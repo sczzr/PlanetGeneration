@@ -323,7 +323,7 @@ theme_override_constants/separation = 4
 layout_mode = 2
 theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
 theme_override_font_sizes/font_size = 11
-text = "地图尺寸"
+text = "信息点"
 
 [node name="MapSizeOption" type="OptionButton" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/MapSizeWrap"]
 layout_mode = 2
@@ -666,7 +666,7 @@ theme_override_constants/separation = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.47451, 0.564706, 0.65098, 1)
 theme_override_font_sizes/font_size = 10
-text = "Preset:Legacy | Seed:1337 | Size:256x128"
+text = "Out:4096x2048 | 信息点:256x128"
 autowrap_mode = 0
 
 [node name="CompareStatsLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsVBox"]

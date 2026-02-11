@@ -58,7 +58,10 @@ public partial class Main : Control
 		new Vector2I(4096, 2048)
 	};
 
-	private const string UltraResolutionWarningText = "⚠ 超高分辨率 4096x2048：生成与导出会更慢，并占用更多内存。";
+	private const int OutputWidth = 4096;
+	private const int OutputHeight = 2048;
+	private const string FixedUltraOutputText = "固定超清输出 4096x2048：信息点越高，细节越多但速度越慢。";
+	private const string HighInfoPointWarningText = "⚠ 信息点较高：生成更慢、细节更多。";
 
 	private bool _isGenerating;
 	private bool _pendingRegenerate;
@@ -336,7 +339,7 @@ public partial class Main : Control
 		for (var index = 0; index < MapSizePresets.Length; index++)
 		{
 			var size = MapSizePresets[index];
-			_mapSizeOption.AddItem($"{size.X}x{size.Y} (2:1)", index);
+			_mapSizeOption.AddItem(BuildInfoPointOptionText(index, size), index);
 		}
 
 		var selectedIndex = FindMapSizePresetIndex(MapWidth, MapHeight);
@@ -347,13 +350,28 @@ public partial class Main : Control
 
 		ApplyMapSizePreset(selectedIndex);
 		_mapSizeOption.Select(selectedIndex);
+		ShowInfoPointHint();
 
 		_mapSizeOption.ItemSelected += id =>
 		{
 			ApplyMapSizePreset((int)id);
-			ShowMapSizeWarningIfNeeded();
+			ShowInfoPointHint();
 			GenerateWorld();
 		};
+	}
+
+	private static string BuildInfoPointOptionText(int index, Vector2I size)
+	{
+		var profile = index switch
+		{
+			0 => "极速",
+			1 => "快速",
+			2 => "均衡",
+			3 => "高细节",
+			_ => "极限细节"
+		};
+
+		return $"{profile} · {size.X}x{size.Y}";
 	}
 
 	private void ApplyMapSizePreset(int presetIndex)
@@ -377,19 +395,16 @@ public partial class Main : Control
 		return -1;
 	}
 
-	private bool IsUltraHighResolutionSelected()
+	private bool IsHighInfoPointSelected()
 	{
-		return MapWidth >= 4096 || MapHeight >= 2048;
+		return MapWidth >= 2048 || MapHeight >= 1024;
 	}
 
-	private void ShowMapSizeWarningIfNeeded()
+	private void ShowInfoPointHint()
 	{
-		if (!IsUltraHighResolutionSelected())
-		{
-			return;
-		}
-
-		_infoLabel.Text = UltraResolutionWarningText;
+		_infoLabel.Text = IsHighInfoPointSelected()
+			? HighInfoPointWarningText
+			: FixedUltraOutputText;
 	}
 
 	private void OnGeneratePressed()
@@ -398,7 +413,7 @@ public partial class Main : Control
 		PlateCount = Mathf.Clamp((int)_plateSpin.Value, 1, 200);
 		WindCellCount = Mathf.Clamp((int)_windSpin.Value, 1, 100);
 		ApplyMapSizePreset(_mapSizeOption.GetSelectedId());
-		ShowMapSizeWarningIfNeeded();
+		ShowInfoPointHint();
 		GenerateWorld();
 	}
 
@@ -459,7 +474,7 @@ public partial class Main : Control
 
 		try
 		{
-			await SetProgressAsync(2f, IsUltraHighResolutionSelected() ? "准备中（超高分辨率）" : "准备中");
+			await SetProgressAsync(2f, IsHighInfoPointSelected() ? "准备中（高信息点）" : "准备中");
 
 			if (_compareMode)
 			{
@@ -757,16 +772,15 @@ public partial class Main : Control
 		}
 
 		var stats = _primaryWorld.Stats;
-		var warningPrefix = IsUltraHighResolutionSelected() ? "⚠UltraRes | " : string.Empty;
 		var oceanTargetPercent = 100f * MapSeaLevelToTargetOceanRatio(SeaLevel);
 		var heatExpectation = BuildHeatExpectationText();
 		_infoLabel.Text =
-			$"{warningPrefix}Preset:{_primaryWorld.Tuning.Name} | Seed:{Seed} | Size:{MapWidth}x{MapHeight} | Plates:{PlateCount} | Wind:{WindCellCount} | Erosion:{ErosionIterations} | Cities:{_primaryWorld.Cities.Count} | Sea:{SeaLevel:0.00} | OceanTarget:{oceanTargetPercent:0.0}% | Heat:{HeatFactor:0.00} | {heatExpectation} | Layer:{layer} | Ocean:{stats.OceanPercent:0.0}% | River:{stats.RiverPercent:0.00}% | Tavg:{stats.AvgTemperature:0.000} | Mavg:{stats.AvgMoisture:0.000}";
+			$"Out:{OutputWidth}x{OutputHeight} | 信息点:{MapWidth}x{MapHeight} | Preset:{_primaryWorld.Tuning.Name} | Seed:{Seed} | Plates:{PlateCount} | Wind:{WindCellCount} | Erosion:{ErosionIterations} | Cities:{_primaryWorld.Cities.Count} | Sea:{SeaLevel:0.00} | OceanTarget:{oceanTargetPercent:0.0}% | Heat:{HeatFactor:0.00} | {heatExpectation} | Layer:{layer} | Ocean:{stats.OceanPercent:0.0}% | River:{stats.RiverPercent:0.00}% | Tavg:{stats.AvgTemperature:0.000} | Mavg:{stats.AvgMoisture:0.000}";
 	}
 
 	private Image RenderLayer(GeneratedWorldData world, MapLayer layer)
 	{
-		return _renderer.Render(
+		var sourceImage = _renderer.Render(
 			MapWidth,
 			MapHeight,
 			layer,
@@ -781,6 +795,38 @@ public partial class Main : Control
 			world.Ore,
 			world.Cities,
 			SeaLevel);
+
+		if (MapWidth == OutputWidth && MapHeight == OutputHeight)
+		{
+			return sourceImage;
+		}
+
+		return UpscaleImageNearest(sourceImage, OutputWidth, OutputHeight);
+	}
+
+	private static Image UpscaleImageNearest(Image source, int targetWidth, int targetHeight)
+	{
+		var sourceWidth = source.GetWidth();
+		var sourceHeight = source.GetHeight();
+
+		if (sourceWidth == targetWidth && sourceHeight == targetHeight)
+		{
+			return source;
+		}
+
+		var scaled = Image.CreateEmpty(targetWidth, targetHeight, false, Image.Format.Rgba8);
+
+		for (var y = 0; y < targetHeight; y++)
+		{
+			var sampleY = Mathf.Clamp((int)((long)y * sourceHeight / targetHeight), 0, sourceHeight - 1);
+			for (var x = 0; x < targetWidth; x++)
+			{
+				var sampleX = Mathf.Clamp((int)((long)x * sourceWidth / targetWidth), 0, sourceWidth - 1);
+				scaled.SetPixel(x, y, source.GetPixel(sampleX, sampleY));
+			}
+		}
+
+		return scaled;
 	}
 
 	private string BuildCompareSummary(GeneratedWorldData primary, GeneratedWorldData compare)
@@ -894,8 +940,10 @@ public partial class Main : Control
 		var payload = new Godot.Collections.Dictionary
 		{
 			["seed"] = Seed,
-			["width"] = MapWidth,
-			["height"] = MapHeight,
+			["width"] = OutputWidth,
+			["height"] = OutputHeight,
+			["info_width"] = MapWidth,
+			["info_height"] = MapHeight,
 			["plates"] = PlateCount,
 			["wind_cells"] = WindCellCount,
 			["sea_level"] = SeaLevel,
