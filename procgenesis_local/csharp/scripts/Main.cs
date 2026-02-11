@@ -22,7 +22,6 @@ public partial class Main : Control
 	[Export] public bool EnableRivers { get; set; } = true;
 
 	private TextureRect _mapTexture = null!;
-	private TextureRect _compareTexture = null!;
 	private SpinBox _seedSpin = null!;
 	private SpinBox _plateSpin = null!;
 	private SpinBox _windSpin = null!;
@@ -46,8 +45,8 @@ public partial class Main : Control
 	private ProgressBar _generateProgress = null!;
 	private Label _progressStatus = null!;
 	private Control _progressOverlay = null!;
-	private ScrollContainer _layerButtonsScroll = null!;
-	private HBoxContainer _layerButtons = null!;
+	private Container _layerButtons = null!;
+	private Control _layerRow = null!;
 	private readonly Dictionary<int, Button> _layerButtonsById = new();
 
 	private static readonly Vector2I[] MapSizePresets =
@@ -104,7 +103,6 @@ public partial class Main : Control
 	public override void _Ready()
 	{
 		_mapTexture = GetNodeByName<TextureRect>("MapTexture");
-		_compareTexture = GetNodeByName<TextureRect>("CompareTexture");
 		_seedSpin = GetNodeByName<SpinBox>("SeedSpin");
 		_plateSpin = GetNodeByName<SpinBox>("PlateSpin");
 		_windSpin = GetNodeByName<SpinBox>("WindSpin");
@@ -128,8 +126,8 @@ public partial class Main : Control
 		_generateProgress = GetNodeByName<ProgressBar>("GenerateProgress");
 		_progressStatus = GetNodeByName<Label>("ProgressStatus");
 		_progressOverlay = GetNodeByName<Control>("ProgressOverlay");
-		_layerButtonsScroll = GetNodeByName<ScrollContainer>("LayerButtonsScroll");
-		_layerButtons = GetNodeByName<HBoxContainer>("LayerButtons");
+		_layerButtons = GetNodeByName<Container>("LayerButtons");
+		_layerRow = GetNodeByName<Control>("LayerRow");
 
 		_generateProgress.Value = 0;
 		_progressStatus.Text = "待命";
@@ -152,7 +150,6 @@ public partial class Main : Control
 			RedrawCurrentLayer();
 			UpdateLayerQuickButtons();
 		};
-		_layerButtonsScroll.GuiInput += OnLayerButtonsScrollGuiInput;
 
 		_riverToggle.Toggled += value =>
 		{
@@ -181,11 +178,14 @@ public partial class Main : Control
 		_riverToggle.ButtonPressed = EnableRivers;
 		_randomHeatToggle.ButtonPressed = RandomHeatFactor;
 		_compareToggle.ButtonPressed = false;
+		_compareToggle.Visible = false;
+		_compareToggle.Disabled = true;
 
-		_compareTexture.Visible = false;
 		_compareStatsLabel.Visible = false;
 		_cityNamesLabel.Visible = false;
 		_layerOption.Visible = false;
+		_layerRow.Visible = true;
+		_layerRow.ZIndex = 10;
 		UpdateLayerQuickButtons();
 
 		UpdateLabels();
@@ -233,6 +233,9 @@ public partial class Main : Control
 		}
 
 		_layerButtonsById.Clear();
+		var normalStyle = CreateLayerButtonStyle(new Color(0.090196f, 0.145098f, 0.231373f, 0.96f), new Color(0.658824f, 0.756863f, 0.937255f, 0.18f));
+		var hoverStyle = CreateLayerButtonStyle(new Color(0.129412f, 0.196078f, 0.301961f, 0.98f), new Color(0.658824f, 0.756863f, 0.937255f, 0.28f));
+		var activeStyle = CreateLayerButtonStyle(new Color(0.180392f, 0.415686f, 0.862745f, 1f), new Color(0.764706f, 0.858824f, 1f, 0.45f));
 
 		for (var index = 0; index < _layerOption.ItemCount; index++)
 		{
@@ -243,9 +246,20 @@ public partial class Main : Control
 				Text = label,
 				ToggleMode = true,
 				FocusMode = Control.FocusModeEnum.None,
-				CustomMinimumSize = new Vector2(58f, 0f),
+				CustomMinimumSize = new Vector2(66f, 28f),
 				ClipText = true
 			};
+
+			button.AddThemeStyleboxOverride("normal", normalStyle);
+			button.AddThemeStyleboxOverride("hover", hoverStyle);
+			button.AddThemeStyleboxOverride("pressed", activeStyle);
+			button.AddThemeStyleboxOverride("focus", activeStyle);
+			button.AddThemeStyleboxOverride("disabled", normalStyle);
+			button.AddThemeColorOverride("font_color", new Color(0.84f, 0.9f, 0.98f, 0.95f));
+			button.AddThemeColorOverride("font_hover_color", Colors.White);
+			button.AddThemeColorOverride("font_pressed_color", Colors.White);
+			button.AddThemeColorOverride("font_focus_color", Colors.White);
+			button.AddThemeFontSizeOverride("font_size", 12);
 
 			var capturedLayerId = layerId;
 			button.Pressed += () => SelectLayerById(capturedLayerId);
@@ -281,30 +295,25 @@ public partial class Main : Control
 		{
 			var isSelected = pair.Key == selectedId;
 			pair.Value.ButtonPressed = isSelected;
-			pair.Value.Modulate = isSelected ? new Color(0.66f, 0.86f, 1f, 1f) : new Color(0.84f, 0.88f, 0.95f, 1f);
+			pair.Value.Modulate = Colors.White;
 		}
 	}
 
-	private void OnLayerButtonsScrollGuiInput(InputEvent inputEvent)
+	private static StyleBoxFlat CreateLayerButtonStyle(Color background, Color border)
 	{
-		if (inputEvent is not InputEventMouseButton mouseButton || !mouseButton.Pressed || !mouseButton.ShiftPressed)
+		return new StyleBoxFlat
 		{
-			return;
-		}
-
-		const int scrollStep = 80;
-		if (mouseButton.ButtonIndex == MouseButton.WheelUp)
-		{
-			_layerButtonsScroll.ScrollHorizontal = Mathf.Max(_layerButtonsScroll.ScrollHorizontal - scrollStep, 0);
-			_layerButtonsScroll.AcceptEvent();
-			return;
-		}
-
-		if (mouseButton.ButtonIndex == MouseButton.WheelDown)
-		{
-			_layerButtonsScroll.ScrollHorizontal += scrollStep;
-			_layerButtonsScroll.AcceptEvent();
-		}
+			BgColor = background,
+			BorderWidthLeft = 1,
+			BorderWidthTop = 1,
+			BorderWidthRight = 1,
+			BorderWidthBottom = 1,
+			BorderColor = border,
+			CornerRadiusTopLeft = 6,
+			CornerRadiusTopRight = 6,
+			CornerRadiusBottomRight = 6,
+			CornerRadiusBottomLeft = 6
+		};
 	}
 
 	private void SetupTuningOptions()
@@ -724,8 +733,6 @@ public partial class Main : Control
 		if (_compareMode && _compareWorld != null)
 		{
 			var compareImage = RenderLayer(_compareWorld, layer);
-			_compareTexture.Texture = ImageTexture.CreateFromImage(compareImage);
-			_compareTexture.Visible = true;
 			_lastCompareImage = compareImage;
 
 			_compareStatsLabel.Visible = true;
@@ -733,7 +740,6 @@ public partial class Main : Control
 		}
 		else
 		{
-			_compareTexture.Visible = false;
 			_lastCompareImage = null;
 			_compareStatsLabel.Visible = false;
 			_compareStatsLabel.Text = string.Empty;

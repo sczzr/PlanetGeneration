@@ -3,77 +3,116 @@
 [ext_resource type="Script" uid="uid://wvf3q3mtgfea" path="res://scripts/Main.cs" id="1_8xi0f"]
 
 [sub_resource type="StyleBoxFlat" id="1"]
-bg_color = Color(0.113725, 0.14902, 0.219608, 0.82)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
 border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.08)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
 
-[sub_resource type="StyleBoxFlat" id="5"]
-bg_color = Color(0.145098, 0.372549, 0.741176, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="6"]
-bg_color = Color(0.219608, 0.478431, 0.901961, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="7"]
-bg_color = Color(0.168627, 0.211765, 0.286275, 0.95)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="8"]
-bg_color = Color(0.25098, 0.298039, 0.388235, 0.95)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_right = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
 
 [sub_resource type="StyleBoxFlat" id="3"]
-bg_color = Color(0.0156863, 0.0352941, 0.0705882, 0.9)
+bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.05)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-
-[sub_resource type="StyleBoxFlat" id="9"]
-bg_color = Color(0.0588235, 0.0901961, 0.164706, 0.85)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.06)
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="4"]
-bg_color = Color(0.0392157, 0.0627451, 0.101961, 0.86)
-border_width_top = 1
-border_color = Color(1, 1, 1, 0.08)
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+bg_color = Color(0.196078, 0.45098, 0.862745, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 
-[node name="Main" type="Control" unique_id=172753251]
+[sub_resource type="StyleBoxFlat" id="5"]
+bg_color = Color(0.152941, 0.380392, 0.760784, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="6"]
+bg_color = Color(0.117647, 0.152941, 0.219608, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="7"]
+bg_color = Color(0.176471, 0.215686, 0.286275, 0.98)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="8"]
+bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="9"]
+bg_color = Color(0.0431373, 0.054902, 0.0784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="10"]
+bg_color = Color(0.0156863, 0.0196078, 0.0313726, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.08)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="11"]
+bg_color = Color(0, 0, 0, 0.62)
+
+[sub_resource type="StyleBoxFlat" id="12"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_top = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="13"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="14"]
+bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="15"]
+bg_color = Color(0.0470588, 0.0627451, 0.0862745, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Main" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -82,441 +121,485 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_8xi0f")
 
-[node name="Background" type="ColorRect" parent="." unique_id=1493547226]
+[node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0588235, 0.0901961, 0.164706, 1)
+color = Color(0.0431373, 0.054902, 0.0784314, 1)
 
-[node name="Root" type="MarginContainer" parent="." unique_id=251454810]
+[node name="Root" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/separation = 0
 
-[node name="RootVBox" type="VBoxContainer" parent="Root" unique_id=1917091536]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="HeaderPanel" type="PanelContainer" parent="Root/RootVBox" unique_id=1545812432]
-custom_minimum_size = Vector2(0, 70)
+[node name="HeaderPanel" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("1")
 
-[node name="HeaderMargin" type="MarginContainer" parent="Root/RootVBox/HeaderPanel" unique_id=81436055]
+[node name="HeaderMargin" type="MarginContainer" parent="Root/HeaderPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
+theme_override_constants/margin_left = 24
 theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 16
+theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 10
 
-[node name="HeaderHBox" type="HBoxContainer" parent="Root/RootVBox/HeaderPanel/HeaderMargin" unique_id=1245148757]
+[node name="HeaderHBox" type="HBoxContainer" parent="Root/HeaderPanel/HeaderMargin"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="TitleVBox" type="VBoxContainer" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox" unique_id=1830009257]
+[node name="TitleHBox" type="HBoxContainer" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
-[node name="Title" type="Label" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox/TitleVBox" unique_id=548041746]
-modulate = Color(0.4, 0.78, 1, 1)
+[node name="Title" type="Label" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox/TitleHBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
 theme_override_font_sizes/font_size = 26
 text = "行星生成系统"
+vertical_alignment = 1
 
-[node name="Subtitle" type="Label" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox/TitleVBox" unique_id=654432684]
-modulate = Color(0.72549, 0.780392, 0.862745, 0.85)
+[node name="Subtitle" type="Label" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox/TitleHBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 15
 text = "Planet Generation V2.0"
+vertical_alignment = 1
 
-[node name="HeaderButtons" type="HBoxContainer" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox" unique_id=1120482776]
+[node name="HeaderButtons" type="HBoxContainer" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="GenerateButton" type="Button" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons" unique_id=239212591]
-custom_minimum_size = Vector2(126, 34)
+[node name="GenerateButton" type="Button" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons"]
+custom_minimum_size = Vector2(118, 36)
 layout_mode = 2
-theme_override_styles/normal = SubResource("5")
-theme_override_styles/pressed = SubResource("6")
-theme_override_styles/hover = SubResource("6")
-text = "重新生成"
+theme_override_styles/normal = SubResource("4")
+theme_override_styles/hover = SubResource("5")
+theme_override_styles/pressed = SubResource("5")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "⟳ 重新生成"
 
-[node name="ExportPngButton" type="Button" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons" unique_id=1419451326]
-custom_minimum_size = Vector2(88, 34)
+[node name="ExportPngButton" type="Button" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons"]
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
-text = "导出 PNG"
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 14
+text = "🖼"
 
-[node name="ExportJsonButton" type="Button" parent="Root/RootVBox/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons" unique_id=833262112]
-custom_minimum_size = Vector2(88, 34)
+[node name="ExportJsonButton" type="Button" parent="Root/HeaderPanel/HeaderMargin/HeaderHBox/HeaderButtons"]
+custom_minimum_size = Vector2(36, 36)
 layout_mode = 2
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
-text = "导出 JSON"
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 13
+text = "</>"
 
-[node name="MainHBox" type="HBoxContainer" parent="Root/RootVBox" unique_id=1826367540]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="LeftPanel" type="PanelContainer" parent="Root/RootVBox/MainHBox" unique_id=1849460728]
-custom_minimum_size = Vector2(332, 0)
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("1")
-
-[node name="LeftScroll" type="ScrollContainer" parent="Root/RootVBox/MainHBox/LeftPanel" unique_id=1438578721]
+[node name="ContentHBox" type="HBoxContainer" parent="Root"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 
-[node name="LeftMargin" type="MarginContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll" unique_id=917263339]
+[node name="LeftPanel" type="PanelContainer" parent="Root/ContentHBox"]
+custom_minimum_size = Vector2(288, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("2")
 
-[node name="LeftVBox" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin" unique_id=386995134]
+[node name="LeftScroll" type="ScrollContainer" parent="Root/ContentHBox/LeftPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/scrollbar_h_size = 4
+theme_override_constants/scrollbar_v_size = 4
+
+[node name="LeftMargin" type="MarginContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 20
+
+[node name="LeftVBox" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 14
 
-[node name="BaseLabel" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=893711462]
-modulate = Color(0.607843, 0.658824, 0.74902, 0.75)
+[node name="BaseHeader" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
 text = "基础配置 / BASE"
 
-[node name="SeedLabel" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=152044980]
+[node name="BaseDivider" type="HSeparator" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
+
+[node name="SeedLabel" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "种子 Seed"
 
-[node name="SeedRow" type="HBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1649484272]
+[node name="SeedRow" type="HBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SeedSpin" type="SpinBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeedRow" unique_id=1213819831]
+[node name="SeedSpin" type="SpinBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-min_value = -2147483600.0
+min_value = -2147483648.0
 max_value = 2147483647.0
 rounded = true
 
-[node name="RandomButton" type="Button" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeedRow" unique_id=569892721]
-custom_minimum_size = Vector2(60, 0)
+[node name="RandomButton" type="Button" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeedRow"]
+custom_minimum_size = Vector2(58, 0)
 layout_mode = 2
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
 text = "随机"
 
-[node name="PlateWindGrid" type="GridContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=253014923]
+[node name="PlateWindRow" type="HBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
-columns = 2
+theme_override_constants/separation = 10
 
-[node name="PlateWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid" unique_id=241916804]
+[node name="PlateWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
-[node name="PlateText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid/PlateWrap" unique_id=1602534511]
+[node name="PlateText" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow/PlateWrap"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
 text = "板块数量"
 
-[node name="PlateSpin" type="SpinBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid/PlateWrap" unique_id=1835193202]
+[node name="PlateSpin" type="SpinBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow/PlateWrap"]
 layout_mode = 2
 min_value = 1.0
 max_value = 200.0
 value = 20.0
 rounded = true
 
-[node name="WindWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid" unique_id=666964523]
+[node name="WindWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
-[node name="WindText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid/WindWrap" unique_id=1626653197]
+[node name="WindText" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow/WindWrap"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
 text = "风力单元"
 
-[node name="WindSpin" type="SpinBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindGrid/WindWrap" unique_id=2050009771]
+[node name="WindSpin" type="SpinBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PlateWindRow/WindWrap"]
 layout_mode = 2
 min_value = 1.0
+max_value = 100.0
 value = 10.0
 rounded = true
 
-[node name="MapSizeWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1902067729]
+[node name="MapSizeWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="MapSizeText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/MapSizeWrap" unique_id=421111802]
+[node name="MapSizeText" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/MapSizeWrap"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
 text = "地图尺寸"
 
-[node name="MapSizeOption" type="OptionButton" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/MapSizeWrap" unique_id=1508371758]
+[node name="MapSizeOption" type="OptionButton" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/MapSizeWrap"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
 
-[node name="DividerA" type="HSeparator" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=675082120]
+[node name="EnvironmentSpacer" type="Control" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="EnvLabel" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=2081246669]
-modulate = Color(0.607843, 0.658824, 0.74902, 0.75)
+[node name="EnvironmentHeader" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
 text = "环境算法 / ENVIRONMENT"
 
-[node name="SeaWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1106033580]
+[node name="EnvironmentDivider" type="HSeparator" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
 
-[node name="SeaHeader" type="HBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap" unique_id=1137789963]
+[node name="SeaWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SeaHeader" type="HBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap"]
 layout_mode = 2
 
-[node name="SeaText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader" unique_id=1355623173]
+[node name="SeaLabel" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "海平面 Sea"
 
-[node name="SeaLevelValue" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader" unique_id=1909896726]
-modulate = Color(0.4, 0.78, 1, 1)
+[node name="SeaLevelValue" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
+theme_override_font_sizes/font_size = 11
 text = "0.35"
 
-[node name="SeaLevelSlider" type="HSlider" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap" unique_id=926848508]
+[node name="SeaLevelSlider" type="HSlider" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/SeaWrap"]
 layout_mode = 2
-size_flags_horizontal = 3
 min_value = 0.1
 max_value = 0.9
 step = 0.01
 value = 0.35
 
-[node name="HeatWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1873329772]
+[node name="HeatWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeatHeader" type="HBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap"]
 layout_mode = 2
 
-[node name="HeatHeader" type="HBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap" unique_id=1957837448]
-layout_mode = 2
-
-[node name="HeatText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader" unique_id=35327856]
+[node name="HeatLabel" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "热量 Heat"
 
-[node name="HeatValue" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader" unique_id=2045214078]
-modulate = Color(0.980392, 0.65098, 0.372549, 1)
+[node name="HeatValue" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.980392, 0.603922, 0.32549, 1)
+theme_override_font_sizes/font_size = 11
 text = "0.50"
 
-[node name="HeatSlider" type="HSlider" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap" unique_id=271066398]
+[node name="HeatSlider" type="HSlider" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/HeatWrap"]
 layout_mode = 2
-size_flags_horizontal = 3
 min_value = 0.01
 max_value = 1.0
 step = 0.01
 value = 0.5
 
-[node name="ErosionWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1838604668]
+[node name="ErosionWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ErosionHeader" type="HBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap"]
 layout_mode = 2
 
-[node name="ErosionHeader" type="HBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap" unique_id=1010063934]
-layout_mode = 2
-
-[node name="ErosionText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader" unique_id=1787921697]
+[node name="ErosionLabel" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "侵蚀度 Erosion"
 
-[node name="ErosionValue" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader" unique_id=427053773]
-modulate = Color(0.494118, 0.894118, 0.658824, 1)
+[node name="ErosionValue" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
 text = "5"
 
-[node name="ErosionSlider" type="HSlider" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap" unique_id=388611420]
+[node name="ErosionSlider" type="HSlider" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/ErosionWrap"]
 layout_mode = 2
-size_flags_horizontal = 3
 max_value = 20.0
+step = 1.0
 value = 5.0
 
-[node name="DividerB" type="HSeparator" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=449447836]
+[node name="ViewSpacer" type="Control" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="ViewLabel" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=2055188029]
-modulate = Color(0.607843, 0.658824, 0.74902, 0.75)
+[node name="ViewHeader" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
 text = "视图控制 / VIEW"
 
-[node name="RiverToggle" type="CheckBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1342118429]
+[node name="ViewDivider" type="HSeparator" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+
+[node name="RiverToggle" type="CheckBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
 button_pressed = true
 text = "河流系统 Rivers"
 
-[node name="RandomHeatToggle" type="CheckBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1481626945]
+[node name="RandomHeatToggle" type="CheckBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 layout_mode = 2
+button_pressed = true
 text = "随机热量 Random Heat"
 
-[node name="CompareToggle" type="CheckBox" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1991062479]
-layout_mode = 2
-text = "A/B 对比 Compare"
-
-[node name="TuningWrap" type="VBoxContainer" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox" unique_id=1503468078]
-layout_mode = 2
-
-[node name="TuningText" type="Label" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/TuningWrap" unique_id=868245672]
-layout_mode = 2
-text = "Preset"
-
-[node name="TuningOption" type="OptionButton" parent="Root/RootVBox/MainHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/TuningWrap" unique_id=1158030136]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
-
-[node name="RightVBox" type="VBoxContainer" parent="Root/RootVBox/MainHBox" unique_id=1122898050]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="PreviewPanel" type="PanelContainer" parent="Root/RootVBox/MainHBox/RightVBox" unique_id=701429609]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("1")
-
-[node name="PreviewMargin" type="MarginContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel" unique_id=141117113]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
-
-[node name="PreviewVBox" type="VBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin" unique_id=1503252206]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
-
-[node name="LayerRow" type="HBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox" unique_id=1535106756]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[node name="LayerSpacer" type="Control" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow" unique_id=955091209]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LayerSwitchPanel" type="PanelContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow" unique_id=1297723644]
-layout_mode = 2
-theme_override_styles/panel = SubResource("3")
-
-[node name="LayerSwitchMargin" type="MarginContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel" unique_id=466327062]
-layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 4
-
-[node name="LayerButtonsScroll" type="ScrollContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin" unique_id=2131725856]
-custom_minimum_size = Vector2(520, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="LayerButtons" type="HBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtonsScroll" unique_id=1426223862]
-custom_minimum_size = Vector2(760, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="LayerOption" type="OptionButton" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin" unique_id=265762013]
+[node name="CompareToggle" type="CheckBox" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
 visible = false
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/pressed = SubResource("8")
-theme_override_styles/hover = SubResource("8")
+text = "对比模式 Compare"
 
-[node name="MapAspect" type="AspectRatioContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox" unique_id=1586658482]
+[node name="PresetWrap" type="VBoxContainer" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PresetText" type="Label" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PresetWrap"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "Preset"
+
+[node name="TuningOption" type="OptionButton" parent="Root/ContentHBox/LeftPanel/LeftScroll/LeftMargin/LeftVBox/PresetWrap"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
+
+[node name="RightMargin" type="MarginContainer" parent="Root/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="RightVBox" type="VBoxContainer" parent="Root/ContentHBox/RightMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PreviewPanel" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("3")
+
+[node name="MapRoot" type="Control" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LayerRow" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 46.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("8")
+
+[node name="LayerRowMargin" type="MarginContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/LayerRow"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="LayerRowHBox" type="HBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/LayerRow/LayerRowMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="LayerButtonsScroll" type="ScrollContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/LayerRow/LayerRowMargin/LayerRowHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 0
+theme_override_constants/scrollbar_h_size = 4
+
+[node name="LayerButtons" type="HFlowContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/LayerRow/LayerRowMargin/LayerRowHBox/LayerButtonsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="LayerOption" type="OptionButton" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/LayerRow/LayerRowMargin/LayerRowHBox"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/hover = SubResource("7")
+theme_override_styles/pressed = SubResource("7")
+
+[node name="MapViewport" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 46.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("9")
+
+[node name="MapViewportMargin" type="MarginContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/MapViewport"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="MapCenter" type="CenterContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/MapViewport/MapViewportMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MapAspect" type="AspectRatioContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter"]
+custom_minimum_size = Vector2(480, 240)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 ratio = 2.0
-stretch_mode = 1
+stretch_mode = 2
 
-[node name="MapCard" type="PanelContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect" unique_id=1585502374]
+[node name="MapTextureFrame" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("9")
+theme_override_styles/panel = SubResource("10")
 
-[node name="MapRoot" type="Control" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard" unique_id=1180732021]
+[node name="MapTexture" type="TextureRect" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect/MapTextureFrame"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+texture_filter = 1
 
-[node name="MapViews" type="HBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot" unique_id=1934254420]
+[node name="ProgressOverlay" type="Control" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
-
-[node name="MapTexture" type="TextureRect" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/MapViews" unique_id=1401369656]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
-
-[node name="CompareTexture" type="TextureRect" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/MapViews" unique_id=1058183234]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 6
-
-[node name="ProgressOverlay" type="Control" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot" unique_id=698419579]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+z_index = 20
 mouse_filter = 2
 
-[node name="OverlayTint" type="ColorRect" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay" unique_id=816231277]
+[node name="OverlayTint" type="ColorRect" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0196078, 0.0352941, 0.0627451, 0.68)
+color = Color(0, 0, 0, 0.55)
 
-[node name="ProgressCenter" type="CenterContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay" unique_id=216833145]
+[node name="ProgressCenter" type="CenterContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -524,72 +607,81 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ProgressPanel" type="PanelContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay/ProgressCenter" unique_id=872761754]
-custom_minimum_size = Vector2(280, 0)
+[node name="ProgressPanel" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter"]
+custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("3")
+theme_override_styles/panel = SubResource("13")
 
-[node name="ProgressMargin" type="MarginContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel" unique_id=735629132]
+[node name="ProgressMargin" type="MarginContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
 
-[node name="ProgressVBox" type="VBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin" unique_id=1357022801]
+[node name="ProgressVBox" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
-[node name="GenerateProgress" type="ProgressBar" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox" unique_id=1572535396]
+[node name="GenerateProgress" type="ProgressBar" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 show_percentage = false
+max_value = 100.0
 
-[node name="ProgressStatus" type="Label" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/MapAspect/MapCard/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox" unique_id=1113600933]
+[node name="ProgressStatus" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.768627, 0.819608, 0.890196, 1)
+theme_override_font_sizes/font_size = 11
 text = "待命"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="StatsPanel" type="PanelContainer" parent="Root/RootVBox/MainHBox/RightVBox" unique_id=1465972652]
-custom_minimum_size = Vector2(0, 98)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("4")
+[node name="StatsPanel" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+z_index = 10
+mouse_filter = 2
+theme_override_styles/panel = SubResource("12")
 
-[node name="StatsMargin" type="MarginContainer" parent="Root/RootVBox/MainHBox/RightVBox/StatsPanel" unique_id=2126582645]
+[node name="StatsMargin" type="MarginContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 8
+theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_bottom = 6
 
-[node name="StatsVBox" type="VBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/StatsPanel/StatsMargin" unique_id=1287674872]
+[node name="StatsVBox" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 2
 
-[node name="InfoLabel" type="Label" parent="Root/RootVBox/MainHBox/RightVBox/StatsPanel/StatsMargin/StatsVBox" unique_id=1194480427]
-modulate = Color(0.839216, 0.878431, 0.92549, 0.95)
+[node name="InfoLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Preset: -"
-autowrap_mode = 2
+theme_override_colors/font_color = Color(0.47451, 0.564706, 0.65098, 1)
+theme_override_font_sizes/font_size = 10
+text = "Preset:Legacy | Seed:1337 | Size:256x128"
+autowrap_mode = 0
 
-[node name="CompareStatsLabel" type="Label" parent="Root/RootVBox/MainHBox/RightVBox/StatsPanel/StatsMargin/StatsVBox" unique_id=1743762444]
+[node name="CompareStatsLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsVBox"]
 visible = false
-modulate = Color(0.639216, 0.878431, 0.984314, 0.95)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.639216, 0.878431, 0.984314, 0.9)
+theme_override_font_sizes/font_size = 10
 text = "Compare stats"
 autowrap_mode = 2
 
-[node name="CityNamesLabel" type="RichTextLabel" parent="Root/RootVBox/MainHBox/RightVBox/StatsPanel/StatsMargin/StatsVBox" unique_id=898386307]
+[node name="CityNamesLabel" type="RichTextLabel" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsVBox"]
 visible = false
-modulate = Color(0.788235, 0.905882, 0.807843, 0.95)
-custom_minimum_size = Vector2(0, 112)
 layout_mode = 2
-size_flags_vertical = 0
-theme_override_font_sizes/normal_font_size = 12
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 11
 text = "Cities"
 autowrap_mode = 2
+scroll_active = false

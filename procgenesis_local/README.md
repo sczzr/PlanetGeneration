@@ -66,3 +66,25 @@ InfoLabel 会显示 `HeatEff` 与 `WarmBand` 预估信息（随 Seed 与 Random 
 - 若需“逐行级”复刻原 JS 的所有细节（城市、语言树、矿石、岩石、侵蚀迭代等），可在此结构上继续扩展。
 
 海平面参数 `Sea` 现在直接控制海陆分界阈值，不再固定目标海洋覆盖率。 当前目标曲线采用贝塞尔插值并锚定：`Sea=0.1 -> Ocean≈30%`, `Sea=0.5 -> Ocean≈72%`, `Sea=0.9 -> Ocean≈95%`。
+
+## 一键启动脚本
+
+在仓库根目录 `procgenesis_local/` 下：
+
+- 启动 Web 项目：`./start-web.sh`
+- 启动 C# / Godot 项目：`./start-csharp.sh`
+
+说明：
+
+- `start-web.sh` 会优先使用 `python3`（端口 `8000`），若不存在则尝试 `node`（端口 `8080`）。
+- `start-csharp.sh` 会自动尝试 `godot4-mono`、`godot4`、`godot`。
+
+### Windows 启动脚本
+
+- 启动 Web 项目：`start-web.cmd`
+- 启动 C# / Godot 项目：`start-csharp.cmd`
+
+说明：
+
+- `start-web.cmd` 会依次尝试 `python`、`py -3`、`node`。
+- `start-csharp.cmd` 会依次尝试 `godot4-mono`、`godot4`、`godot`。
