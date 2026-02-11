@@ -1,5 +1,12 @@
 # 行星生成 (Planet Generation) - Godot 4.6 C#
 
+## 目录拆分
+
+已将仓库内容按项目类型拆分为两个目录：
+
+- `csharp/`：Godot 4.6 C# 项目（当前主项目）
+- `web/`：原网页版本及静态资源（用于对照迁移）
+
 当前工程已迁移为 **Godot 4.6 + C#**，并完成 `WorldGen` 的核心模块迁移：
 
 - 板块（Plate IDs + 边界类型：汇聚/离散/转换）
@@ -20,9 +27,11 @@
 ## 如何打开
 
 1. 安装 **Godot 4.6 (.NET)**
-2. 在 Godot 中导入目录：`procgenesis_local`
+2. 在 Godot 中导入目录：`procgenesis_local/csharp`
 3. 首次打开等待 C# 项目初始化
 4. 运行主场景（已配置 `res://scenes/Main.tscn`）
+
+网页版如需本地运行，请进入 `procgenesis_local/web` 后启动 `server.py` 或 `server.js`。
 
 ## 当前功能入口
 
@@ -53,7 +62,7 @@ InfoLabel 会显示 `HeatEff` 与 `WarmBand` 预估信息（随 Seed 与 Random 
 
 ## 备注
 
-- 原网页资源与脚本仍保留在仓库中，便于后续继续对照迁移。
+- 原网页资源与脚本位于 `web/`，便于后续继续对照迁移。
 - 若需“逐行级”复刻原 JS 的所有细节（城市、语言树、矿石、岩石、侵蚀迭代等），可在此结构上继续扩展。
 
 海平面参数 `Sea` 现在直接控制海陆分界阈值，不再固定目标海洋覆盖率。 当前目标曲线采用贝塞尔插值并锚定：`Sea=0.1 -> Ocean≈30%`, `Sea=0.5 -> Ocean≈72%`, `Sea=0.9 -> Ocean≈95%`。
