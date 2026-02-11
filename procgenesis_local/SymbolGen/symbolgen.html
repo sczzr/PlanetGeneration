@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8435851807212049"
+     crossorigin="anonymous"></script>
+        <meta charset="utf-8" />
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <script src="seedrandom.js"></script>
+
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+          /*(adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-8435851807212049",
+            enable_page_level_ads: true
+          });*/
+        </script>
+
+    </head>
+    <body>
+        
+        <div id="Banner">
+            <div id="Logo"><img src="procgenesis_logo_t2_small.png" alt="ProcGenesis"></div>
+        </div>
+        <div id="Navbar">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../generators.html">Generators</a></li>
+                <li><a href="http://blog.procgenesis.com">Blog</a></li>
+                <li><a href="../gallery.html">Gallery</a></li>
+                            
+            </ul>
+        </div>
+
+        <canvas id="mainCanvas" width="816" height="800" style="border: 1px solid #c3c3c3"></canvas>
+
+        <div id="ctrlPanel">
+            
+            <br><br>Minimum Elements<br><form onsubmit="return false;"><input type="number" id="minEl" name="minEl" class="displayButtons" value="2" onchange="if(this.value < 1){ this.value = 1; }if(this.value >= document.getElementById('maxEl').value){ this.value = document.getElementById('maxEl').value; }"><input type="reset" class="resetButtons"></form>
+            <br>Maximum Elements<br><form onsubmit="return false;"><input type="number" id="maxEl" name="maxEl" class="displayButtons" value="4" onchange="if(this.value <= 0){ this.value = 0; } if(this.value <= document.getElementById('minEl').value){ this.value = document.getElementById('minEl').value; }"><input type="reset" class="resetButtons"></form>
+            <br>Line Width<br><form onsubmit="return false;"><input type="number" id="lineW" name="lineW" class="displayButtons" value="3" onchange="if(this.value < 1){ this.value = 1; } if(this.value > 20){ this.value = 20; }"><input type="reset" class="resetButtons"></form>
+            <br><br>Curve Element Chance (%)<br><form onsubmit="return false;"><input type="range" id="curveChance" name="curveChance" class="displayButtons" value="50" min="0" max="100" onchange="document.getElementById('curveChanceText').value = this.value">
+            <input type="text" id="curveChanceText" style="width: 60px" class="displayButtons" value="50" onchange="document.getElementById('curveChance').value = this.value"><input type="reset" class="resetButtons"></form>
+            <br>Circle Chance (%)<br><form onsubmit="return false;"><input type="range" id="circleChance" name="circleChance" class="displayButtons" value="10" min="0" max="100" onchange="document.getElementById('circleChanceText').value = this.value">
+            <input type="text" id="circleChanceText" style="width: 60px" class="displayButtons" value="10" onchange="document.getElementById('circleChance').value = this.value"><input type="reset" class="resetButtons"></form></form>
+            <br>Minimum Angle (Degrees)<br><form onsubmit="return false;"><input type="range" id="minAngle" name="minAngle" class="displayButtons" value="45" min="0" max="180" onchange="document.getElementById('minAngleText').value = this.value">
+            <input type="text" id="minAngleText" style="width: 60px" class="displayButtons" value="45" onchange="document.getElementById('minAngle').value = this.value"><input type="reset" class="resetButtons"></form></form>
+            <br><br>Symmetry Type:
+            <div id="symPanel">
+                <br>None<form onsubmit="return false"><input type="checkbox" id="useNone" name="useNone" value="true" checked></form>
+                Vertical<form onsubmit="return false"><input type="checkbox" id="useVertical" name="useVertical" value="true" checked></form>
+                Horizontal<form onsubmit="return false"><input type="checkbox" id="useHorizontal" name="useHorizontal" value="true" checked></form>
+                2-Axis<form onsubmit="return false"><input type="checkbox" id="use2Axis" name="use2Axis" value="true" checked></form>
+            </div>
+            <br><br>Use Seed<br><form onsubmit="return false"><input type="checkbox" id="useSeed" name="useSeed" value="false" onchange="if(this.checked){document.getElementById('seedForm').style = 'visibility: visible'}else{document.getElementById('seedForm').style = 'visiblity: hidden'}"></form>
+            <br><div id="seedForm">Seed<br><form onsubmit="return false"><input type="text" id="seed" name="seed" class="displayButtons" value=""><input type="reset" class="resetButtons"></form></div>
+
+            <br><br><input type="button" id="generate" class="genButton" value="Generate Symbols" onclick="generate(100)">
+        </div>
+
+        <script src="generate2.min.js"></script><script>window.onload=function(){setTimeout(function(){if(typeof generate==='function'){generate(100);}},500);};</script>
+    </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- code copyright (c) 2016-2017 ProcGenesis                            -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<html>
+    <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8435851807212049"
+     crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      /*(adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-8435851807212049",
+        enable_page_level_ads: true
+      });*/
+    </script>
+    
+    </head>
+<body>
+    
+    
+    
+    <div id="Banner">
+            <div id="Logo"><img src="procgenesis_logo_t2_small.png" alt="ProcGenesis"></div>
+        
+        </div>
+
+        <div id="Navbar">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../generators.html">Generators</a></li>
+                <li><a href="http://blog.procgenesis.com">Blog</a></li>
+                <li><a href="../gallery.html">Gallery</a></li>
+                <!--<li><a href="#">About</a></li>-->
+            
+            </ul>
+            
+    </div>
+    
+    <div id="main">
+    <div id="canvases">
+        <!--From left to right: Final Biome Map, Base Elevation Map, Smoothed Elevation Map, Temperature Map, Rainfall Map-->
+        <canvas id="myCanvas" width="320" height="320" style="border:1px solid #c3c3c3;">
+        Your browser does not support the HTML5 canvas tag.
+        </canvas>
+        <canvas id="elCanvas" width="320" height="320" style="display: none;"></canvas>
+        <canvas id="smoothElCanvas" width="320" height="320" style="display: none;"></canvas>
+        <canvas id="tempCanvas" width="320" height="320" style="display: none;"></canvas>
+        <canvas id="rainCanvas" width="320" height="320" style="display: none;"></canvas>
+    </div>
+    <br>
+
+    <div id="DisplayButtons">
+        <input type="button" class="dispButtons" value="Show Biomes" onclick="document.getElementById('myCanvas').style='border:1px solid #c3c3c3;'; document.getElementById('elCanvas').style='display: none'; document.getElementById('smoothElCanvas').style='display: none'; document.getElementById('tempCanvas').style='display: none'; document.getElementById('rainCanvas').style='display: none';">
+        <input type="button" class="dispButtons" value="Show Base Elevation" onclick="document.getElementById('myCanvas').style='display: none'; document.getElementById('elCanvas').style='border:1px solid #c3c3c3;'; document.getElementById('smoothElCanvas').style='display: none'; document.getElementById('tempCanvas').style='display: none'; document.getElementById('rainCanvas').style='display: none';">
+        <input type="button" class="dispButtons" value="Show Smoothed Elevation" onclick="document.getElementById('myCanvas').style='display: none'; document.getElementById('elCanvas').style='display: none'; document.getElementById('smoothElCanvas').style='border:1px solid #c3c3c3;'; document.getElementById('tempCanvas').style='display: none'; document.getElementById('rainCanvas').style='display: none';">
+        <input type="button" class="dispButtons" value="Show Temperature" onclick="document.getElementById('myCanvas').style='display: none'; document.getElementById('elCanvas').style='display: none'; document.getElementById('smoothElCanvas').style='display: none'; document.getElementById('tempCanvas').style='border:1px solid #c3c3c3;'; document.getElementById('rainCanvas').style='display: none';">
+        <input type="button" class="dispButtons" value="Show Rainfall" onclick="document.getElementById('myCanvas').style='display: none'; document.getElementById('elCanvas').style='display: none'; document.getElementById('smoothElCanvas').style='display: none'; document.getElementById('tempCanvas').style='display: none'; document.getElementById('rainCanvas').style='border:1px solid #c3c3c3;';">
+
+
+        <br><br><span class="dispText">Map Width (in # of 16px tiles): </span><input type="number" class="dispButtons" id="map_width" value="20">  <!-- Width -->
+        <span class="dispText">Map Height (in # of 16px tiles):</span><input type="number" class="dispButtons" id="map_height" value="20">  <!-- Height -->
+        <br><br><span class="dispText">Min Mountain Height (0 - 1): </span><input type="number" class="dispButtons" id="mountain_height" value=".7" step=".01">  
+        <span class="dispText">Sea Level (0 - 1): </span><input type="number" class="dispButtons" id="sea_level" value=".2" step=".01">
+        <br><br>
+        <span class="dispText">Noise Type:</span>
+        <select class="dispButtons" id="selectBox" ><!--onchange="changeFunc()">-->
+            <option class="dispButtons" value="math_rand">Random</option>
+            <option class="dispButtons" value="perlin1">Perlin 1</option>
+            <option class="dispButtons" value="perlin2">Perlin 2</option>
+        </select>
+    
+        <span class="dispText">Tile Size:</span>
+        <select class="dispButtons" id="selectBox2" ><!--onchange="changeFunc()">-->
+            <option class="dispButtons" value="1">1</option>
+            <option class="dispButtons" value="2">2</option>
+            <option class="dispButtons" value="4">4</option>
+            <option class="dispButtons" value="8" selected="selected">8</option>
+            <option class="dispButtons" value="16">16</option>
+            <option class="dispButtons" value="32">32</option>
+        </select>
+
+        <span class="dispText">Ocean Type:</span>
+        <select class="dispButtons" id="selectBox3" ><!--onchange="changeFunc()">-->
+            <option class="dispButtons" value="arb_ocean">Arbitrary</option>
+            <option class="dispButtons" value="elev_ocean">Elevation-Based</option>
+        </select>
+        <br><br>
+        <form action="">
+            <span class="dispText"><input type="checkbox" name="oceans" id="OceanBox" value="oceans" checked>Oceans<br></span>
+            <span class="dispText"><input type="checkbox" name="rbiomes" id="RandBiomColor" value="biomecolor">Random Biome Colors<br></span>
+        </form>
+        <br>
+        <input type="button" class="dispButtons" style="height:  43px;" value="Generate" onclick="generateTiles('map_width', 'map_height','mountain_height','sea_level','OceanBox')">
+    </div>
+    </div>
+<script src="perlin.js"></script>
+<script src="perlin2.js"></script>
+<script src="main.min.js"></script><script>window.onload=function(){setTimeout(function(){if(typeof generateTiles==='function'){generateTiles('map_width','map_height','mountain_height','sea_level','OceanBox');}},500);};</script>
+
+</body>
+</html>

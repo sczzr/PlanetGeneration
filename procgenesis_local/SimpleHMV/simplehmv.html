@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- code copyright (c) 2016-2017 ProcGenesis                            -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<html lang="en">
+    
+    <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8435851807212049"
+     crossorigin="anonymous"></script>
+        <meta charset="utf-8" />
+        <title></title>
+
+        <link type="text/css" rel="stylesheet" href="hmv_style.css" />
+
+        <script type="text/javascript" src="three.min.js"></script>
+        <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+        <script src="OrbitControls.js"></script>
+        <script src="Mirror.js"></script>
+        <script src="WaterShader.js"></script>
+        <script src='spectrum.js'></script>
+        <script src="stackblur.js"></script>
+        <script src="dom-drag.js"></script>
+        <script src="STLExporter.js"></script>
+        <script src="STLBinaryExporter.js"></script>
+        <script src="OBJExporter.js"></script>
+        <script src="FileSaver.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="colorpicker.css" />
+        <script src="colorpicker.js"></script>
+
+        <link type="text/css" rel="stylesheet" href="gradX.css" />
+        <script src="gradX.js"></script>
+        
+        
+    
+
+        <link rel='stylesheet' href='spectrum.css' />
+                
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+          /*(adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-8435851807212049",
+            enable_page_level_ads: true
+          });*/
+        </script>
+    </head>
+    <body>
+        <div id="Banner">
+            <div id="Logo"><img src="procgenesis_logo_t2_small.png" alt="ProcGenesis"></div>
+        
+        </div>
+
+        <div id="Navbar">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../generators.html">Generators</a></li>
+                <li><a href="http://blog.procgenesis.com">Blog</a></li>
+                <li><a href="../gallery.html">Gallery</a></li>
+                <!--<li><a href="#">About</a></li>-->
+            
+            </ul>
+            
+        </div>
+        <div id="sidebar">
+            <button id="helpText" onclick="showHelpText()">How to use the Height Map Viewer</button><br>
+            <input type="file" id="files" style="margin-left: 5px;" name="files[]" multiple />
+            <br>
+            <output id="list"></output>        
+            <div id="progress_bar"><div class="percent">0%</div></div>
+            <div id="params">        
+                <form onsubmit="return false;">Coeff: <input type="range" id="Coeff" name="Coeff" class ="controlButtons" value="1" max="5" min="0" step=".1" style="margin-left: 18px;" onchange="updateText('CoeffText', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"><input type="text" id="CoeffText" value="1" style="width: 49px; border-radius:  5px; border: 1px solid #0059b3; background:  #101010; color:  #FFF; margin-left: 2px;" onchange="updateSlider('Coeff', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"></form>
+                <form onsubmit="return false;">Exp: <input type="range" id="Exp" name="Exp"  class ="controlButtons" value="1" max="2" min="0" step=".01" style="margin-left: 26px;" onchange="updateText('ExpText', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"><input type="text" id="ExpText" value="1" style="width: 49px; border-radius:  5px; border: 1px solid #0059b3; background:  #101010; color:  #FFF; margin-left: 2.5px;" onchange="updateSlider('Exp', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"></form>
+                <form onsubmit="return false;">Scale: <input type="range" id="Scale" name="Scale" class ="controlButtons" value="5" max="10" min="1" step="1" style="margin-left: 17px" onchange ="updateText('ScaleText', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"><input type="text" id="ScaleText" value="5" style="width: 49px; border-radius:  5px; border: 1px solid #0059b3; background:  #101010; color:  #FFF; margin-left: 2px;" onchange="updateSlider('Scale', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"></form>
+                <form onsubmit="return false;">Blur: <input type="range" id="Blur" name="Blur" class ="controlButtons" value="0" max="50" min="0" step="1" style="margin-left:  25px" onchange="updateText('BlurText', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"><input type="text" id="BlurText" value="0" style="width: 49px; border-radius:  5px; border: 1px solid #0059b3; background:  #101010; color:  #FFF; margin-left: 3px;" onchange="updateSlider('Blur', this.value); setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"></form>
+                <form onsubmit="return false;" style="position: absolute; left: 61px; top: 162px;">Use Blurred Texture: <input type="checkbox" id="blurTexture" name="blurTexture" value="true" checked onchange="setWaitVisibility('visible'); setTimeout(function(){changePlaneGeom = true;}, 50);"></form>
+                <form onsubmit="return false;" style="position: absolute; top: 185px; width: 250px;">Sea Level: <input type="range" id="seaLvl" name="seaLvl" style="width:45%" class ="controlButtons" value="0" max="80" min="0" step=".1" onchange="updateText('seaLvlText', this.value)"><input type="text" id="seaLvlText" value="0" style="width: 49px; border-radius:  5px; border: 1px solid #0059b3; background:  #101010; color:  #FFF; margin-left: 2px;" onchange="updateSlider('seaLvl', this.value);"></form>
+                <span class="label">Sea Type: </span><select id='seaType' class='controlButtons'onchange='switchSeaType()'>
+                            <option selected value='mirrored'>Mirrored Surface (Animated)</option>
+                            <option value='transparent'>Transparent</option>
+                </select>
+                <button id="seaToggle" style="position: absolute;top: 186px;left: 300px;margin-left: -35px;" onclick="toggleOcean(); oceanToggle = !oceanToggle;">Toggle Sea</button>
+                <form onsubmit="return false;" style="position: absolute; top: 238px;">Sea Color: <input type='text' id="seaColor"></input></form>
+                <button id="3DButton" style="position: absolute;top: 84px;left: 300px;margin-left: -35px;height: 40px;" onclick="setWaitVisibility('visible'); setTimeout(function(){removeScene(document.getElementById('canvas-container')); resetControls(); create3DMap();}, 100);">Convert to 3D</button>
+                <br><div id="gradPicker"></div>
+                <!--<button id="exportSTL" style="position: absolute;left: 265px;top: 2220px;width: 200px; margin-left: 0px;" onclick="saveSTL(scene, 'testfile');">Export as ASCII .STL File</button>-->
+                <button id="exportBinarySTL" style="position: absolute;left: 265px;top: 241px;width: 200px; margin-left: 0px;" onclick="saveBinarySTL(scene, 'Height_Map_Model');">Export as <!--Binary--> .STL File</button>
+                
+            </div>
+            <canvas id="PreviewCanv" width="256" height="256" style="border: 1px solid #c3c3c3"></canvas>
+            <button id="downloadTexture">View Texture for Download (New Tab)</button>
+            
+            <!--<button id="exportOBJ" onclick="saveOBJ(scene, 'testfile');">Export as .OBJ File</button>-->
+        </div>
+        
+        <div id="canvas-container" style="position: absolute; left:0px; top:0px"></div>
+        <canvas id="OriginalCanv" width="512" height="512" style="display: none;"></canvas>
+        <canvas id="3DCanv" width="512" height="512" style="display: none"></canvas>
+        <canvas id="TextureCanv" width="512" height="512" style="display: none"></canvas>
+        <canvas id="DownloadCanv" style="display: none; position: absolute; left:  500px;"></canvas>
+        <canvas id="OrigDownloadCanv" style="position: absolute; display: none; left: 1000px;"></canvas>
+        <div id="wait_message">Please Wait...</div>
+        <div id="helpTextDiv">
+            <h2>How to Use the ProcGenesis Simple Height Map Viewer (HMV)</h2><button id="exitHelp" onclick="hideHelpText()">X</button><br>
+            <p>
+                <span class="helpHighlight">1.  Click on the "Choose File" button to upload a grayscale height map image and get started.</span><br><br>
+                The HMV will show a preview of the image you have uploaded in the sidebar. Use this to verify that you uploaded the correct image. If at any time you wish to view a different height map, just click Choose File and upload a new file.<br><br>
+                <span class="helpHighlight">2.  Click "Convert to 3D" to create a 3D representation of your height map.</span> <br><br>Once this is completed, you can modify the character of the 3D generation, change the height and color of the sea,
+                and adjust a gradient map which will color your 3D model according to its height. <br><br>Use left mouse click to rotate, right click to pan, and the mousewheel to zoom in and out.<br><br><span class="helpHighlight">Click "View Texture for Download" to see the gradient applied to your original heightmap in a new tab.</span><br><br> From there,
+                just right click and press "Save As" to save your texture. Note: the texture displayed in the new tab will be the same size as your original uploaded image. If that image is exceptionally large, there can be errors in certain
+                browsers when saving. Images up to 5000 x 5000 have been confirmed to work.<br><br>
+
+                <span class="helpHighlight">Export to .STL File:</span> Exports the geometry of the 3D model to a .STL file, commonly used for 3D Printing. <!--<span class="helpHighlight">Exporting using a Binary .STL rather than an ASCII .STL is highly recommended.</span>
+                Binary .STL files tend to be much smaller and most programs that can read .STL files are capable of reading both types. In addition, 3D models containing a large amount of geometry can sometimes be slow or cause issues for the browser when exporting as an ASCII .STL. 
+                --><br><br>
+
+                <span class="helpHighlight">The different sliders change different aspects of the 3D model:</span><br><br>
+                <span class="helpHighlight">Coefficient (Coeff):</span> Multiplies all height values by the coefficient value.<br>
+                <span class="helpHighlight">Exponent (Exp):</span> Controls the ratio between high and low values. Values greater than 1 will tend to make high values higher in comparison to low values. Values less than 1 will make low values higher in comparison to high values.<br>
+                <span class="helpHighlight">Scale:</span> Higher scales create a more "compressed" or "flat" 3D model. Lower scales will see a greater range between high and low values.<br>
+                <span class="helpHighlight">Blur:</span>Blur the values in the 3D model, causing the terrain to be smoother. Can be useful for removing sharp peaks. Uncheck "Use Blurred Texture" to use the original unblurred texture despite a smoother 3D surface.
+                <br><br>
+                <span class="helpHighlight">Sea Level:</span> Change the height of the sea in the 3D model.<br>
+                <span class="helpHighlight">Sea Type:</span> Choose between an animated sea with reflections or a semi-transparent sea that allows you to look below the surface.<br>
+                <span class="helpHighlight">Sea Color:</span> Choose a different color for your sea. Click choose to select.<br>
+                <span class="helpHighlight">Toggle Sea:</span> Turn the sea on and off.
+                <br><br>
+                <span class="helpHighlight">The gradient picker allows you to map color values to different values of the map:</span><br><br>
+                <span class="helpHighlight">Add: </span>Click to add a new color stop to the gradient. The new color stop will appear in a random location along the gradient with a random color. Click it to change color, and drag it to change location.<br>
+                <span class="helpHighlight">Select Preset: </span>There are several preset gradients which can be used to quickly choose a color scheme. The gradient will be applied when selected. You can add new color stops and change the location and color of existing color stops in the preset gradient. This will not affect the preset - you can return to the original preset by selecting it again.<br>
+                <br><br> 
+                <span class="helpHighlight">It's possibile to create some very interesting textures using the gradient picker. Experiment with gradients to create topographic art!</span>
+
+            </p>
+
+        </div>
+
+        
+
+        <script src="hmv_main.min.js"></script>
+           
+    </body>
+</html>

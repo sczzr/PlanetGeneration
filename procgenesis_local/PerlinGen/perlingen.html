@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- code copyright (c) 2016-2017 ProcGenesis                            -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<html lang="en">
+    <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8435851807212049"
+     crossorigin="anonymous"></script>
+        <meta charset="utf-8" />
+        <title></title>
+
+        <script src="perlin.js"></script>
+        <script src="draw.min.js"></script>
+        <script src="biome.min.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="style.css">
+
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+          /*(adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-8435851807212049",
+            enable_page_level_ads: true
+          });*/
+        </script>
+    </head>
+    <body>
+        <div id="Banner">
+            <div id="Logo"><img src="procgenesis_logo_t2_small.png" alt="ProcGenesis"></div>
+        
+        </div>
+
+        <div id="Navbar">
+            <ul>
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../generators.html">Generators</a></li>
+                <li><a href="http://blog.procgenesis.com">Blog</a></li>
+                <li><a href="../gallery.html">Gallery</a></li>
+                            
+            </ul>
+            
+        </div>
+
+        <div id="canvases">
+        <canvas id="myCanvas" width="500" height="500" style="display:  none">
+	    </canvas>
+        <canvas id="myCanvas2" width="500" height=" 500" style="display:  none">
+        </canvas>
+        <canvas id="myCanvas3" width="500" height=" 500" style="border: 1px solid #c3c3c3;">
+        </canvas></div><br>
+
+        <div id="buttons">
+        <br>       
+        <input type="button"  class="displayButtons" value="Show Biomes" onclick="document.getElementById('myCanvas3').style='border: 1px solid #c3c3c3;'; document.getElementById('myCanvas2').style='display: none;'; document.getElementById('myCanvas').style='display: none;';"><br>
+        <input type="button"  class="displayButtons" value="Show Moisture" onclick="document.getElementById('myCanvas2').style='border: 1px solid #c3c3c3;'; document.getElementById('myCanvas3').style='display: none;'; document.getElementById('myCanvas').style='display: none;';"><br>
+        <input type="button"  class="displayButtons" value="Show Elevation" onclick="document.getElementById('myCanvas').style='border: 1px solid #c3c3c3;'; document.getElementById('myCanvas2').style='display: none;'; document.getElementById('myCanvas3').style='display: none;';"><br>  
+        
+        <br><br>
+        
+        <input type="button" class="displayButtons" style="height:  43px;" value="Generate New Map" onclick="generateMap()"><br><br>
+        <form action="">
+            <input type="checkbox" name="rbiomes" id="RandBiomColor" value="biomecolor">Generate with Random Biome Colors
+        </form>
+        
+        
+        </div>
+        <script src="main.min.js"></script><script>window.onload=function(){setTimeout(function(){if(typeof generateMap==='function'){generateMap();}},500);};</script>
+        
+        
+            
+    </body>
+</html>

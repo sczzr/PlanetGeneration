@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<!-- code copyright (c) 2016-2017 ProcGenesis                            -->
+<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+<html>
+  <head>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8435851807212049"
+     crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, shrink-to-fit=no" />
+    <!-- <link rel="stylesheet" type="text/css" href="gal_style.css" /> -->
+
+    <script
+      async
+      src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    ></script>
+    <script>
+      /*(adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-8435851807212049",
+            enable_page_level_ads: true
+          });*/
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <style>
+     
+      html {
+        margin: 0px;
+        min-height: 100%;
+        width: 100%;
+      }
+      body{
+        background: url(nebula_starfield.jpg) repeat fixed;
+        color: #dcdcdc;
+        margin: 0px;
+        min-height: 100%;
+        width: 100%;
+      }  
+      .card-body{
+        background-color: #572aff;
+        font-size: .9rem;
+        height: 100%;
+      }
+      .card-title{
+        color: white;
+      }
+      .btn{
+          background-color: white;
+      }
+
+      h1{
+        color: white;
+      }
+      h3, h4{
+        color: #4fdad5;
+        /*color: #43bbb7;*/
+      }
+      
+      .nav-link{
+        font-weight: bold !important;
+        color: white !important;
+      }
+      a{
+        color:inherit;
+        text-decoration: none;
+      }
+      a:hover{
+        color: inherit;
+        text-decoration: none;
+        background-color: #9f85fd;
+      }
+      .nav-link:hover{
+        background-color: rgba(0, 0, 0, 0) !important;
+      }
+      .navdropped{
+        padding-top: 160px;
+      }
+      .responsive img{
+          height: 125px;
+          width: 250px;
+          margin: 15px;
+          margin-bottom: 0px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          
+      }
+      
+      .responsive a:hover{
+          background-color: rgba(0, 0, 0, 0) !important;
+      }
+      
+      @media (min-width: 768px) { 
+        .card-title{
+          padding-top: 10%;
+        }
+        body{
+          background: url(nebula_starfield.jpg) repeat center fixed;
+        }
+        .responsive img:hover{
+          border: 1px solid #777;
+          transform: scale(1.8, 1.8);
+          transition: .3s transform;
+          position: relative;
+          z-index: 100;
+        }
+       .row{
+          /*margin-bottom: 20px;*/
+       }
+      }
+      @media (min-width: 992px) {
+        .card-title{
+          padding-top: 5%;
+
+        }
+        .card-text{
+          padding-top: 5%;
+        }
+        #globe{
+          visibility: visible !important;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .card-title{
+          padding-top: 0%;
+
+        }
+        .card-text{
+          padding-top: 0%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div id="Banner">
+    <div id="Logo"><img src="procgenesis_logo_t2.png" alt="ProcGenesis"></div>
+</div>
+<div id="Navbar">
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="generators.html">Generators</a></li>
+        <li><a href="http://blog.procgenesis.com">Blog</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        
+    </ul>        
+</div> -->
+
+    <div class="container-fluid">
+      <div class="container" style="background-color: rgba(0, 0, 0, 0);">
+        <img
+          src="procgenesis_logo_t2_globe.png"
+          alt="ProcGenesis"
+          id="globe"
+          style="margin-left: -30px; visibility: hidden;"
+        />
+
+        <div class="row center-block" style="margin-top: -150px">
+          <img
+            src="procgenesis_logo_t2_text.png"
+            alt="ProcGenesis"
+            style="margin: 0 auto; max-width: 100%"
+          />
+        </div>
+      </div>
+      <div class="container">
+        <nav
+          class="navbar navbar-expand-lg navbar-dark bg-dark fixed"
+          style="height: 55px; margin: 0 -15px; background-color: #7b43aa !important;"
+        >
+          <div class="container">
+            <button
+              class="navbar-toggler"
+              type="button"
+              data-toggle="collapse"
+              data-target=""
+              aria-controls="navbarNav"
+              aria-expanded="false"
+              aria-label="Toggle navigation"
+              onclick="document.getElementById('main container').classList.toggle('navdropped'); document.getElementById('navbarNav').classList.toggle('collapse');"
+            >
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul
+                class="navbar-nav"
+                style="position: absolute; left: 50%; transform: translatex(-50%)"
+              >
+                <li class="nav-item">
+                  <a class="nav-link" href="index.html"
+                    >Home <span class="sr-only">(current)</span></a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a
+                    class="nav-link"
+                    href="generators.html"
+                    >Generators</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="http://blog.procgenesis.com/"
+                    >Blog</a
+                  >
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="gallery.html"
+                    >Gallery</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+
+      <div
+        class="container text-center mb-3"
+        id="main container"
+        style="background-color: #0b0c10cc;"
+      >
+        <div id="main" class="pt-5" style="min-height: 100vh;">
+          <div id="gallery_title"><h1 class="mb-4">Gallery</h1></div>
+
+          <div class="tabs mb-5">
+            <a
+              id="WGTab"
+              onmouseover="selectTab('WGGal', 'WGTab')"
+              href="#Portraits"
+              class="btn btn-default m-2"
+              >WorldGen</a
+            >
+            <a
+              id="PGTab"
+              onmouseover="selectTab('PGGal', 'PGTab')"
+              href="#Portraits"
+              class="btn btn-default m-2"
+              >PerlinGen</a
+            >
+            <a
+              id="TGTab"
+              onmouseover="selectTab('TGGal', 'TGTab')"
+              href="#Portraits"
+              class="btn btn-default m-2"
+              >TileGen</a
+            >
+            <a
+              id="HMVTab"
+              onmouseover="selectTab('HMVGal', 'HMVTab')"
+              href="#Portraits"
+              class="btn btn-default m-2"
+              >Height Map Viewer</a
+            >
+          </div>
+
+          
+          <div id="WGGal">
+             <div class="row">
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_0.png">
+                      <img
+                        src="GalleryImgs/WG_0.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Satellite View with Normal Map</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_1.png">
+                      <img
+                        src="GalleryImgs/WG_1.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">
+                      Satellite View with Normal Map + Cities
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_2.png">
+                      <img
+                        src="GalleryImgs/WG_2.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Biome View</div>
+                  </div>
+                </div>
+              </div>
+                </div>
+                
+                 <div class="row">
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_3.png">
+                      <img
+                        src="GalleryImgs/WG_3.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Satellite View with Normal Map</div>
+                  </div>
+                </div>
+              </div>
+            
+
+           
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_4.png">
+                      <img
+                        src="GalleryImgs/WG_4.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Tectonic Plates in Planet Mode</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_5.png">
+                      <img
+                        src="GalleryImgs/WG_5.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">
+                      Satellite View in Planet Mode with Clouds
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+              
+              
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_6.png">
+                      <img
+                        src="GalleryImgs/WG_6.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Biome View in Planet Mode</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_9.png">
+                      <img
+                        src="GalleryImgs/WG_9.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Outline View</div>
+                  </div>
+                </div>
+              </div>
+            
+
+            
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_10.png">
+                      <img
+                        src="GalleryImgs/WG_10.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Ore Deposit View</div>
+                  </div>
+                </div>
+              </div>
+               </div> 
+                
+                
+                <div class="row">
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_11.png">
+                      <img
+                        src="GalleryImgs/WG_11.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Rock Type View</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_7.png">
+                      <img
+                        src="GalleryImgs/WG_7.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Satellite View in 3D Plane Mode</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="responsive">
+                  <div class="img">
+                    <a target="_blank" href="GalleryImgs/WG_8.png">
+                      <img
+                        src="GalleryImgs/WG_8.png"
+                        alt="WorldGen"
+                        width="200"
+                        height="100"
+                      />
+                    </a>
+                    <div class="desc">Temperature View in 3D Plane Mode</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="PGGal">
+              <div class="row">
+                  <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/PG_0.png">
+                  <img
+                    src="GalleryImgs/PG_0.png"
+                    alt="PerlinGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Random Colors</div>
+              </div>
+            </div>
+            </div>
+            
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/PG_1.png">
+                  <img
+                    src="GalleryImgs/PG_1.png"
+                    alt="PerlinGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Standard Colors</div>
+              </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/PG_2.png">
+                  <img
+                    src="GalleryImgs/PG_2.png"
+                    alt="PerlinGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Random Colors</div>
+              </div>
+            </div>
+            </div>
+            
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/PG_3.png">
+                  <img
+                    src="GalleryImgs/PG_3.png"
+                    alt="PerlinGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Standard Colors</div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+
+          <div id="TGGal">
+              <div class="row">
+                  <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/TG_0.png">
+                  <img
+                    src="GalleryImgs/TG_0.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Collage of Random Color Outputs #1</div>
+              </div>
+            </div>
+            </div>
+            
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/TG_1.png">
+                  <img
+                    src="GalleryImgs/TG_1.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Collage of Random Color Outputs #2</div>
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>
+
+          <div id="HMVGal">
+              <div class="row">
+                  <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_0.png">
+                  <img
+                    src="GalleryImgs/HMV_0.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">
+                  Middle Earth using Topographic Gradient Preset
+                </div>
+              </div>
+            </div>
+            </div>
+            
+            
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_1.png">
+                  <img
+                    src="GalleryImgs/HMV_1.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">
+                  Continental USA using Terrestrial Gradient Preset
+                </div>
+              </div>
+            </div>
+            </div>
+            
+            
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_2.png">
+                  <img
+                    src="GalleryImgs/HMV_2.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Canyon</div>
+              </div>
+            </div>
+            </div>
+            </div>
+            
+            <div class="row">
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_3.png">
+                  <img
+                    src="GalleryImgs/HMV_3.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Cratered Landscape in Black and White</div>
+              </div>
+            </div>
+            </div>
+            
+
+            
+                <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_4.png">
+                  <img
+                    src="GalleryImgs/HMV_4.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">Tamriel (Elder Scrolls) Gradient Texture</div>
+              </div>
+            </div>
+            </div>
+
+            <div class="col">
+            <div class="responsive">
+              <div class="img">
+                <a target="_blank" href="GalleryImgs/HMV_5.png">
+                  <img
+                    src="GalleryImgs/HMV_5.png"
+                    alt="TileGen"
+                    width="200"
+                    height="100"
+                  />
+                </a>
+                <div class="desc">
+                  Random Gradient Texture on a Noise Height Map
+                </div>
+              </div>
+            </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+    </div>
+
+    <script src="gal.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+      integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

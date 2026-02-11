@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WorldGen Test</title>
+    <style>
+        body { background: #333; color: white; font-family: Arial; padding: 20px; }
+        canvas { border: 2px solid white; background: black; }
+        .status { margin: 10px 0; padding: 10px; background: #555; }
+        .error { background: #500; }
+        .success { background: #050; }
+    </style>
+</head>
+<body>
+    <h1>WorldGen 诊断测试</h1>
+    <div id="status"></div>
+    <canvas id="testCanvas" width="800" height="400"></canvas>
+    
+    <script>
+        function log(msg, isError) {
+            const div = document.createElement('div');
+            div.className = 'status ' + (isError ? 'error' : 'success');
+            div.textContent = msg;
+            document.getElementById('status').appendChild(div);
+            console.log(msg);
+        }
+        
+        // 测试 Canvas
+        try {
+            const canvas = document.getElementById('testCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'blue';
+            ctx.fillRect(100, 100, 200, 200);
+            log('✓ Canvas 可以正常工作');
+        } catch(e) {
+            log('✗ Canvas 错误: ' + e.message, true);
+        }
+        
+        // 检查必要的函数是否存在
+        setTimeout(() => {
+            log('请在开发者工具(F12)控制台查看是否有错误信息');
+            log('如果看到 "generateMap is not defined" 错误，说明 JS 文件未正确加载');
+        }, 1000);
+    </script>
+</body>
+</html>
