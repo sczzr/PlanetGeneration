@@ -46,10 +46,9 @@ public partial class Main : Control
 	private ProgressBar _generateProgress = null!;
 	private Label _progressStatus = null!;
 	private Control _progressOverlay = null!;
-	private Button _layerSatelliteButton = null!;
-	private Button _layerPlatesButton = null!;
-	private Button _layerMoistureButton = null!;
-	private Button _layerBiomeButton = null!;
+	private ScrollContainer _layerButtonsScroll = null!;
+	private HBoxContainer _layerButtons = null!;
+	private readonly Dictionary<int, Button> _layerButtonsById = new();
 
 	private static readonly Vector2I[] MapSizePresets =
 	{
@@ -129,10 +128,8 @@ public partial class Main : Control
 		_generateProgress = GetNodeByName<ProgressBar>("GenerateProgress");
 		_progressStatus = GetNodeByName<Label>("ProgressStatus");
 		_progressOverlay = GetNodeByName<Control>("ProgressOverlay");
-		_layerSatelliteButton = GetNodeByName<Button>("LayerSatelliteButton");
-		_layerPlatesButton = GetNodeByName<Button>("LayerPlatesButton");
-		_layerMoistureButton = GetNodeByName<Button>("LayerMoistureButton");
-		_layerBiomeButton = GetNodeByName<Button>("LayerBiomeButton");
+		_layerButtonsScroll = GetNodeByName<ScrollContainer>("LayerButtonsScroll");
+		_layerButtons = GetNodeByName<HBoxContainer>("LayerButtons");
 
 		_generateProgress.Value = 0;
 		_progressStatus.Text = "待命";
@@ -155,6 +152,7 @@ public partial class Main : Control
 			RedrawCurrentLayer();
 			UpdateLayerQuickButtons();
 		};
+		_layerButtonsScroll.GuiInput += OnLayerButtonsScrollGuiInput;
 
 		_riverToggle.Toggled += value =>
 		{
@@ -174,11 +172,6 @@ public partial class Main : Control
 			GenerateWorld();
 		};
 
-		_layerSatelliteButton.Pressed += () => SelectLayer(MapLayer.Satellite);
-		_layerPlatesButton.Pressed += () => SelectLayer(MapLayer.Plates);
-		_layerMoistureButton.Pressed += () => SelectLayer(MapLayer.Moisture);
-		_layerBiomeButton.Pressed += () => SelectLayer(MapLayer.Biomes);
-
 		_seedSpin.Value = Seed;
 		_plateSpin.Value = PlateCount;
 		_windSpin.Value = WindCellCount;
@@ -192,6 +185,7 @@ public partial class Main : Control
 		_compareTexture.Visible = false;
 		_compareStatsLabel.Visible = false;
 		_cityNamesLabel.Visible = false;
+		_layerOption.Visible = false;
 		UpdateLayerQuickButtons();
 
 		UpdateLabels();
@@ -213,11 +207,12 @@ public partial class Main : Control
 		_layerOption.AddItem("Biomes", (int)MapLayer.Biomes);
 		_layerOption.AddItem("Cities", (int)MapLayer.Cities);
 		_layerOption.Select(0);
+		BuildLayerButtons();
 	}
 
-	private void SelectLayer(MapLayer layer)
+	private void SelectLayerById(int layerId)
 	{
-		var index = _layerOption.GetItemIndex((int)layer);
+		var index = _layerOption.GetItemIndex(layerId);
 		if (index < 0)
 		{
 			return;
@@ -228,13 +223,88 @@ public partial class Main : Control
 		UpdateLayerQuickButtons();
 	}
 
+	private void BuildLayerButtons()
+	{
+		var children = _layerButtons.GetChildren();
+		foreach (Node child in children)
+		{
+			_layerButtons.RemoveChild(child);
+			child.Free();
+		}
+
+		_layerButtonsById.Clear();
+
+		for (var index = 0; index < _layerOption.ItemCount; index++)
+		{
+			var layerId = _layerOption.GetItemId(index);
+			var label = GetLayerButtonText(layerId, _layerOption.GetItemText(index));
+			var button = new Button
+			{
+				Text = label,
+				ToggleMode = true,
+				FocusMode = Control.FocusModeEnum.None,
+				CustomMinimumSize = new Vector2(58f, 0f),
+				ClipText = true
+			};
+
+			var capturedLayerId = layerId;
+			button.Pressed += () => SelectLayerById(capturedLayerId);
+
+			_layerButtons.AddChild(button);
+			_layerButtonsById[layerId] = button;
+		}
+	}
+
+	private string GetLayerButtonText(int layerId, string fallback)
+	{
+		return layerId switch
+		{
+			(int)MapLayer.Satellite => "卫星",
+			(int)MapLayer.Plates => "板块",
+			(int)MapLayer.Temperature => "温度",
+			(int)MapLayer.Rivers => "河流",
+			(int)MapLayer.Moisture => "降水",
+			(int)MapLayer.Wind => "风场",
+			(int)MapLayer.Elevation => "高程",
+			(int)MapLayer.RockTypes => "岩石",
+			(int)MapLayer.Ores => "矿产",
+			(int)MapLayer.Biomes => "群系",
+			(int)MapLayer.Cities => "城市",
+			_ => fallback
+		};
+	}
+
 	private void UpdateLayerQuickButtons()
 	{
 		var selectedId = _layerOption.GetSelectedId();
-		_layerSatelliteButton.ButtonPressed = selectedId == (int)MapLayer.Satellite;
-		_layerPlatesButton.ButtonPressed = selectedId == (int)MapLayer.Plates;
-		_layerMoistureButton.ButtonPressed = selectedId == (int)MapLayer.Moisture;
-		_layerBiomeButton.ButtonPressed = selectedId == (int)MapLayer.Biomes;
+		foreach (var pair in _layerButtonsById)
+		{
+			var isSelected = pair.Key == selectedId;
+			pair.Value.ButtonPressed = isSelected;
+			pair.Value.Modulate = isSelected ? new Color(0.66f, 0.86f, 1f, 1f) : new Color(0.84f, 0.88f, 0.95f, 1f);
+		}
+	}
+
+	private void OnLayerButtonsScrollGuiInput(InputEvent inputEvent)
+	{
+		if (inputEvent is not InputEventMouseButton mouseButton || !mouseButton.Pressed || !mouseButton.ShiftPressed)
+		{
+			return;
+		}
+
+		const int scrollStep = 80;
+		if (mouseButton.ButtonIndex == MouseButton.WheelUp)
+		{
+			_layerButtonsScroll.ScrollHorizontal = Mathf.Max(_layerButtonsScroll.ScrollHorizontal - scrollStep, 0);
+			_layerButtonsScroll.AcceptEvent();
+			return;
+		}
+
+		if (mouseButton.ButtonIndex == MouseButton.WheelDown)
+		{
+			_layerButtonsScroll.ScrollHorizontal += scrollStep;
+			_layerButtonsScroll.AcceptEvent();
+		}
 	}
 
 	private void SetupTuningOptions()

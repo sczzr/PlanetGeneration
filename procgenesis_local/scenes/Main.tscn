@@ -462,47 +462,19 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 4
 
-[node name="LayerButtons" type="HBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin"]
+[node name="LayerButtonsScroll" type="ScrollContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin"]
 layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(520, 0)
+
+[node name="LayerButtons" type="HBoxContainer" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtonsScroll"]
+layout_mode = 2
+custom_minimum_size = Vector2(760, 0)
+size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
-[node name="LayerSatelliteButton" type="Button" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtons"]
-layout_mode = 2
-toggle_mode = true
-custom_minimum_size = Vector2(58, 0)
-theme_override_styles/normal = SubResource("5")
-theme_override_styles/hover = SubResource("6")
-theme_override_styles/pressed = SubResource("6")
-text = "卫星"
-
-[node name="LayerPlatesButton" type="Button" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtons"]
-layout_mode = 2
-toggle_mode = true
-custom_minimum_size = Vector2(50, 0)
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/hover = SubResource("8")
-theme_override_styles/pressed = SubResource("8")
-text = "板块"
-
-[node name="LayerMoistureButton" type="Button" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtons"]
-layout_mode = 2
-toggle_mode = true
-custom_minimum_size = Vector2(50, 0)
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/hover = SubResource("8")
-theme_override_styles/pressed = SubResource("8")
-text = "降水"
-
-[node name="LayerBiomeButton" type="Button" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin/LayerButtons"]
-layout_mode = 2
-toggle_mode = true
-custom_minimum_size = Vector2(60, 0)
-theme_override_styles/normal = SubResource("7")
-theme_override_styles/hover = SubResource("8")
-theme_override_styles/pressed = SubResource("8")
-text = "生物群系"
-
 [node name="LayerOption" type="OptionButton" parent="Root/RootVBox/MainHBox/RightVBox/PreviewPanel/PreviewMargin/PreviewVBox/LayerRow/LayerSwitchPanel/LayerSwitchMargin"]
+visible = false
 layout_mode = 2
 custom_minimum_size = Vector2(0, 0)
 size_flags_horizontal = 3

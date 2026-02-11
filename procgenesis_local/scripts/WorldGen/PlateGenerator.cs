@@ -125,14 +125,7 @@ public sealed class PlateGenerator
 				var px = WrapX(Mathf.FloorToInt(x + scaleFactor * tx), width);
 				var py = Mathf.Clamp(Mathf.FloorToInt(y + scaleFactor * ty), 0, height - 1);
 
-				var dstX = (x + scaleFactor) % width;
-				var dstY = y + scaleFactor;
-				if (dstY >= height)
-				{
-					dstY %= height;
-				}
-
-				turbulence[dstX, dstY] = basePlateIds[px, py];
+				turbulence[x, y] = basePlateIds[px, py];
 			}
 		});
 
