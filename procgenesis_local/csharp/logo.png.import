@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cuvy58rpvt1n4"
-path="res://.godot/imported/procgenesis_logo_t2_globe.png-2882376e3378ac53b593e5048b216be8.ctex"
+uid="uid://cl6vbnbvvmqxw"
+path="res://.godot/imported/logo.png-cca8726399059c8d4f806e28e356b14d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://procgenesis_logo_t2_globe.png"
-dest_files=["res://.godot/imported/procgenesis_logo_t2_globe.png-2882376e3378ac53b593e5048b216be8.ctex"]
+source_file="res://logo.png"
+dest_files=["res://.godot/imported/logo.png-cca8726399059c8d4f806e28e356b14d.ctex"]
 
 [params]
 

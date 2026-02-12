@@ -15,16 +15,32 @@ public enum MapLayer
     RockTypes,
     Ores,
     Biomes,
-    Cities
+    Cities,
+    Landform
+}
+
+public enum ElevationStyle
+{
+    Realistic,
+    Topographic
 }
 
 public sealed class WorldRenderer
 {
     private static readonly Color DeepOcean = Hex("#1a2482");
     private static readonly Color ShallowOcean = Hex("#0059b3");
-    private static readonly Color CoastBrown = new(0.55f, 0.27f, 0.07f);
     private static readonly Color RiverBlue = Hex("#0000ff");
     private static readonly Color DarkOcean = Hex("#0a2044");
+    private static readonly Color ElevationOceanDeep = Hex("#03123a");
+    private static readonly Color ElevationOceanMid = Hex("#0a316f");
+    private static readonly Color ElevationOceanShallow = Hex("#1674c4");
+    private static readonly Color ElevationLandLow = Hex("#2e9143");
+    private static readonly Color ElevationLandMidLow = Hex("#58ab51");
+    private static readonly Color ElevationLandMid = Hex("#8db462");
+    private static readonly Color ElevationLandHigh = Hex("#c5bc92");
+    private static readonly Color ElevationLandVeryHigh = Hex("#ddd3b6");
+    private static readonly Color ElevationLandPeak = Hex("#f0e8d7");
+    private static readonly Color ElevationLandSnow = Hex("#f9fafb");
 
     public Image Render(
         int width,
@@ -40,7 +56,8 @@ public sealed class WorldRenderer
         RockType[,] rock,
         OreType[,] ore,
         List<CityInfo> cities,
-        float seaLevel)
+        float seaLevel,
+        ElevationStyle elevationStyle)
     {
         var image = Image.CreateEmpty(width, height, false, Image.Format.Rgba8);
 
@@ -68,11 +85,11 @@ public sealed class WorldRenderer
                 var color = layer switch
                 {
                     MapLayer.Plates => DrawPlates(plate, x, y),
-                    MapLayer.Temperature => DrawTemperature(x, y, width, height, elevation, temperature[x, y], seaLevel),
+                    MapLayer.Temperature => DrawTemperature(temperature[x, y]),
                     MapLayer.Rivers => DrawRivers(elevation[x, y], seaLevel, river[x, y]),
                     MapLayer.Moisture => DrawMoisture(moisture[x, y]),
                     MapLayer.Wind => Colors.Black,
-                    MapLayer.Elevation => DrawElevation(elevation[x, y], seaLevel),
+                    MapLayer.Elevation => DrawElevation(elevation[x, y], seaLevel, elevationStyle),
                     MapLayer.RockTypes => DrawRock(rock[x, y], elevation[x, y], seaLevel),
                     MapLayer.Ores => DrawOre(ore[x, y], elevation[x, y], seaLevel),
                     MapLayer.Biomes => DrawBiomeColor(biome[x, y]),
@@ -80,6 +97,8 @@ public sealed class WorldRenderer
                         cityMask[x, y],
                         x,
                         y,
+                        width,
+                        height,
                         elevation[x, y],
                         temperature[x, y],
                         avgMoisture![x, y],
@@ -87,6 +106,8 @@ public sealed class WorldRenderer
                         river[x, y],
                         seaLevel),
                     _ => DrawSatellite(
+                        y,
+                        height,
                         elevation[x, y],
                         temperature[x, y],
                         avgMoisture![x, y],
@@ -161,67 +182,28 @@ public sealed class WorldRenderer
         };
     }
 
-    private Color DrawTemperature(int x, int y, int width, int height, float[,] elevation, float value, float seaLevel)
+    private Color DrawTemperature(float value)
     {
-        var color = value switch
-        {
-            < 0.05f => Hex("#0066ff"),
-            < 0.18f => Hex("#00e6b8"),
-            < 0.3f => Hex("#66ff99"),
-            < 0.47f => Hex("#ffff99"),
-            < 0.7f => Hex("#ff6600"),
-            _ => Hex("#cc0000")
-        };
+        var t = Mathf.Clamp(value, 0f, 1f);
+        var cold = Hex("#004cff");
+        var mild = Hex("#ffe45c");
+        var hot = Hex("#ff2a00");
 
-        if (elevation[x, y] >= seaLevel && IsCoastline(x, y, width, height, elevation, seaLevel))
+        if (t < 0.5f)
         {
-            color = CoastBrown;
+            return Blend(cold, mild, t * 2f);
         }
 
-        return color;
+        return Blend(mild, hot, (t - 0.5f) * 2f);
     }
 
-    private bool IsCoastline(int x, int y, int width, int height, float[,] elevation, float seaLevel)
-    {
-        for (var oy = -1; oy <= 1; oy++)
-        {
-            for (var ox = -1; ox <= 1; ox++)
-            {
-                if (ox == 0 && oy == 0)
-                {
-                    continue;
-                }
-
-                var nx = x + ox;
-                var ny = y + oy;
-
-                if (nx < 0)
-                {
-                    nx = width - 1;
-                }
-                else if (nx >= width)
-                {
-                    nx = 0;
-                }
-
-                ny = Mathf.Clamp(ny, 0, height - 1);
-
-                if (elevation[nx, ny] < seaLevel)
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private Color DrawRivers(float elevation, float seaLevel, float river)
-    {
-        if (river > 0f)
-        {
-            return RiverBlue;
-        }
+	private Color DrawRivers(float elevation, float seaLevel, float river)
+	{
+		if (river > 0.12f)
+		{
+			var t = Mathf.Clamp((river - 0.12f) / 1.2f, 0f, 1f);
+			return Blend(Hex("#0e3f95"), RiverBlue, t);
+		}
 
         if (elevation < 0.5714f * seaLevel)
         {
@@ -238,7 +220,17 @@ public sealed class WorldRenderer
 
     private Color DrawMoisture(float value)
     {
-        return ColorLuminance("#66ff99", value);
+        var t = Mathf.Clamp(value, 0f, 1f);
+        var lightRain = Hex("#d9ecff");
+        var mediumRain = Hex("#5aa9ff");
+        var heavyRain = Hex("#0d3f95");
+
+        if (t < 0.5f)
+        {
+            return Blend(lightRain, mediumRain, t * 2f);
+        }
+
+        return Blend(mediumRain, heavyRain, (t - 0.5f) * 2f);
     }
 
     private Image RenderWindVectors(
@@ -258,35 +250,103 @@ public sealed class WorldRenderer
         {
             for (var x = 0; x < width; x++)
             {
-                var terrain = DrawSatellite(elevation[x, y], temperature[x, y], avgMoisture[x, y], biome[x, y], river[x, y], seaLevel);
+                var terrain = DrawSatellite(y, height, elevation[x, y], temperature[x, y], avgMoisture[x, y], biome[x, y], river[x, y], seaLevel);
                 terrain = Blend(terrain, Colors.Black, 0.30f);
                 image.SetPixel(x, y, SanitizeColor(terrain));
             }
         }
 
-        for (var y = 0; y < height; y += 16)
+        return image;
+    }
+
+    public void OverlayWindArrows(Image image, Vector2[,] wind, int sourceWidth, int sourceHeight, float density)
+    {
+        if (image.GetWidth() <= 0 || image.GetHeight() <= 0 || sourceWidth <= 0 || sourceHeight <= 0)
         {
-            for (var x = 0; x < width; x += 16)
-            {
-                var vector = wind[x, y];
-                var magnitude = vector.Length();
-
-                DrawWindPoint(image, x, y, 2, Colors.White);
-
-                var endX = x + vector.X;
-                var endY = y + vector.Y;
-
-                if (magnitude > 20f)
-                {
-                    endX = x + 15f * vector.X / Mathf.Max(magnitude, 0.0001f);
-                    endY = y + 15f * vector.Y / Mathf.Max(magnitude, 0.0001f);
-                }
-
-                DrawWindLine(image, x, y, endX, endY, Colors.White);
-            }
+            return;
         }
 
-        return image;
+        var targetWidth = image.GetWidth();
+        var targetHeight = image.GetHeight();
+
+        var densityFactor = Mathf.Clamp(density, 0.5f, 2.5f);
+        var desiredColumns = Mathf.Clamp(Mathf.RoundToInt(targetWidth / 92f * densityFactor), 20, 140);
+        var desiredRows = Mathf.Clamp(Mathf.RoundToInt(targetHeight / 92f * densityFactor), 10, 72);
+        var spacingX = Mathf.Max(36, targetWidth / Mathf.Max(desiredColumns, 1));
+        var spacingY = Mathf.Max(36, targetHeight / Mathf.Max(desiredRows, 1));
+
+        var windColor = new Color(0.92f, 0.97f, 1f, 1f);
+        for (var y = spacingY / 2; y < targetHeight; y += spacingY)
+        {
+            for (var x = spacingX / 2; x < targetWidth; x += spacingX)
+            {
+                var sampleX = Mathf.Clamp((int)((long)x * sourceWidth / targetWidth), 0, sourceWidth - 1);
+                var sampleY = Mathf.Clamp((int)((long)y * sourceHeight / targetHeight), 0, sourceHeight - 1);
+                var vector = wind[sampleX, sampleY];
+                DrawWindArrow(image, x, y, vector, windColor);
+            }
+        }
+    }
+
+    private void DrawWindArrow(Image image, int x, int y, Vector2 vector, Color color)
+    {
+        var magnitude = vector.Length();
+        if (magnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        var direction = vector / magnitude;
+        var shaftLength = Mathf.Lerp(12f, 30f, Mathf.Clamp(magnitude / 35f, 0f, 1f));
+        var endX = x + direction.X * shaftLength;
+        var endY = y + direction.Y * shaftLength;
+
+        DrawWindLineThick(image, x, y, endX, endY, color, 2);
+
+        var back = -direction;
+        const float headAngle = 0.55f;
+        var headLength = Mathf.Clamp(shaftLength * 0.38f, 5f, 11f);
+        var leftHead = RotateVector(back, headAngle) * headLength;
+        var rightHead = RotateVector(back, -headAngle) * headLength;
+
+        DrawWindLineThick(image, endX, endY, endX + leftHead.X, endY + leftHead.Y, color, 2);
+        DrawWindLineThick(image, endX, endY, endX + rightHead.X, endY + rightHead.Y, color, 2);
+        DrawWindPoint(image, x, y, 1, color);
+    }
+
+    private void DrawWindLineThick(Image image, float x0, float y0, float x1, float y1, Color color, int thickness)
+    {
+        if (thickness <= 1)
+        {
+            DrawWindLine(image, x0, y0, x1, y1, color);
+            return;
+        }
+
+        var direction = new Vector2(x1 - x0, y1 - y0);
+        var length = direction.Length();
+        if (length <= 0.0001f)
+        {
+            DrawWindPoint(image, Mathf.RoundToInt(x0), Mathf.RoundToInt(y0), thickness / 2, color);
+            return;
+        }
+
+        var normal = new Vector2(-direction.Y / length, direction.X / length);
+        var half = 0.5f * (thickness - 1);
+
+        for (var i = 0; i < thickness; i++)
+        {
+            var offset = i - half;
+            var ox = normal.X * offset;
+            var oy = normal.Y * offset;
+            DrawWindLine(image, x0 + ox, y0 + oy, x1 + ox, y1 + oy, color);
+        }
+    }
+
+    private static Vector2 RotateVector(Vector2 input, float angle)
+    {
+        var cos = Mathf.Cos(angle);
+        var sin = Mathf.Sin(angle);
+        return new Vector2(input.X * cos - input.Y * sin, input.X * sin + input.Y * cos);
     }
 
     private void DrawWindPoint(Image image, int cx, int cy, int radius, Color color)
@@ -365,30 +425,135 @@ public sealed class WorldRenderer
             image.SetPixel(x, y, color);
         }
     }
-
-    private Color DrawElevation(float value, float seaLevel)
+    private Color DrawElevation(float value, float seaLevel, ElevationStyle style)
     {
-        if (value < 0.5714f * seaLevel)
-        {
-            return DeepOcean;
-        }
-
-        if (value < 0.8f * seaLevel)
-        {
-            return ShallowOcean;
-        }
-
-        if (value < seaLevel)
-        {
-            return ShallowOcean;
-        }
-
-        return ColorLuminance("#ffffff", value);
+        return style == ElevationStyle.Realistic
+            ? DrawElevationRealistic(value, seaLevel)
+            : DrawElevationTopographic(value, seaLevel);
     }
 
-    private Color DrawSatellite(float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
+    private Color DrawElevationRealistic(float value, float seaLevel)
+    {
+        var safeSea = Mathf.Clamp(seaLevel, 0.0001f, 0.9999f);
+
+        if (value < safeSea)
+        {
+            var oceanT = Mathf.Clamp(value / safeSea, 0f, 1f);
+
+            if (oceanT < 0.38f)
+            {
+                return Blend(ElevationOceanDeep, ElevationOceanMid, oceanT / 0.38f);
+            }
+
+            return Blend(ElevationOceanMid, ElevationOceanShallow, (oceanT - 0.38f) / 0.62f);
+        }
+
+        var landT = Mathf.Clamp((value - safeSea) / Mathf.Max(1f - safeSea, 0.0001f), 0f, 1f);
+
+        if (landT < 0.16f)
+        {
+            return Blend(ElevationLandLow, ElevationLandMidLow, landT / 0.16f);
+        }
+
+        if (landT < 0.36f)
+        {
+            return Blend(ElevationLandMidLow, ElevationLandMid, (landT - 0.16f) / 0.20f);
+        }
+
+        if (landT < 0.58f)
+        {
+            return Blend(ElevationLandMid, ElevationLandHigh, (landT - 0.36f) / 0.22f);
+        }
+
+        if (landT < 0.80f)
+        {
+            return Blend(ElevationLandHigh, ElevationLandVeryHigh, (landT - 0.58f) / 0.22f);
+        }
+
+        return Blend(ElevationLandVeryHigh, ElevationLandSnow, (landT - 0.80f) / 0.20f);
+    }
+
+    private Color DrawElevationTopographic(float value, float seaLevel)
+    {
+        var safeSea = Mathf.Clamp(seaLevel, 0.0001f, 0.9999f);
+
+        if (value < safeSea)
+        {
+            var oceanT = Mathf.Clamp(value / safeSea, 0f, 1f);
+            Color oceanColor;
+
+            if (oceanT < 0.30f)
+            {
+                oceanColor = Blend(ElevationOceanDeep, ElevationOceanMid, oceanT / 0.30f);
+            }
+            else
+            {
+                oceanColor = Blend(ElevationOceanMid, ElevationOceanShallow, (oceanT - 0.30f) / 0.70f);
+            }
+
+            var shelfHighlight = Mathf.Clamp((oceanT - 0.82f) / 0.18f, 0f, 1f);
+            if (shelfHighlight > 0f)
+            {
+                oceanColor = Blend(oceanColor, Hex("#2c8fd6"), shelfHighlight * 0.22f);
+            }
+
+            return oceanColor;
+        }
+
+        var landT = Mathf.Clamp((value - safeSea) / Mathf.Max(1f - safeSea, 0.0001f), 0f, 1f);
+        Color landColor;
+
+        if (landT < 0.10f)
+        {
+            landColor = Blend(ElevationLandLow, ElevationLandMidLow, landT / 0.10f);
+        }
+        else if (landT < 0.24f)
+        {
+            landColor = Blend(ElevationLandMidLow, ElevationLandMid, (landT - 0.10f) / 0.14f);
+        }
+        else if (landT < 0.42f)
+        {
+            landColor = Blend(ElevationLandMid, ElevationLandHigh, (landT - 0.24f) / 0.18f);
+        }
+        else if (landT < 0.62f)
+        {
+            landColor = Blend(ElevationLandHigh, ElevationLandVeryHigh, (landT - 0.42f) / 0.20f);
+        }
+        else if (landT < 0.82f)
+        {
+            landColor = Blend(ElevationLandVeryHigh, ElevationLandPeak, (landT - 0.62f) / 0.20f);
+        }
+        else
+        {
+            landColor = Blend(ElevationLandPeak, ElevationLandSnow, (landT - 0.82f) / 0.18f);
+        }
+
+        var coastAlpha = Mathf.Clamp((0.035f - landT) / 0.035f, 0f, 1f);
+        if (coastAlpha > 0f)
+        {
+            landColor = Blend(landColor, Hex("#a7c872"), coastAlpha * 0.28f);
+        }
+
+        var contourPhase = Mathf.Abs(Mathf.PosMod(landT * 24f, 1f) - 0.5f) * 2f;
+        var contourAlpha = Mathf.Clamp((0.18f - contourPhase) / 0.18f, 0f, 1f);
+        if (contourAlpha > 0f)
+        {
+            landColor = Blend(landColor, Hex("#5e7b49"), contourAlpha * 0.10f);
+        }
+
+        var snowPatchAlpha = Mathf.Clamp((landT - 0.88f) / 0.12f, 0f, 1f);
+        if (snowPatchAlpha > 0f)
+        {
+            landColor = Blend(landColor, ElevationLandSnow, snowPatchAlpha * 0.30f);
+        }
+
+        return landColor;
+    }
+
+    private Color DrawSatellite(int y, int height, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
     {
         Color color;
+        var polarMask = ComputePolarMask(y, height);
 
         if (elevation < seaLevel)
         {
@@ -397,6 +562,15 @@ public sealed class WorldRenderer
             {
                 var alpha = Mathf.Clamp(elevation / Mathf.Max(seaLevel, 0.0001f), 0f, 1f);
                 color = Blend(color, Hex("#0d3f82"), alpha);
+            }
+
+            if (polarMask > 0f)
+            {
+                var seaIceAlpha = polarMask * Mathf.Clamp((0.34f - temperature) / 0.34f, 0f, 1f);
+                if (seaIceAlpha > 0f)
+                {
+                    color = Blend(color, new Color(0.84f, 0.92f, 0.98f), Mathf.Clamp(seaIceAlpha, 0f, 0.78f));
+                }
             }
         }
         else
@@ -422,26 +596,61 @@ public sealed class WorldRenderer
                 color = Blend(color, new Color(222f / 255f, 232f / 255f, 187f / 255f), 0.2f);
             }
 
-            if (temperature < 0.2f)
+            var snowAlpha = ComputeSatelliteSnowAlpha(elevation, temperature, seaLevel);
+            if (biome == BiomeType.Ice)
             {
-                var t = Mathf.Max(temperature, 0f);
-                var snowAlpha = Mathf.Clamp(1f - 25f * t * t, 0f, 1f);
+                snowAlpha = Mathf.Max(snowAlpha, 0.55f);
+            }
+
+            if (snowAlpha > 0f)
+            {
                 color = Blend(color, new Color(232f / 255f, 246f / 255f, 255f / 255f), snowAlpha);
+            }
+
+            if (polarMask > 0f)
+            {
+                var polarSnowAlpha = polarMask * Mathf.Clamp((0.30f - temperature) / 0.30f, 0f, 1f);
+                if (polarSnowAlpha > 0f)
+                {
+                    color = Blend(color, new Color(236f / 255f, 248f / 255f, 255f / 255f), Mathf.Clamp(polarSnowAlpha, 0f, 0.82f));
+                }
             }
         }
 
-        if (biome == BiomeType.Ice && elevation >= seaLevel)
-        {
-            color = Hex("#ddf2ff");
-        }
+		if (river > 0.12f)
+		{
+			var riverAlpha = Mathf.Clamp((river - 0.12f) / 1.2f, 0.18f, 0.62f);
+			color = Blend(color, DarkOcean, riverAlpha);
+		}
 
-        if (river > 0f)
-        {
-            color = DarkOcean;
-        }
+		return color;
+	}
 
-        return color;
-    }
+	private static float ComputePolarMask(int y, int height)
+	{
+		if (height <= 1)
+		{
+			return 0f;
+		}
+
+		var latitude = Mathf.Abs((2f * y / (height - 1f)) - 1f);
+		var t = Mathf.Clamp((latitude - 0.74f) / 0.26f, 0f, 1f);
+		return t * t * (3f - 2f * t);
+	}
+
+	private static float ComputeSatelliteSnowAlpha(float elevation, float temperature, float seaLevel)
+	{
+		if (elevation <= seaLevel)
+		{
+			return 0f;
+		}
+
+		var normalizedElevation = Mathf.Clamp((elevation - seaLevel) / Mathf.Max(1f - seaLevel, 0.0001f), 0f, 1f);
+		var coldness = Mathf.Clamp((0.24f - temperature) / 0.24f, 0f, 1f);
+		var altitudeBoost = Mathf.Lerp(0.28f, 1f, normalizedElevation);
+		var alpha = Mathf.Pow(coldness, 1.55f) * altitudeBoost;
+		return Mathf.Clamp(alpha, 0f, 0.95f);
+	}
 
     private Color DrawRock(RockType rock, float elevation, float seaLevel)
     {
@@ -486,39 +695,39 @@ public sealed class WorldRenderer
     {
         return biome switch
         {
-            BiomeType.Ocean => Hex("#1a2482"),
-            BiomeType.ShallowOcean => Hex("#0059b3"),
-            BiomeType.Coastland => Hex("#ffffcc"),
-            BiomeType.TropicalRainForest => Hex("#004800"),
-            BiomeType.TropicalSeasonalForest => Hex("#0c8d0c"),
-            BiomeType.Shrubland => Hex("#607818"),
-            BiomeType.Savanna => Hex("#f4f48b"),
-            BiomeType.TropicalDesert => Hex("#a86048"),
-            BiomeType.TemperateRainForest => Hex("#64b464"),
-            BiomeType.TemperateSeasonalForest => Hex("#628f56"),
-            BiomeType.Chaparral => Hex("#8f849a"),
-            BiomeType.Grassland => Hex("#90d848"),
-            BiomeType.Steppe => Hex("#bfbfbf"),
-            BiomeType.TemperateDesert => Hex("#d8a878"),
-            BiomeType.BorealForest => Hex("#006048"),
-            BiomeType.Taiga => Hex("#489090"),
-            BiomeType.Tundra => Hex("#8cccbd"),
-            BiomeType.Ice => Hex("#b3ecff"),
-            BiomeType.RockyMountain => Hex("#ad421f"),
-            BiomeType.SnowyMountain => Hex("#e6f3ff"),
-            BiomeType.River => Hex("#0059b3"),
+            BiomeType.Ocean => Hex("#2f5f88"),
+            BiomeType.ShallowOcean => Hex("#4f7ea8"),
+            BiomeType.Coastland => Hex("#dfe4c9"),
+            BiomeType.TropicalRainForest => Hex("#7acb33"),
+            BiomeType.TropicalSeasonalForest => Hex("#aed45a"),
+            BiomeType.Shrubland => Hex("#7c8f53"),
+            BiomeType.Savanna => Hex("#cfd18a"),
+            BiomeType.TropicalDesert => Hex("#e9d79b"),
+            BiomeType.TemperateRainForest => Hex("#46a857"),
+            BiomeType.TemperateSeasonalForest => Hex("#2fb95a"),
+            BiomeType.Chaparral => Hex("#a8a07f"),
+            BiomeType.Grassland => Hex("#b8c98a"),
+            BiomeType.Steppe => Hex("#c7c5ac"),
+            BiomeType.TemperateDesert => Hex("#d7c691"),
+            BiomeType.BorealForest => Hex("#4f6e34"),
+            BiomeType.Taiga => Hex("#5f8640"),
+            BiomeType.Tundra => Hex("#a1814a"),
+            BiomeType.Ice => Hex("#c2d3da"),
+            BiomeType.RockyMountain => Hex("#8f8067"),
+            BiomeType.SnowyMountain => Hex("#e7edf0"),
+            BiomeType.River => Hex("#4f7ea8"),
             _ => Colors.Black
         };
     }
 
-    private Color DrawCitiesOverlay(bool hasCity, int x, int y, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
+    private Color DrawCitiesOverlay(bool hasCity, int x, int y, int width, int height, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
     {
         if (hasCity)
         {
             return Hex("#ff3bbf");
         }
 
-        return Blend(DrawSatellite(elevation, temperature, avgMoisture, biome, river, seaLevel), Colors.Black, 0.45f);
+        return Blend(DrawSatellite(y, height, elevation, temperature, avgMoisture, biome, river, seaLevel), Colors.Black, 0.45f);
     }
 
     private float[,] AverageLandArray(float[,] input, float[,] elevation, int width, int height, float seaLevel, int radius)

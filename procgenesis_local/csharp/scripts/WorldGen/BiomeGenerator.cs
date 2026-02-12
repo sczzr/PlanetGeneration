@@ -11,6 +11,9 @@ public sealed class BiomeGenerator
 
         Parallel.For(0, height, y =>
         {
+            var latitude = height <= 1 ? 0f : Mathf.Abs((2f * y / (height - 1f)) - 1f);
+            var polarBand = Mathf.Clamp((latitude - 0.76f) / 0.24f, 0f, 1f);
+
             for (var x = 0; x < width; x++)
             {
                 var e = elevation[x, y];
@@ -45,6 +48,16 @@ public sealed class BiomeGenerator
                 {
                     biome[x, y] = t > 0.2f ? BiomeType.RockyMountain : BiomeType.SnowyMountain;
                     continue;
+                }
+
+                if (polarBand > 0f)
+                {
+                    var polarIceCutoff = Mathf.Lerp(0.11f, 0.22f, polarBand);
+                    if (t <= polarIceCutoff)
+                    {
+                        biome[x, y] = m < 0.10f ? BiomeType.Tundra : BiomeType.Ice;
+                        continue;
+                    }
                 }
 
                 if (t > 0.6f)
