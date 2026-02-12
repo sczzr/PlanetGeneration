@@ -16,7 +16,10 @@ public enum MapLayer
     Ores,
     Biomes,
     Cities,
-    Landform
+    Landform,
+    Ecology,
+    Civilization,
+    TradeRoutes
 }
 
 public enum ElevationStyle
@@ -57,7 +60,13 @@ public sealed class WorldRenderer
         OreType[,] ore,
         List<CityInfo> cities,
         float seaLevel,
-        ElevationStyle elevationStyle)
+        ElevationStyle elevationStyle,
+        float[,]? ecology = null,
+        float[,]? civilizationInfluence = null,
+        int[,]? civilizationPolityId = null,
+        bool[,]? civilizationBorders = null,
+        bool[,]? tradeRouteMask = null,
+        float[,]? tradeFlow = null)
     {
         var image = Image.CreateEmpty(width, height, false, Image.Format.Rgba8);
 
@@ -93,6 +102,19 @@ public sealed class WorldRenderer
                     MapLayer.RockTypes => DrawRock(rock[x, y], elevation[x, y], seaLevel),
                     MapLayer.Ores => DrawOre(ore[x, y], elevation[x, y], seaLevel),
                     MapLayer.Biomes => DrawBiomeColor(biome[x, y]),
+                    MapLayer.Ecology when ecology != null => DrawEcologyColor(ecology[x, y], elevation[x, y], seaLevel),
+                    MapLayer.Civilization when civilizationInfluence != null => DrawCivilizationColor(
+                        civilizationInfluence[x, y],
+                        civilizationPolityId != null ? civilizationPolityId[x, y] : -1,
+                        civilizationBorders != null && civilizationBorders[x, y],
+                        elevation[x, y],
+                        seaLevel),
+                    MapLayer.TradeRoutes when tradeRouteMask != null => DrawTradeRouteColor(
+                        tradeRouteMask[x, y],
+                        tradeFlow != null ? tradeFlow[x, y] : 0f,
+                        civilizationInfluence != null ? civilizationInfluence[x, y] : 0f,
+                        elevation[x, y],
+                        seaLevel),
                     MapLayer.Cities => DrawCitiesOverlay(
                         cityMask[x, y],
                         x,
@@ -121,6 +143,82 @@ public sealed class WorldRenderer
         }
 
         return image;
+    }
+
+    private Color DrawEcologyColor(float ecology, float elevation, float seaLevel)
+    {
+        if (elevation <= seaLevel)
+        {
+            var deep = Mathf.Clamp((seaLevel - elevation) / Mathf.Max(seaLevel, 0.0001f), 0f, 1f);
+            return DarkOcean.Lerp(ShallowOcean, 1f - deep * 0.65f);
+        }
+
+        var t = Mathf.Clamp(ecology, 0f, 1f);
+        if (t < 0.34f)
+        {
+            var local = t / 0.34f;
+            return Hex("#8a4f2b").Lerp(Hex("#d69a45"), local);
+        }
+
+        if (t < 0.67f)
+        {
+            var local = (t - 0.34f) / 0.33f;
+            return Hex("#d69a45").Lerp(Hex("#74b152"), local);
+        }
+
+        var lush = (t - 0.67f) / 0.33f;
+        return Hex("#74b152").Lerp(Hex("#2bcf74"), lush);
+    }
+
+    private Color DrawCivilizationColor(float influence, int polityId, bool isBorder, float elevation, float seaLevel)
+    {
+        if (elevation <= seaLevel)
+        {
+            var depth = Mathf.Clamp((seaLevel - elevation) / Mathf.Max(seaLevel, 0.0001f), 0f, 1f);
+            return DarkOcean.Lerp(ShallowOcean, 1f - depth * 0.55f);
+        }
+
+        if (polityId < 0 || influence < 0.16f)
+        {
+            var neutral = Mathf.Clamp(influence, 0f, 1f);
+            return Hex("#3a3f47").Lerp(Hex("#5e6672"), neutral * 0.75f);
+        }
+
+        var baseColor = ColorForPolity(polityId);
+        var tinted = Hex("#1f232a").Lerp(baseColor, Mathf.Clamp(influence * 0.95f + 0.05f, 0f, 1f));
+        if (isBorder)
+        {
+            return tinted.Lerp(Colors.White, 0.26f);
+        }
+
+        return tinted;
+    }
+
+    private static Color ColorForPolity(int polityId)
+    {
+        uint hash = unchecked((uint)(polityId * 2654435761));
+        var red = 0.28f + ((hash & 0xFFu) / 255f) * 0.62f;
+        var green = 0.28f + (((hash >> 8) & 0xFFu) / 255f) * 0.62f;
+        var blue = 0.28f + (((hash >> 16) & 0xFFu) / 255f) * 0.62f;
+        return new Color(red, green, blue, 1f);
+    }
+
+    private Color DrawTradeRouteColor(bool hasRoute, float flow, float influence, float elevation, float seaLevel)
+    {
+        if (elevation <= seaLevel)
+        {
+            var depth = Mathf.Clamp((seaLevel - elevation) / Mathf.Max(seaLevel, 0.0001f), 0f, 1f);
+            return DarkOcean.Lerp(ShallowOcean, 1f - depth * 0.55f);
+        }
+
+        var baseGround = Hex("#2f3f34").Lerp(Hex("#4a5f47"), Mathf.Clamp(influence, 0f, 1f) * 0.55f);
+        if (!hasRoute)
+        {
+            return baseGround;
+        }
+
+        var routeColor = Hex("#d79a4a").Lerp(Hex("#f4df8c"), Mathf.Clamp(flow, 0f, 1f));
+        return baseGround.Lerp(routeColor, 0.72f);
     }
 
     private void MarkCities(bool[,] cityMask, List<CityInfo> cities, int width, int height)

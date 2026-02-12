@@ -39,10 +39,16 @@ public partial class Main : Control
 	private HSlider _riverDensitySlider = null!;
 	private HSlider _windArrowDensitySlider = null!;
 	private HSlider _basinSensitivitySlider = null!;
+	private HSlider _interiorReliefSlider = null!;
+	private HSlider _orogenyStrengthSlider = null!;
+	private HSlider _subductionArcRatioSlider = null!;
+	private HSlider _continentalAgeSlider = null!;
 	private HSlider _magicSlider = null!;
 	private HSlider _aggressionSlider = null!;
 	private HSlider _diversitySlider = null!;
 	private HSlider _timelineSlider = null!;
+	private Button _prevEpochButton = null!;
+	private Button _nextEpochButton = null!;
 	private Label _plateValue = null!;
 	private Label _windValue = null!;
 	private Label _seaLevelValue = null!;
@@ -51,10 +57,18 @@ public partial class Main : Control
 	private Label _riverDensityValue = null!;
 	private Label _windArrowDensityValue = null!;
 	private Label _basinSensitivityValue = null!;
+	private Label _interiorReliefValue = null!;
+	private Label _orogenyStrengthValue = null!;
+	private Label _subductionArcRatioValue = null!;
+	private Label _continentalAgeValue = null!;
+	private Button _mountainControlToggleButton = null!;
+	private Control _mountainControlBody = null!;
+	private Label _mountainControlSummaryLabel = null!;
 	private Label _magicValue = null!;
 	private Label _aggressionValue = null!;
 	private Label _diversityValue = null!;
 	private Label _epochLabel = null!;
+	private Label _epochEventIndexLabel = null!;
 	private Label _loreStateLabel = null!;
 	private Label _threatLabel = null!;
 	private Label _infoLabel = null!;
@@ -71,6 +85,7 @@ public partial class Main : Control
 	private OptionButton _layerOption = null!;
 	private OptionButton _mapSizeOption = null!;
 	private OptionButton _terrainPresetOption = null!;
+	private OptionButton _mountainPresetOption = null!;
 	private OptionButton _elevationStyleOption = null!;
 	private OptionButton _continentCountOption = null!;
 	private OptionButton _archiveOption = null!;
@@ -122,13 +137,16 @@ public partial class Main : Control
 		(int)MapLayer.Wind,
 		(int)MapLayer.Elevation,
 		(int)MapLayer.RockTypes,
-		(int)MapLayer.Landform
+		(int)MapLayer.Landform,
+		(int)MapLayer.Ecology
 	};
 
 	private static readonly int[] HumanLayerIds =
 	{
 		(int)MapLayer.Cities,
-		(int)MapLayer.Ores
+		(int)MapLayer.Ores,
+		(int)MapLayer.Civilization,
+		(int)MapLayer.TradeRoutes
 	};
 
 	private static readonly int[] ArcaneLayerIds =
@@ -150,6 +168,10 @@ public partial class Main : Control
 	private const float DefaultRiverDensity = 1.0f;
 	private const float DefaultWindArrowDensity = 1.0f;
 	private const float DefaultBasinSensitivity = 1.0f;
+	private const float DefaultInteriorRelief = 1.0f;
+	private const float DefaultOrogenyStrength = 1.0f;
+	private const float DefaultSubductionArcRatio = 0.72f;
+	private const int DefaultContinentalAge = 58;
 	private const ElevationStyle DefaultElevationStyle = ElevationStyle.Realistic;
 	private const int DefaultMagicDensity = 75;
 	private const int DefaultCivilAggression = 42;
@@ -173,6 +195,7 @@ public partial class Main : Control
 	private const int LayerRenderCacheCapacity = 20;
 	private const int WorldGenerationCacheCapacity = 6;
 	private const long WorldGenerationCacheMaxCells = 16_777_216;
+	private const int WorldGenerationAlgorithmVersion = 2;
 	private const string ArchiveSection = "archive";
 	private const string LastArchivePathKey = "last_path";
 	private const string CacheDirectoryName = "cache";
@@ -197,6 +220,7 @@ public partial class Main : Control
 	private int _lastConfirmedMapSizeIndex;
 	private int _pendingMapSizeIndex = -1;
 	private bool _suppressMapSizeSelectionHandler;
+	private bool _suppressMountainPresetSelectionHandler;
 	private bool _skipMapInfoWarningForSession;
 	private bool _suppressArchiveSelectionHandler;
 	private bool _archiveOptionSignalBound;
@@ -206,6 +230,12 @@ public partial class Main : Control
 	private bool _preferredAdvancedPanelVisible;
 	private float _terrainOceanicRatio = 0.48f;
 	private float _terrainContinentBias = 0.18f;
+	private float _interiorRelief = DefaultInteriorRelief;
+	private float _orogenyStrength = DefaultOrogenyStrength;
+	private float _subductionArcRatio = DefaultSubductionArcRatio;
+	private int _continentalAge = DefaultContinentalAge;
+	private MountainPresetId _mountainPresetId = MountainPresetId.EarthLike;
+	private bool _mountainControlExpanded = true;
 	private TerrainMorphology _terrainMorphology = TerrainMorphology.Balanced;
 	private int _continentCount = 3;
 	private float _currentReliefExaggeration = ReliefExaggerationMin;
@@ -214,6 +244,7 @@ public partial class Main : Control
 	private int _civilAggression = DefaultCivilAggression;
 	private int _speciesDiversity = DefaultSpeciesDiversity;
 	private int _currentEpoch = DefaultEpoch;
+	private int _selectedTimelineEventEpoch = -1;
 	private MapMode _mapMode = MapMode.Geographic;
 
 	private enum ExportKind
@@ -242,6 +273,15 @@ public partial class Main : Control
 		Arcane
 	}
 
+	private enum MountainPresetId
+	{
+		EarthLike = 0,
+		YoungOrogeny = 1,
+		AncientStable = 2,
+		EdgeArcs = 3,
+		Custom = 99
+	}
+
 	private enum LandformType
 	{
 		DeepOcean,
@@ -255,6 +295,20 @@ public partial class Main : Control
 		Mountain
 	}
 
+	private readonly struct TimelineHotspotPoint
+	{
+		public int X { get; }
+		public int Y { get; }
+		public float Score { get; }
+
+		public TimelineHotspotPoint(int x, int y, float score)
+		{
+			X = x;
+			Y = y;
+			Score = score;
+		}
+	}
+
 	private readonly PlateGenerator _plateGenerator = new();
 	private readonly ElevationGenerator _elevationGenerator = new();
 	private readonly TemperatureGenerator _temperatureGenerator = new();
@@ -264,6 +318,8 @@ public partial class Main : Control
 	private readonly ErosionSimulator _erosionSimulator = new();
 	private readonly ResourceGenerator _resourceGenerator = new();
 	private readonly CityGenerator _cityGenerator = new();
+	private readonly EcologySimulator _ecologySimulator = new();
+	private readonly CivilizationSimulator _civilizationSimulator = new();
 	private readonly StatsCalculator _statsCalculator = new();
 	private readonly WorldRenderer _renderer = new();
 
@@ -299,6 +355,10 @@ public partial class Main : Control
 		public List<CityInfo> Cities { get; init; } = null!;
 		public WorldStats Stats { get; init; } = null!;
 		public WorldTuning Tuning { get; init; } = null!;
+		public EcologySimulationResult? EcologySimulation { get; set; }
+		public int EcologySignature { get; set; } = int.MinValue;
+		public CivilizationSimulationResult? CivilizationSimulation { get; set; }
+		public int CivilizationSignature { get; set; } = int.MinValue;
 		public Dictionary<MapLayer, LayerRenderCacheEntry> LayerRenderCache { get; } = new();
 	}
 
@@ -390,6 +450,16 @@ public partial class Main : Control
 		public int ContinentCount { get; init; } = 3;
 	}
 
+	private sealed class MountainPreset
+	{
+		public MountainPresetId Id { get; init; }
+		public string Name { get; init; } = string.Empty;
+		public float InteriorRelief { get; init; }
+		public float OrogenyStrength { get; init; }
+		public float SubductionArcRatio { get; init; }
+		public int ContinentalAge { get; init; }
+	}
+
 	private static readonly TerrainPreset[] TerrainPresets =
 	{
 		new TerrainPreset { Name = "均衡大陆", Morphology = TerrainMorphology.Balanced, SeaLevel = 0.50f, PlateCount = 20, WindCellCount = 10, HeatFactor = 0.50f, ErosionIterations = 5, OceanicRatio = 0.48f, ContinentBias = 0.18f, ContinentCount = 3 },
@@ -398,6 +468,14 @@ public partial class Main : Control
 		new TerrainPreset { Name = "经典群岛", Morphology = TerrainMorphology.Archipelago, SeaLevel = 0.62f, PlateCount = 30, WindCellCount = 12, HeatFactor = 0.56f, ErosionIterations = 6, OceanicRatio = 0.56f, ContinentBias = 0.10f, ContinentCount = 3 },
 		new TerrainPreset { Name = "破碎岛链", Morphology = TerrainMorphology.FracturedIslands, SeaLevel = 0.70f, PlateCount = 42, WindCellCount = 14, HeatFactor = 0.58f, ErosionIterations = 7, OceanicRatio = 0.64f, ContinentBias = 0.04f, ContinentCount = 4 },
 		new TerrainPreset { Name = "浅海碎陆", Morphology = TerrainMorphology.ShallowFragments, SeaLevel = 0.57f, PlateCount = 28, WindCellCount = 11, HeatFactor = 0.54f, ErosionIterations = 5, OceanicRatio = 0.52f, ContinentBias = 0.20f, ContinentCount = 3 },
+	};
+
+	private static readonly MountainPreset[] MountainPresets =
+	{
+		new MountainPreset { Id = MountainPresetId.EarthLike, Name = "地球式均衡", InteriorRelief = 1.00f, OrogenyStrength = 1.00f, SubductionArcRatio = 0.72f, ContinentalAge = 58 },
+		new MountainPreset { Id = MountainPresetId.YoungOrogeny, Name = "年轻褶皱山系", InteriorRelief = 1.36f, OrogenyStrength = 1.72f, SubductionArcRatio = 0.88f, ContinentalAge = 22 },
+		new MountainPreset { Id = MountainPresetId.AncientStable, Name = "古老稳定地盾", InteriorRelief = 0.78f, OrogenyStrength = 0.72f, SubductionArcRatio = 0.40f, ContinentalAge = 86 },
+		new MountainPreset { Id = MountainPresetId.EdgeArcs, Name = "边缘岛弧造山", InteriorRelief = 1.08f, OrogenyStrength = 1.48f, SubductionArcRatio = 0.95f, ContinentalAge = 46 }
 	};
 
 	private static readonly Vector2[] ContinentCenters2 =
@@ -448,6 +526,7 @@ public partial class Main : Control
 		_layerOption = GetNodeByName<OptionButton>("LayerOption");
 		_mapSizeOption = GetNodeByName<OptionButton>("MapSizeOption");
 		_terrainPresetOption = GetNodeByName<OptionButton>("TerrainPresetOption");
+		_mountainPresetOption = GetNodeByName<OptionButton>("MountainPresetOption");
 		_elevationStyleOption = GetNodeByName<OptionButton>("ElevationStyleOption");
 		_continentCountOption = GetNodeByName<OptionButton>("ContinentCountOption");
 		_archiveOption = GetNodeByName<OptionButton>("ArchiveOption");
@@ -484,6 +563,17 @@ public partial class Main : Control
 		_windArrowDensityValue = GetNodeByName<Label>("WindArrowDensityValue");
 		_basinSensitivitySlider = GetNodeByName<HSlider>("BasinSensitivitySlider");
 		_basinSensitivityValue = GetNodeByName<Label>("BasinSensitivityValue");
+		_interiorReliefSlider = GetNodeByName<HSlider>("InteriorReliefSlider");
+		_interiorReliefValue = GetNodeByName<Label>("InteriorReliefValue");
+		_orogenyStrengthSlider = GetNodeByName<HSlider>("OrogenyStrengthSlider");
+		_orogenyStrengthValue = GetNodeByName<Label>("OrogenyStrengthValue");
+		_subductionArcRatioSlider = GetNodeByName<HSlider>("SubductionArcRatioSlider");
+		_subductionArcRatioValue = GetNodeByName<Label>("SubductionArcRatioValue");
+		_continentalAgeSlider = GetNodeByName<HSlider>("ContinentalAgeSlider");
+		_continentalAgeValue = GetNodeByName<Label>("ContinentalAgeValue");
+		_mountainControlToggleButton = GetNodeByName<Button>("MountainControlToggleButton");
+		_mountainControlBody = GetNodeByName<Control>("MountainControlBody");
+		_mountainControlSummaryLabel = GetNodeByName<Label>("MountainControlSummary");
 		_magicSlider = GetNodeByName<HSlider>("MagicSlider");
 		_magicValue = GetNodeByName<Label>("MagicValue");
 		_aggressionSlider = GetNodeByName<HSlider>("AggressionSlider");
@@ -491,7 +581,10 @@ public partial class Main : Control
 		_diversitySlider = GetNodeByName<HSlider>("DiversitySlider");
 		_diversityValue = GetNodeByName<Label>("DiversityValue");
 		_timelineSlider = GetNodeByName<HSlider>("TimelineSlider");
+		_prevEpochButton = GetNodeByName<Button>("PrevEpochButton");
+		_nextEpochButton = GetNodeByName<Button>("NextEpochButton");
 		_epochLabel = GetNodeByName<Label>("EpochLabel");
+		_epochEventIndexLabel = GetNodeByName<Label>("EpochEventIndexLabel");
 		_loreStateLabel = GetNodeByName<Label>("LoreStateLabel");
 		_threatLabel = GetNodeByName<Label>("ThreatLabel");
 		_loreText = GetNodeByName<RichTextLabel>("LoreText");
@@ -523,6 +616,7 @@ public partial class Main : Control
 		SetupMapSizeOptions();
 		SetupContinentCountOptions();
 		SetupTerrainPresetOptions();
+		SetupMountainPresetOptions();
 		SetupElevationStyleOptions();
 		SetupArchiveOptions();
 		SetupMapModeOptions();
@@ -542,10 +636,17 @@ public partial class Main : Control
 		_riverDensitySlider.ValueChanged += OnRiverDensityChanged;
 		_windArrowDensitySlider.ValueChanged += OnWindArrowDensityChanged;
 		_basinSensitivitySlider.ValueChanged += OnBasinSensitivityChanged;
+		_interiorReliefSlider.ValueChanged += OnInteriorReliefChanged;
+		_orogenyStrengthSlider.ValueChanged += OnOrogenyStrengthChanged;
+		_subductionArcRatioSlider.ValueChanged += OnSubductionArcRatioChanged;
+		_continentalAgeSlider.ValueChanged += OnContinentalAgeChanged;
+		_mountainControlToggleButton.Pressed += ToggleMountainControlGroup;
 		_magicSlider.ValueChanged += OnMagicDensityChanged;
 		_aggressionSlider.ValueChanged += OnCivilAggressionChanged;
 		_diversitySlider.ValueChanged += OnSpeciesDiversityChanged;
 		_timelineSlider.ValueChanged += OnTimelineChanged;
+		_prevEpochButton.Pressed += OnPrevEpochPressed;
+		_nextEpochButton.Pressed += OnNextEpochPressed;
 		_plateSpin.ValueChanged += value =>
 		{
 			PlateCount = Mathf.Clamp((int)Mathf.Round((float)value), 1, 200);
@@ -594,10 +695,15 @@ public partial class Main : Control
 		_riverDensitySlider.Value = RiverDensity;
 		_windArrowDensitySlider.Value = WindArrowDensity;
 		_basinSensitivitySlider.Value = BasinSensitivity;
+		_interiorReliefSlider.Value = _interiorRelief;
+		_orogenyStrengthSlider.Value = _orogenyStrength;
+		_subductionArcRatioSlider.Value = _subductionArcRatio;
+		_continentalAgeSlider.Value = _continentalAge;
 		_magicSlider.Value = _magicDensity;
 		_aggressionSlider.Value = _civilAggression;
 		_diversitySlider.Value = _speciesDiversity;
 		_timelineSlider.Value = _currentEpoch;
+		UpdateTimelineReplayCursor(Array.Empty<CivilizationEpochEvent>());
 		_riverToggle.ButtonPressed = EnableRivers;
 		UpdateRiverDensityControlState();
 		UpdateRiverLayerAvailability();
@@ -681,6 +787,31 @@ public partial class Main : Control
 		}
 	}
 
+	private void ToggleMountainControlGroup()
+	{
+		SetMountainControlExpanded(!_mountainControlExpanded);
+	}
+
+	private void SetMountainControlExpanded(bool expanded, bool persist = true)
+	{
+		_mountainControlExpanded = expanded;
+		_mountainControlToggleButton.Text = expanded ? "收起山脉参数 ▲" : "展开山脉参数 ▼";
+		UpdateMountainControlSummary();
+		_mountainControlBody.Visible = expanded;
+		_mountainControlSummaryLabel.Visible = !expanded;
+
+		if (persist)
+		{
+			SaveAdvancedSettings();
+		}
+	}
+
+	private void UpdateMountainControlSummary()
+	{
+		_mountainControlSummaryLabel.Text =
+			$"起伏:{_interiorRelief:0.00} | 造山:{_orogenyStrength:0.00} | 俯冲:{_subductionArcRatio:0.00} | 年龄:{_continentalAge}";
+	}
+
 	private void ApplySavedUiState()
 	{
 		var savedMapSizeIndex = FindMapSizePresetIndex(MapWidth, MapHeight);
@@ -701,6 +832,7 @@ public partial class Main : Control
 		SelectMapModeOption(_mapMode);
 		SelectLayerById(canUsePreferredLayer ? _preferredLayerId : (int)MapLayer.Satellite, persist: false);
 		SetAdvancedSettingsPanelVisible(_preferredAdvancedPanelVisible, persist: false);
+		SetMountainControlExpanded(_mountainControlExpanded, persist: false);
 	}
 
 	private static bool IsPointInsideControl(Control control, Vector2 point)
@@ -725,6 +857,9 @@ public partial class Main : Control
 		_layerOption.AddItem("Biomes", (int)MapLayer.Biomes);
 		_layerOption.AddItem("Cities", (int)MapLayer.Cities);
 		_layerOption.AddItem("地貌", (int)MapLayer.Landform);
+		_layerOption.AddItem("生态演化", (int)MapLayer.Ecology);
+		_layerOption.AddItem("文明疆域", (int)MapLayer.Civilization);
+		_layerOption.AddItem("贸易走廊", (int)MapLayer.TradeRoutes);
 		_layerOption.Select(0);
 		BuildLayerButtons();
 	}
@@ -929,7 +1064,7 @@ public partial class Main : Control
 		return mode switch
 		{
 			MapMode.Geographic => (int)MapLayer.Satellite,
-			MapMode.Geopolitical => (int)MapLayer.Cities,
+			MapMode.Geopolitical => (int)MapLayer.TradeRoutes,
 			MapMode.Arcane => (int)MapLayer.Biomes,
 			_ => -1
 		};
@@ -951,6 +1086,9 @@ public partial class Main : Control
 			(int)MapLayer.Biomes => "群系",
 			(int)MapLayer.Cities => "城市",
 			(int)MapLayer.Landform => "地貌",
+			(int)MapLayer.Ecology => "生态",
+			(int)MapLayer.Civilization => "文明",
+			(int)MapLayer.TradeRoutes => "贸易",
 			_ => fallback
 		};
 	}
@@ -1100,6 +1238,181 @@ public partial class Main : Control
 		{
 			ApplyTerrainPreset((int)id, regenerate: true);
 		};
+	}
+
+	private void SetupMountainPresetOptions()
+	{
+		_mountainPresetOption.Clear();
+		for (var index = 0; index < MountainPresets.Length; index++)
+		{
+			var preset = MountainPresets[index];
+			_mountainPresetOption.AddItem(preset.Name, (int)preset.Id);
+		}
+
+		_mountainPresetOption.AddItem("自定义", (int)MountainPresetId.Custom);
+
+		if (_mountainPresetId != MountainPresetId.Custom && !TryGetMountainPreset(_mountainPresetId, out _))
+		{
+			_mountainPresetId = ResolveMountainPresetIdFromCurrentValues();
+		}
+
+		if (_mountainPresetId == MountainPresetId.Custom)
+		{
+			SyncMountainPresetFromCurrentValues();
+		}
+		else
+		{
+			ApplyMountainPreset(_mountainPresetId, regenerate: false, persist: false);
+		}
+
+		_mountainPresetOption.ItemSelected += id =>
+		{
+			if (_suppressMountainPresetSelectionHandler)
+			{
+				return;
+			}
+
+			var selectedId = _mountainPresetOption.GetItemId((int)id);
+			if (!Enum.IsDefined(typeof(MountainPresetId), selectedId))
+			{
+				return;
+			}
+
+			var presetId = (MountainPresetId)selectedId;
+			if (presetId == MountainPresetId.Custom)
+			{
+				_mountainPresetId = MountainPresetId.Custom;
+				SaveAdvancedSettings();
+				return;
+			}
+
+			ApplyMountainPreset(presetId, regenerate: true, persist: true);
+		};
+	}
+
+	private void ApplyMountainPreset(MountainPresetId presetId, bool regenerate, bool persist)
+	{
+		if (!TryGetMountainPreset(presetId, out var preset))
+		{
+			_mountainPresetId = MountainPresetId.Custom;
+			SelectMountainPresetOption(_mountainPresetId);
+			return;
+		}
+
+		_mountainPresetId = presetId;
+		_interiorRelief = Mathf.Clamp(preset.InteriorRelief, 0.5f, 2.0f);
+		_orogenyStrength = Mathf.Clamp(preset.OrogenyStrength, 0.5f, 2.5f);
+		_subductionArcRatio = Mathf.Clamp(preset.SubductionArcRatio, 0.2f, 1.0f);
+		_continentalAge = Mathf.Clamp(preset.ContinentalAge, 0, 100);
+
+		_interiorReliefSlider.SetValueNoSignal(_interiorRelief);
+		_orogenyStrengthSlider.SetValueNoSignal(_orogenyStrength);
+		_subductionArcRatioSlider.SetValueNoSignal(_subductionArcRatio);
+		_continentalAgeSlider.SetValueNoSignal(_continentalAge);
+		SelectMountainPresetOption(_mountainPresetId);
+
+		UpdateLabels();
+		if (persist)
+		{
+			SaveAdvancedSettings();
+		}
+
+		if (regenerate)
+		{
+			GenerateWorld();
+		}
+	}
+
+	private bool TryGetMountainPreset(MountainPresetId presetId, out MountainPreset preset)
+	{
+		for (var index = 0; index < MountainPresets.Length; index++)
+		{
+			if (MountainPresets[index].Id == presetId)
+			{
+				preset = MountainPresets[index];
+				return true;
+			}
+		}
+
+		preset = null!;
+		return false;
+	}
+
+	private void SelectMountainPresetOption(MountainPresetId presetId)
+	{
+		for (var index = 0; index < _mountainPresetOption.ItemCount; index++)
+		{
+			if (_mountainPresetOption.GetItemId(index) != (int)presetId)
+			{
+				continue;
+			}
+
+			_suppressMountainPresetSelectionHandler = true;
+			_mountainPresetOption.Select(index);
+			_suppressMountainPresetSelectionHandler = false;
+			return;
+		}
+
+		for (var index = 0; index < _mountainPresetOption.ItemCount; index++)
+		{
+			if (_mountainPresetOption.GetItemId(index) != (int)MountainPresetId.Custom)
+			{
+				continue;
+			}
+
+			_suppressMountainPresetSelectionHandler = true;
+			_mountainPresetOption.Select(index);
+			_suppressMountainPresetSelectionHandler = false;
+			return;
+		}
+	}
+
+	private MountainPresetId ResolveMountainPresetIdFromCurrentValues()
+	{
+		for (var index = 0; index < MountainPresets.Length; index++)
+		{
+			var preset = MountainPresets[index];
+			if (!AreNearlyEqual(_interiorRelief, preset.InteriorRelief))
+			{
+				continue;
+			}
+
+			if (!AreNearlyEqual(_orogenyStrength, preset.OrogenyStrength))
+			{
+				continue;
+			}
+
+			if (!AreNearlyEqual(_subductionArcRatio, preset.SubductionArcRatio))
+			{
+				continue;
+			}
+
+			if (_continentalAge != preset.ContinentalAge)
+			{
+				continue;
+			}
+
+			return preset.Id;
+		}
+
+		return MountainPresetId.Custom;
+	}
+
+	private void SyncMountainPresetFromCurrentValues()
+	{
+		var resolvedPreset = ResolveMountainPresetIdFromCurrentValues();
+		if (_mountainPresetId == resolvedPreset)
+		{
+			return;
+		}
+
+		_mountainPresetId = resolvedPreset;
+		SelectMountainPresetOption(_mountainPresetId);
+	}
+
+	private static bool AreNearlyEqual(float left, float right)
+	{
+		return Mathf.Abs(left - right) <= 0.005f;
 	}
 
 	private void SetupElevationStyleOptions()
@@ -1478,9 +1791,46 @@ public partial class Main : Control
 		}
 	}
 
+	private void OnInteriorReliefChanged(double value)
+	{
+		_interiorRelief = Mathf.Clamp((float)value, 0.5f, 2.0f);
+		SyncMountainPresetFromCurrentValues();
+		SaveAdvancedSettings();
+		UpdateLabels();
+		GenerateWorld();
+	}
+
+	private void OnOrogenyStrengthChanged(double value)
+	{
+		_orogenyStrength = Mathf.Clamp((float)value, 0.5f, 2.5f);
+		SyncMountainPresetFromCurrentValues();
+		SaveAdvancedSettings();
+		UpdateLabels();
+		GenerateWorld();
+	}
+
+	private void OnSubductionArcRatioChanged(double value)
+	{
+		_subductionArcRatio = Mathf.Clamp((float)value, 0.2f, 1.0f);
+		SyncMountainPresetFromCurrentValues();
+		SaveAdvancedSettings();
+		UpdateLabels();
+		GenerateWorld();
+	}
+
+	private void OnContinentalAgeChanged(double value)
+	{
+		_continentalAge = Mathf.Clamp((int)Mathf.Round((float)value), 0, 100);
+		SyncMountainPresetFromCurrentValues();
+		SaveAdvancedSettings();
+		UpdateLabels();
+		GenerateWorld();
+	}
+
 	private void OnMagicDensityChanged(double value)
 	{
 		_magicDensity = Mathf.Clamp((int)Mathf.Round((float)value), 0, 100);
+		InvalidateEcologyCaches();
 		UpdateLabels();
 		UpdateLorePanel();
 		SaveAdvancedSettings();
@@ -1489,6 +1839,7 @@ public partial class Main : Control
 	private void OnCivilAggressionChanged(double value)
 	{
 		_civilAggression = Mathf.Clamp((int)Mathf.Round((float)value), 0, 100);
+		InvalidateEcologyCaches();
 		UpdateLabels();
 		UpdateLorePanel();
 		SaveAdvancedSettings();
@@ -1497,6 +1848,7 @@ public partial class Main : Control
 	private void OnSpeciesDiversityChanged(double value)
 	{
 		_speciesDiversity = Mathf.Clamp((int)Mathf.Round((float)value), 0, 100);
+		InvalidateEcologyCaches();
 		UpdateLabels();
 		UpdateLorePanel();
 		SaveAdvancedSettings();
@@ -1505,9 +1857,92 @@ public partial class Main : Control
 	private void OnTimelineChanged(double value)
 	{
 		_currentEpoch = Mathf.Clamp((int)Mathf.Round((float)value), 0, MaxEpoch);
+		_selectedTimelineEventEpoch = _currentEpoch;
+		InvalidateEcologyCaches();
 		UpdateLabels();
 		UpdateLorePanel();
 		SaveAdvancedSettings();
+	}
+
+	private void OnPrevEpochPressed()
+	{
+		MoveTimelineEventCursor(-1);
+	}
+
+	private void OnNextEpochPressed()
+	{
+		MoveTimelineEventCursor(1);
+	}
+
+	private void MoveTimelineEventCursor(int direction)
+	{
+		if (_primaryWorld == null)
+		{
+			ApplyEpochFromReplayCursor(Mathf.Clamp(_currentEpoch + direction, 0, MaxEpoch));
+			return;
+		}
+
+		EnsureCivilizationSimulation(_primaryWorld);
+		var events = _primaryWorld.CivilizationSimulation?.RecentEvents ?? Array.Empty<CivilizationEpochEvent>();
+		if (events.Length == 0)
+		{
+			ApplyEpochFromReplayCursor(Mathf.Clamp(_currentEpoch + direction, 0, MaxEpoch));
+			return;
+		}
+
+		var currentIndex = ResolveTimelineEventIndex(events, _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch);
+		var nextIndex = Mathf.Clamp(currentIndex + direction, 0, events.Length - 1);
+		_selectedTimelineEventEpoch = events[nextIndex].Epoch;
+		ApplyEpochFromReplayCursor(_selectedTimelineEventEpoch);
+	}
+
+	private void ApplyEpochFromReplayCursor(int targetEpoch)
+	{
+		var clampedEpoch = Mathf.Clamp(targetEpoch, 0, MaxEpoch);
+		if (clampedEpoch == _currentEpoch)
+		{
+			UpdateLabels();
+			RedrawCurrentLayer();
+			SaveAdvancedSettings();
+			return;
+		}
+
+		_currentEpoch = clampedEpoch;
+		InvalidateEcologyCaches();
+		UpdateLabels();
+		UpdateLorePanel();
+		SaveAdvancedSettings();
+	}
+
+	private void InvalidateEcologyCaches()
+	{
+		if (_primaryWorld != null)
+		{
+			_primaryWorld.EcologySimulation = null;
+			_primaryWorld.EcologySignature = int.MinValue;
+			_primaryWorld.CivilizationSimulation = null;
+			_primaryWorld.CivilizationSignature = int.MinValue;
+			_primaryWorld.LayerRenderCache.Remove(MapLayer.Ecology);
+			_primaryWorld.LayerRenderCache.Remove(MapLayer.Civilization);
+			_primaryWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
+		}
+
+		if (_compareWorld != null)
+		{
+			_compareWorld.EcologySimulation = null;
+			_compareWorld.EcologySignature = int.MinValue;
+			_compareWorld.CivilizationSimulation = null;
+			_compareWorld.CivilizationSignature = int.MinValue;
+			_compareWorld.LayerRenderCache.Remove(MapLayer.Ecology);
+			_compareWorld.LayerRenderCache.Remove(MapLayer.Civilization);
+			_compareWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
+		}
+
+		var layer = GetCurrentLayer();
+		if (layer == MapLayer.Ecology || layer == MapLayer.Civilization || layer == MapLayer.TradeRoutes)
+		{
+			RedrawCurrentLayer();
+		}
 	}
 
 	private void OnResetAdvancedSettingsPressed()
@@ -1529,17 +1964,29 @@ public partial class Main : Control
 		RiverDensity = DefaultRiverDensity;
 		WindArrowDensity = DefaultWindArrowDensity;
 		BasinSensitivity = DefaultBasinSensitivity;
+		_interiorRelief = DefaultInteriorRelief;
+		_orogenyStrength = DefaultOrogenyStrength;
+		_subductionArcRatio = DefaultSubductionArcRatio;
+		_continentalAge = DefaultContinentalAge;
+		_mountainPresetId = MountainPresetId.EarthLike;
 		_elevationStyle = DefaultElevationStyle;
 		_magicDensity = DefaultMagicDensity;
 		_civilAggression = DefaultCivilAggression;
 		_speciesDiversity = DefaultSpeciesDiversity;
 		_currentEpoch = DefaultEpoch;
+		_selectedTimelineEventEpoch = _currentEpoch;
+		_mountainControlExpanded = true;
 		_mapMode = MapMode.Geographic;
 
 		_riverToggle.ButtonPressed = EnableRivers;
 		_riverDensitySlider.SetValueNoSignal(RiverDensity);
 		_windArrowDensitySlider.SetValueNoSignal(WindArrowDensity);
 		_basinSensitivitySlider.SetValueNoSignal(BasinSensitivity);
+		_interiorReliefSlider.SetValueNoSignal(_interiorRelief);
+		_orogenyStrengthSlider.SetValueNoSignal(_orogenyStrength);
+		_subductionArcRatioSlider.SetValueNoSignal(_subductionArcRatio);
+		_continentalAgeSlider.SetValueNoSignal(_continentalAge);
+		SelectMountainPresetOption(_mountainPresetId);
 		_magicSlider.SetValueNoSignal(_magicDensity);
 		_aggressionSlider.SetValueNoSignal(_civilAggression);
 		_diversitySlider.SetValueNoSignal(_speciesDiversity);
@@ -1564,6 +2011,15 @@ public partial class Main : Control
 		RiverDensity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "river_density", (double)DefaultRiverDensity), 0.4f, 2.5f);
 		WindArrowDensity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "wind_arrow_density", (double)DefaultWindArrowDensity), 0.5f, 2.5f);
 		BasinSensitivity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "basin_sensitivity", (double)DefaultBasinSensitivity), 0.5f, 2.0f);
+		_interiorRelief = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "interior_relief", (double)DefaultInteriorRelief), 0.5f, 2.0f);
+		_orogenyStrength = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "orogeny_strength", (double)DefaultOrogenyStrength), 0.5f, 2.5f);
+		_subductionArcRatio = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "subduction_arc_ratio", (double)DefaultSubductionArcRatio), 0.2f, 1.0f);
+		_continentalAge = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "continental_age", (long)DefaultContinentalAge), 0, 100);
+		var defaultMountainPresetId = (long)ResolveMountainPresetIdFromCurrentValues();
+		var mountainPresetId = (int)(long)config.GetValue(AdvancedSettingsSection, "mountain_preset", defaultMountainPresetId);
+		_mountainPresetId = Enum.IsDefined(typeof(MountainPresetId), mountainPresetId)
+			? (MountainPresetId)mountainPresetId
+			: ResolveMountainPresetIdFromCurrentValues();
 
 		var styleId = (int)(long)config.GetValue(AdvancedSettingsSection, "elevation_style", (long)DefaultElevationStyle);
 		_elevationStyle = Enum.IsDefined(typeof(ElevationStyle), styleId)
@@ -1572,10 +2028,12 @@ public partial class Main : Control
 
 		_preferredLayerId = (int)(long)config.GetValue(AdvancedSettingsSection, "selected_layer", (long)_preferredLayerId);
 		_preferredAdvancedPanelVisible = (bool)config.GetValue(AdvancedSettingsSection, "advanced_panel_visible", _preferredAdvancedPanelVisible);
+		_mountainControlExpanded = (bool)config.GetValue(AdvancedSettingsSection, "mountain_control_expanded", _mountainControlExpanded);
 		_magicDensity = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "magic_density", (long)DefaultMagicDensity), 0, 100);
 		_civilAggression = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "civil_aggression", (long)DefaultCivilAggression), 0, 100);
 		_speciesDiversity = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "species_diversity", (long)DefaultSpeciesDiversity), 0, 100);
 		_currentEpoch = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "timeline_epoch", (long)DefaultEpoch), 0, MaxEpoch);
+		_selectedTimelineEventEpoch = _currentEpoch;
 		var mapModeId = (int)(long)config.GetValue(AdvancedSettingsSection, "map_mode", (long)MapMode.Geographic);
 		_mapMode = Enum.IsDefined(typeof(MapMode), mapModeId)
 			? (MapMode)mapModeId
@@ -1604,9 +2062,15 @@ public partial class Main : Control
 		config.SetValue(AdvancedSettingsSection, "river_density", (double)RiverDensity);
 		config.SetValue(AdvancedSettingsSection, "wind_arrow_density", (double)WindArrowDensity);
 		config.SetValue(AdvancedSettingsSection, "basin_sensitivity", (double)BasinSensitivity);
+		config.SetValue(AdvancedSettingsSection, "interior_relief", (double)_interiorRelief);
+		config.SetValue(AdvancedSettingsSection, "orogeny_strength", (double)_orogenyStrength);
+		config.SetValue(AdvancedSettingsSection, "subduction_arc_ratio", (double)_subductionArcRatio);
+		config.SetValue(AdvancedSettingsSection, "continental_age", (long)_continentalAge);
+		config.SetValue(AdvancedSettingsSection, "mountain_preset", (long)_mountainPresetId);
 		config.SetValue(AdvancedSettingsSection, "elevation_style", (long)_elevationStyle);
 		config.SetValue(AdvancedSettingsSection, "selected_layer", (long)_layerOption.GetSelectedId());
 		config.SetValue(AdvancedSettingsSection, "advanced_panel_visible", _advancedSettingsPanel.Visible);
+		config.SetValue(AdvancedSettingsSection, "mountain_control_expanded", _mountainControlExpanded);
 		config.SetValue(AdvancedSettingsSection, "magic_density", (long)_magicDensity);
 		config.SetValue(AdvancedSettingsSection, "civil_aggression", (long)_civilAggression);
 		config.SetValue(AdvancedSettingsSection, "species_diversity", (long)_speciesDiversity);
@@ -1629,6 +2093,11 @@ public partial class Main : Control
 		_riverDensityValue.Text = RiverDensity.ToString("0.00");
 		_windArrowDensityValue.Text = WindArrowDensity.ToString("0.00");
 		_basinSensitivityValue.Text = BasinSensitivity.ToString("0.00");
+		_interiorReliefValue.Text = _interiorRelief.ToString("0.00");
+		_orogenyStrengthValue.Text = _orogenyStrength.ToString("0.00");
+		_subductionArcRatioValue.Text = _subductionArcRatio.ToString("0.00");
+		_continentalAgeValue.Text = _continentalAge.ToString();
+		UpdateMountainControlSummary();
 		_magicValue.Text = _magicDensity.ToString();
 		_aggressionValue.Text = _civilAggression.ToString();
 		_diversityValue.Text = _speciesDiversity.ToString();
@@ -1733,6 +2202,10 @@ public partial class Main : Control
 		var riverDensityQuantized = Mathf.RoundToInt(RiverDensity * 10000f);
 		var oceanicRatioQuantized = Mathf.RoundToInt(_terrainOceanicRatio * 10000f);
 		var continentBiasQuantized = Mathf.RoundToInt(_terrainContinentBias * 10000f);
+		var interiorReliefQuantized = Mathf.RoundToInt(_interiorRelief * 10000f);
+		var orogenyStrengthQuantized = Mathf.RoundToInt(_orogenyStrength * 10000f);
+		var subductionArcRatioQuantized = Mathf.RoundToInt(_subductionArcRatio * 10000f);
+		var continentalAgeQuantized = Mathf.Clamp(_continentalAge, 0, 100);
 		var deepOceanFactorQuantized = Mathf.RoundToInt(_tuning.DeepOceanFactor * 10000f);
 		var coastBandQuantized = Mathf.RoundToInt(_tuning.CoastBand * 10000f);
 		var mountainThresholdQuantized = Mathf.RoundToInt(_tuning.MountainThreshold * 10000f);
@@ -1740,7 +2213,7 @@ public partial class Main : Control
 		var riverSourceMoistureQuantized = Mathf.RoundToInt(_tuning.RiverSourceMoistureThreshold * 10000f);
 		var riverSourceChanceQuantized = Mathf.RoundToInt(_tuning.RiverSourceChance * 1_000_000f);
 
-		return $"{MapWidth}x{MapHeight}|seed:{Seed}|plates:{PlateCount}|wind:{WindCellCount}|sea:{seaLevelQuantized}|heat:{heatFactorQuantized}|moIter:{MoistureIterations}|erosion:{ErosionIterations}|rivers:{(EnableRivers ? 1 : 0)}|riverDensity:{riverDensityQuantized}|oceanic:{oceanicRatioQuantized}|continentBias:{continentBiasQuantized}|morph:{(int)_terrainMorphology}|continentCount:{_continentCount}|tuning:{_tuning.Name}|deepOcean:{deepOceanFactorQuantized}|coast:{coastBandQuantized}|mountain:{mountainThresholdQuantized}|riverSrcEl:{riverSourceElevationQuantized}|riverSrcMo:{riverSourceMoistureQuantized}|riverSrcChance:{riverSourceChanceQuantized}|compare:{(_compareMode ? 1 : 0)}";
+		return $"ver:{WorldGenerationAlgorithmVersion}|{MapWidth}x{MapHeight}|seed:{Seed}|plates:{PlateCount}|wind:{WindCellCount}|sea:{seaLevelQuantized}|heat:{heatFactorQuantized}|moIter:{MoistureIterations}|erosion:{ErosionIterations}|rivers:{(EnableRivers ? 1 : 0)}|riverDensity:{riverDensityQuantized}|oceanic:{oceanicRatioQuantized}|continentBias:{continentBiasQuantized}|interiorRelief:{interiorReliefQuantized}|orogeny:{orogenyStrengthQuantized}|subductionArc:{subductionArcRatioQuantized}|age:{continentalAgeQuantized}|morph:{(int)_terrainMorphology}|continentCount:{_continentCount}|tuning:{_tuning.Name}|deepOcean:{deepOceanFactorQuantized}|coast:{coastBandQuantized}|mountain:{mountainThresholdQuantized}|riverSrcEl:{riverSourceElevationQuantized}|riverSrcMo:{riverSourceMoistureQuantized}|riverSrcChance:{riverSourceChanceQuantized}|compare:{(_compareMode ? 1 : 0)}";
 	}
 
 	private bool TryGetWorldGenerationCache(string cacheKey, out GeneratedWorldData primaryWorld, out GeneratedWorldData? compareWorld)
@@ -2138,6 +2611,136 @@ public partial class Main : Control
 		}
 
 		return result;
+	}
+
+	private static float[,] BuildOrogenyMask(PlateResult plateResult, float[,] elevation, int width, int height, float seaLevel, TerrainMorphology morphology, int seed, float subductionArcRatio)
+	{
+		var mask = new float[width, height];
+		var arcRatio = Mathf.Clamp(subductionArcRatio, 0.2f, 1.0f);
+
+		for (var y = 0; y < height; y++)
+		{
+			for (var x = 0; x < width; x++)
+			{
+				if (elevation[x, y] <= seaLevel)
+				{
+					continue;
+				}
+
+				var boundaryType = plateResult.BoundaryTypes[x, y];
+				float baseWeight;
+				switch (boundaryType)
+				{
+					case PlateBoundaryType.Convergent:
+						baseWeight = 1.0f;
+						break;
+					case PlateBoundaryType.Transform:
+						baseWeight = 0.55f;
+						break;
+					case PlateBoundaryType.Divergent:
+						baseWeight = 0.20f;
+						break;
+					default:
+						baseWeight = 0f;
+						break;
+				}
+
+				if (baseWeight <= 0f)
+				{
+					continue;
+				}
+
+				if (boundaryType == PlateBoundaryType.Convergent)
+				{
+					var arcNoise = HashNoise01(seed ^ unchecked((int)0x3c6ef35f), x, y);
+					if (arcNoise > arcRatio)
+					{
+						baseWeight *= 0.36f;
+					}
+				}
+
+				if (IsNearSeaEdge(x, y, elevation, width, height, seaLevel, 4))
+				{
+					baseWeight *= 1.26f;
+				}
+
+				baseWeight *= morphology switch
+				{
+					TerrainMorphology.Archipelago => 0.82f,
+					TerrainMorphology.FracturedIslands => 0.78f,
+					TerrainMorphology.ShallowFragments => 0.84f,
+					_ => 1f
+				};
+
+				if (baseWeight > mask[x, y])
+				{
+					mask[x, y] = Mathf.Clamp(baseWeight, 0f, 1.2f);
+				}
+			}
+		}
+
+		return BlurMask(mask, width, height, 3);
+	}
+
+	private static bool IsNearSeaEdge(int x, int y, float[,] elevation, int width, int height, float seaLevel, int radius)
+	{
+		for (var oy = -radius; oy <= radius; oy++)
+		{
+			for (var ox = -radius; ox <= radius; ox++)
+			{
+				if (ox == 0 && oy == 0)
+				{
+					continue;
+				}
+
+				var nx = WrapX(x + ox, width);
+				var ny = ClampY(y + oy, height);
+				if (elevation[nx, ny] <= seaLevel)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private static float[,] BlurMask(float[,] source, int width, int height, int radius)
+	{
+		if (radius <= 0)
+		{
+			return source;
+		}
+
+		var blurred = new float[width, height];
+		var sigma = Mathf.Max(radius * 0.65f, 0.5f);
+
+		for (var y = 0; y < height; y++)
+		{
+			for (var x = 0; x < width; x++)
+			{
+				var accum = 0f;
+				var weightSum = 0f;
+
+				for (var oy = -radius; oy <= radius; oy++)
+				{
+					for (var ox = -radius; ox <= radius; ox++)
+					{
+						var nx = WrapX(x + ox, width);
+						var ny = ClampY(y + oy, height);
+						var distSq = ox * ox + oy * oy;
+						var weight = Mathf.Exp(-distSq / (2f * sigma * sigma));
+
+						accum += source[nx, ny] * weight;
+						weightSum += weight;
+					}
+				}
+
+				blurred[x, y] = weightSum > 0f ? accum / weightSum : source[x, y];
+			}
+		}
+
+		return blurred;
 	}
 
 	private Godot.Collections.Dictionary ConvertPersistedWorldToGodotDictionary(PersistedWorldData world)
@@ -2696,7 +3299,7 @@ public partial class Main : Control
 		var resourceTask = Task.Run(() => _resourceGenerator.Generate(MapWidth, MapHeight, Seed, plateResult.BoundaryTypes));
 
 		var elevation = await Task.Run(() => _elevationGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, plateResult));
-		elevation = ApplyTerrainMorphologyMask(elevation, MapWidth, MapHeight, SeaLevel, _terrainContinentBias, _terrainMorphology, Seed, _continentCount);
+		elevation = ApplyTerrainMorphologyMask(elevation, plateResult, MapWidth, MapHeight, SeaLevel, _terrainContinentBias, _interiorRelief, _orogenyStrength, _subductionArcRatio, _continentalAge, _terrainMorphology, Seed, _continentCount);
 		await SetBuildProgressAsync(label, "地形", ++step, totalSteps, startProgress, endProgress);
 
 		var waterLayer = Array2D.Create(MapWidth, MapHeight, 1f);
@@ -2998,7 +3601,7 @@ public partial class Main : Control
 		return normalized;
 	}
 
-	private float[,] ApplyTerrainMorphologyMask(float[,] source, int width, int height, float seaLevel, float continentBias, TerrainMorphology morphology, int seed, int continentCount)
+	private float[,] ApplyTerrainMorphologyMask(float[,] source, PlateResult plateResult, int width, int height, float seaLevel, float continentBias, float interiorRelief, float orogenyStrength, float subductionArcRatio, int continentalAge, TerrainMorphology morphology, int seed, int continentCount)
 	{
 		if (continentBias <= 0.001f && morphology == TerrainMorphology.Balanced)
 		{
@@ -3006,7 +3609,12 @@ public partial class Main : Control
 		}
 
 		var bias = Mathf.Clamp(continentBias, 0f, 1f);
+		var relief = Mathf.Clamp(interiorRelief, 0.5f, 2.0f);
+		var orogenyScale = Mathf.Clamp(orogenyStrength, 0.5f, 2.5f);
+		var ageNorm = Mathf.Clamp(continentalAge / 100f, 0f, 1f);
+		var ageRoughnessFactor = Mathf.Lerp(1.24f, 0.72f, ageNorm);
 		var result = new float[width, height];
+		var orogenyMask = BuildOrogenyMask(plateResult, source, width, height, seaLevel, morphology, seed, subductionArcRatio);
 
 		var contourNoise = new FastNoiseLite
 		{
@@ -3053,7 +3661,7 @@ public partial class Main : Control
 				var morphologyBase = morphology switch
 				{
 					TerrainMorphology.Supercontinent => Mathf.Clamp(1f - 1.24f * radial, 0f, 1f),
-					TerrainMorphology.Continents => BuildContinentsBase(radial, fragmentNoise, nx, ny, nz, px, py, continentCount),
+					TerrainMorphology.Continents => BuildContinentsBase(radial, fragmentNoise, nx, ny, nz, px, py, continentCount, seed),
 					TerrainMorphology.Archipelago => Mathf.Clamp(0.56f - 0.42f * radial, 0f, 1f),
 					TerrainMorphology.FracturedIslands => Mathf.Clamp(0.52f - 0.34f * radial, 0f, 1f),
 					TerrainMorphology.ShallowFragments => Mathf.Clamp(0.62f - 0.48f * radial, 0f, 1f),
@@ -3081,7 +3689,43 @@ public partial class Main : Control
 
 				if (falloff > 0.48f)
 				{
-					shifted += (falloff - 0.48f) * Mathf.Lerp(0.03f, 0.13f, bias);
+					var interiorMask = (falloff - 0.48f) / 0.52f;
+					var interiorNoise = 0.5f + 0.5f * fragmentNoise.GetNoise3D(
+						8.4f * nx + 13.7f,
+						8.4f * ny - 9.2f,
+						8.4f * nz + 4.6f);
+
+					var ridgeBias = morphology switch
+					{
+						TerrainMorphology.Supercontinent => 0.58f,
+						TerrainMorphology.Continents => 0.50f,
+						TerrainMorphology.ColdContinent => 0.54f,
+						_ => 0.46f
+					};
+
+					var ridgeStrength = Mathf.Clamp((interiorNoise - ridgeBias) / Mathf.Max(1f - ridgeBias, 0.0001f), 0f, 1f);
+					var basinStrength = Mathf.Clamp((ridgeBias - interiorNoise) / Mathf.Max(ridgeBias, 0.0001f), 0f, 1f);
+
+					shifted += interiorMask * ridgeStrength * Mathf.Lerp(0.01f, 0.08f, bias) * relief * ageRoughnessFactor;
+					shifted -= interiorMask * basinStrength * Mathf.Lerp(0.01f, 0.06f, bias) * relief * ageRoughnessFactor;
+				}
+
+				var edgeBand = Mathf.Clamp((0.62f - falloff) / 0.34f, 0f, 1f);
+				var orogeny = orogenyMask[x, y];
+				if (orogeny > 0.001f)
+				{
+					var edgeMountainBoost = Mathf.Lerp(0.02f, 0.14f, bias) * relief;
+					var youngEdgeBoost = Mathf.Lerp(1.18f, 0.86f, ageNorm);
+					shifted += orogeny * (0.55f + 0.45f * edgeBand) * edgeMountainBoost * orogenyScale * youngEdgeBoost;
+
+					var inlandSuppression = Mathf.Clamp((falloff - 0.68f) / 0.32f, 0f, 1f);
+					var oldContinentSmoothing = Mathf.Lerp(0.90f, 1.35f, ageNorm);
+					shifted -= orogeny * inlandSuppression * Mathf.Lerp(0.005f, 0.032f, bias) * (2.2f - relief) * Mathf.Lerp(0.8f, 1.3f, Mathf.Clamp(orogenyScale - 0.5f, 0f, 2f) / 2f) * oldContinentSmoothing;
+				}
+				else if (falloff > 0.70f)
+				{
+					var deepInterior = Mathf.Clamp((falloff - 0.70f) / 0.30f, 0f, 1f);
+					shifted -= deepInterior * Mathf.Lerp(0.004f, 0.030f, bias) * (2.1f - relief) * Mathf.Lerp(0.92f, 1.38f, ageNorm);
 				}
 
 				if (falloff < 0.22f)
@@ -3096,7 +3740,7 @@ public partial class Main : Control
 		return result;
 	}
 
-	private static float BuildContinentsBase(float radial, FastNoiseLite fragmentNoise, float nx, float ny, float nz, float px, float py, int continentCount)
+	private static float BuildContinentsBase(float radial, FastNoiseLite fragmentNoise, float nx, float ny, float nz, float px, float py, int continentCount, int seed)
 	{
 		var normalizedCount = Mathf.Clamp(continentCount, 2, 4);
 		var centers = normalizedCount switch
@@ -3136,7 +3780,9 @@ public partial class Main : Control
 			4 => 0.26f,
 			_ => 0.36f
 		};
-		baseShape -= centerBridge * centerSuppression;
+		var centerNoise = 0.5f + 0.5f * fragmentNoise.GetNoise3D(3.1f * nx + seed * 0.0003f, 3.1f * ny, 3.1f * nz - seed * 0.0002f);
+		var centerSuppressionScale = Mathf.Lerp(0.70f, 1.20f, centerNoise);
+		baseShape -= centerBridge * centerSuppression * centerSuppressionScale;
 
 		var split = fragmentNoise.GetNoise3D(5.8f * nx, 5.8f * ny, 5.8f * nz);
 		baseShape += split * (normalizedCount == 4 ? 0.08f : 0.10f);
@@ -3235,8 +3881,50 @@ public partial class Main : Control
 		var averageTempCelsius = NormalizedTemperatureToCelsius(stats.AvgTemperature);
 		var forestPercent = ComputeForestCoveragePercent(_primaryWorld.Biome, MapWidth, MapHeight);
 		var (peakHeightMeters, deepSeaHeightMeters) = ComputeTerrainExtremesMeters(_primaryWorld.Elevation, MapWidth, MapHeight, SeaLevel, _currentReliefExaggeration);
-		_infoLabel.Text =
+		var baseInfoText =
 			$"地形形态:{morphologyText}{continentSuffix} | 海洋占比:{stats.OceanPercent:0.0}% | 森林占比:{forestPercent:0.0}% | 平均温度:{averageTempCelsius:0.0}℃ | 最高山峰高度:{FormatAltitude(peakHeightMeters)} | 最低深海高度:{FormatAltitude(deepSeaHeightMeters)}";
+
+		if (layer == MapLayer.Ecology)
+		{
+			EnsureEcologySimulation(_primaryWorld);
+			var ecology = _primaryWorld.EcologySimulation;
+			if (ecology != null)
+			{
+				baseInfoText += $" | 生态健康:{ecology.AvgEcologyHealth * 100f:0.0}% | 文明潜力:{ecology.AvgCivilizationPotential * 100f:0.0}% | 文明萌发区:{ecology.CivilizationEmergencePercent:0.0}%";
+			}
+		}
+
+		if (layer == MapLayer.Civilization)
+		{
+			EnsureCivilizationSimulation(_primaryWorld);
+			var civilization = _primaryWorld.CivilizationSimulation;
+			if (civilization != null)
+			{
+				baseInfoText += $" | 政体数量:{civilization.PolityCount} | 领土覆盖:{civilization.ControlledLandPercent:0.0}% | 核心腹地:{civilization.CoreCellPercent:0.0}% | 最大政体占比:{civilization.DominantPolitySharePercent:0.0}% | 聚落分级(村/镇/城邦):{civilization.HamletCount}/{civilization.TownCount}/{civilization.CityStateCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}% | 边界波动:{civilization.BorderVolatilityPercent:0.0}%";
+				var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
+				if (focusedEvent != null)
+				{
+					baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+				}
+			}
+		}
+
+		if (layer == MapLayer.TradeRoutes)
+		{
+			EnsureCivilizationSimulation(_primaryWorld);
+			var civilization = _primaryWorld.CivilizationSimulation;
+			if (civilization != null)
+			{
+				baseInfoText += $" | 贸易走廊覆盖:{civilization.TradeRouteCells} 格 | 枢纽联通率:{civilization.ConnectedHubPercent:0.0}% | 政体数量:{civilization.PolityCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}%";
+				var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
+				if (focusedEvent != null)
+				{
+					baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+				}
+			}
+		}
+
+		_infoLabel.Text = baseInfoText;
 		UpdateLorePanel();
 	}
 
@@ -3383,8 +4071,29 @@ public partial class Main : Control
 			MapLayer.Elevation => (int)_elevationStyle,
 			MapLayer.Wind => Mathf.RoundToInt(WindArrowDensity * 1000f),
 			MapLayer.Landform => Mathf.RoundToInt(BasinSensitivity * 1000f),
+			MapLayer.Ecology => BuildEcologySignature(),
+			MapLayer.Civilization => BuildCivilizationSignature(),
+			MapLayer.TradeRoutes => BuildCivilizationSignature(),
 			_ => 0
 		};
+	}
+
+	private int BuildEcologySignature()
+	{
+		return HashCode.Combine(
+			Seed,
+			_currentEpoch,
+			_speciesDiversity,
+			_civilAggression,
+			_magicDensity,
+			MapWidth,
+			MapHeight,
+			Mathf.RoundToInt(SeaLevel * 10000f));
+	}
+
+	private int BuildCivilizationSignature()
+	{
+		return BuildEcologySignature();
 	}
 
 	private void StoreLayerRenderCache(GeneratedWorldData world, MapLayer layer, LayerRenderCacheEntry entry)
@@ -3432,6 +4141,21 @@ public partial class Main : Control
 				: UpscaleImageNearest(landformImage, OutputWidth, OutputHeight);
 		}
 
+		if (layer == MapLayer.Ecology)
+		{
+			EnsureEcologySimulation(world);
+		}
+
+		if (layer == MapLayer.Civilization)
+		{
+			EnsureCivilizationSimulation(world);
+		}
+
+		if (layer == MapLayer.TradeRoutes)
+		{
+			EnsureCivilizationSimulation(world);
+		}
+
 		var sourceImage = _renderer.Render(
 			MapWidth,
 			MapHeight,
@@ -3447,7 +4171,13 @@ public partial class Main : Control
 			world.Ore,
 			world.Cities,
 			SeaLevel,
-			_elevationStyle);
+			_elevationStyle,
+			world.EcologySimulation?.EcologyHealth,
+			world.CivilizationSimulation?.Influence,
+			world.CivilizationSimulation?.PolityId,
+			world.CivilizationSimulation?.BorderMask,
+			world.CivilizationSimulation?.TradeRouteMask,
+			world.CivilizationSimulation?.TradeFlow);
 
 		var finalImage = MapWidth == OutputWidth && MapHeight == OutputHeight
 			? sourceImage
@@ -3458,7 +4188,70 @@ public partial class Main : Control
 			_renderer.OverlayWindArrows(finalImage, world.Wind, MapWidth, MapHeight, WindArrowDensity);
 		}
 
+		if (layer == MapLayer.Civilization || layer == MapLayer.TradeRoutes)
+		{
+			ApplyTimelineHotspotOverlay(finalImage, world, layer);
+		}
+
 		return finalImage;
+	}
+
+	private void EnsureEcologySimulation(GeneratedWorldData world)
+	{
+		var signature = BuildEcologySignature();
+		if (world.EcologySimulation != null && world.EcologySignature == signature)
+		{
+			return;
+		}
+
+		world.EcologySimulation = _ecologySimulator.Simulate(
+			MapWidth,
+			MapHeight,
+			Seed,
+			_currentEpoch,
+			_speciesDiversity,
+			_civilAggression,
+			_magicDensity,
+			SeaLevel,
+			world.Elevation,
+			world.Temperature,
+			world.Moisture,
+			world.River,
+			world.Biome);
+		world.EcologySignature = signature;
+	}
+
+	private void EnsureCivilizationSimulation(GeneratedWorldData world)
+	{
+		EnsureEcologySimulation(world);
+
+		var signature = BuildCivilizationSignature();
+		if (world.CivilizationSimulation != null && world.CivilizationSignature == signature)
+		{
+			return;
+		}
+
+		if (world.EcologySimulation == null)
+		{
+			world.CivilizationSimulation = null;
+			world.CivilizationSignature = int.MinValue;
+			return;
+		}
+
+		world.CivilizationSimulation = _civilizationSimulator.Simulate(
+			MapWidth,
+			MapHeight,
+			Seed,
+			_currentEpoch,
+			_civilAggression,
+			_speciesDiversity,
+			SeaLevel,
+			world.Elevation,
+			world.River,
+			world.Biome,
+			world.Cities,
+			world.EcologySimulation.CivilizationPotential);
+		world.CivilizationSignature = signature;
 	}
 
 	private Image BuildLandformImage(float[,] elevation, float[,] moisture, float[,] river, float seaLevel, int width, int height)
@@ -3747,6 +4540,9 @@ public partial class Main : Control
 			MapLayer.Biomes => "biomes",
 			MapLayer.Cities => "cities",
 			MapLayer.Landform => "landform",
+			MapLayer.Ecology => "ecology",
+			MapLayer.Civilization => "civilization",
+			MapLayer.TradeRoutes => "trade_routes",
 			_ => "satellite"
 		};
 	}
@@ -3855,6 +4651,27 @@ public partial class Main : Control
 				break;
 			case MapLayer.Landform:
 				SetLandformLegend();
+				break;
+			case MapLayer.Ecology:
+				SetGradientLegend("生态健康图例", "脆弱", "繁荣",
+					new Color(0.54f, 0.31f, 0.17f),
+					new Color(0.84f, 0.62f, 0.27f),
+					new Color(0.46f, 0.69f, 0.32f),
+					new Color(0.17f, 0.81f, 0.45f));
+				break;
+			case MapLayer.Civilization:
+				SetGradientLegend("文明影响图例", "边缘", "核心",
+					new Color(0.22f, 0.25f, 0.32f),
+					new Color(0.44f, 0.56f, 0.74f),
+					new Color(0.78f, 0.50f, 0.26f),
+					new Color(0.95f, 0.85f, 0.56f));
+				break;
+			case MapLayer.TradeRoutes:
+				SetGradientLegend("贸易走廊图例", "弱", "强",
+					new Color(0.25f, 0.29f, 0.34f),
+					new Color(0.64f, 0.53f, 0.36f),
+					new Color(0.92f, 0.73f, 0.38f),
+					new Color(0.97f, 0.89f, 0.62f));
 				break;
 			default:
 				_legendPanel.Visible = false;
@@ -4252,7 +5069,8 @@ public partial class Main : Control
 			MapMode.Arcane => "奥术",
 			_ => "地理"
 		};
-		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch}";
+		var timelineEvents = GetTimelineEventsForCurrentWorld();
+		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch} | {BuildReplayStatusText(timelineEvents)}";
 
 		_loreText.Text = BuildNarrativeText(sampleX, sampleY, biome, landform, hazardSkulls);
 	}
@@ -4267,7 +5085,10 @@ public partial class Main : Control
 			_ => "地理"
 		};
 
-		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch}";
+		var timelineEvents = GetTimelineEventsForCurrentWorld();
+		UpdateTimelineReplayCursor(timelineEvents);
+
+		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch} | {BuildReplayStatusText(timelineEvents)}";
 		var baseThreat = Mathf.Clamp(1 + _civilAggression / 40 + _magicDensity / 60, 1, 5);
 		_threatLabel.Text = $"生存威胁指数: {BuildThreatIcons(baseThreat)}";
 
@@ -4348,6 +5169,10 @@ public partial class Main : Control
 			_ => "高多样性交汇，边境语言与信仰高度混融"
 		};
 
+		EnsureCivilizationSimulation(_primaryWorld);
+		var civilization = _primaryWorld.CivilizationSimulation;
+		var timelineText = BuildCivilizationTimelineText(civilization);
+
 		return string.Concat(
 			"[b]世界编年概览：[/b]\n",
 			"当前纪元：", _currentEpoch.ToString(), " / ", MaxEpoch.ToString(), "\n",
@@ -4356,8 +5181,333 @@ public partial class Main : Control
 			"[b]文明趋势：[/b] ", civilizationProfile, "\n",
 			"[b]奥术格局：[/b] ", arcaneProfile, "\n",
 			"[b]族群生态：[/b] ", diversityProfile, "\n",
-			"提示：点击地图后将切换为区域级叙事。"
+			timelineText,
+			"\n提示：点击地图后将切换为区域级叙事。"
 		);
+	}
+
+	private string BuildCivilizationTimelineText(CivilizationSimulationResult? civilization)
+	{
+		if (civilization == null || civilization.RecentEvents.Length == 0)
+		{
+			return "[b]近纪元事件：[/b] 暂无可回放事件。";
+		}
+
+		var selectedEpoch = _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch;
+		var selectedIndex = ResolveTimelineEventIndex(civilization.RecentEvents, selectedEpoch);
+		if (selectedIndex >= 0)
+		{
+			_selectedTimelineEventEpoch = civilization.RecentEvents[selectedIndex].Epoch;
+		}
+
+		var builder = new StringBuilder();
+		builder.Append("[b]近纪元事件：[/b]\n");
+		var maxEvents = civilization.RecentEvents.Length;
+		for (var i = civilization.RecentEvents.Length - maxEvents; i < civilization.RecentEvents.Length; i++)
+		{
+			if (i < 0)
+			{
+				continue;
+			}
+
+			var evt = civilization.RecentEvents[i];
+			var impactStars = BuildImpactIcons(evt.ImpactLevel);
+			var isSelected = i == selectedIndex;
+			var prefix = isSelected ? "▶ " : "- ";
+			builder.Append(prefix).Append("第 ").Append(evt.Epoch).Append(" 纪元 [").Append(evt.Category).Append("] ").Append(evt.Summary).Append(" ").Append(impactStars);
+			if (isSelected)
+			{
+				builder.Append(" [color=#ffd27a]◀ 回放焦点[/color]");
+			}
+			builder.Append("\n");
+		}
+
+		return builder.ToString();
+	}
+
+	private CivilizationEpochEvent[] GetTimelineEventsForCurrentWorld()
+	{
+		if (_primaryWorld == null)
+		{
+			return Array.Empty<CivilizationEpochEvent>();
+		}
+
+		EnsureCivilizationSimulation(_primaryWorld);
+		return _primaryWorld.CivilizationSimulation?.RecentEvents ?? Array.Empty<CivilizationEpochEvent>();
+	}
+
+	private void UpdateTimelineReplayCursor(CivilizationEpochEvent[] events)
+	{
+		if (events.Length == 0)
+		{
+			if (_selectedTimelineEventEpoch < 0)
+			{
+				_selectedTimelineEventEpoch = _currentEpoch;
+			}
+
+			_epochEventIndexLabel.Text = "事件 --/--";
+			_prevEpochButton.Disabled = _currentEpoch <= 0;
+			_nextEpochButton.Disabled = _currentEpoch >= MaxEpoch;
+			return;
+		}
+
+		var selectedEpoch = _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch;
+		var selectedIndex = ResolveTimelineEventIndex(events, selectedEpoch);
+		if (selectedIndex < 0)
+		{
+			_epochEventIndexLabel.Text = "事件 --/--";
+			_prevEpochButton.Disabled = false;
+			_nextEpochButton.Disabled = false;
+			return;
+		}
+
+		_selectedTimelineEventEpoch = events[selectedIndex].Epoch;
+		_epochEventIndexLabel.Text = $"事件 {selectedIndex + 1}/{events.Length}";
+		_prevEpochButton.Disabled = selectedIndex <= 0;
+		_nextEpochButton.Disabled = selectedIndex >= events.Length - 1;
+	}
+
+	private static int ResolveTimelineEventIndex(CivilizationEpochEvent[] events, int targetEpoch)
+	{
+		if (events.Length == 0)
+		{
+			return -1;
+		}
+
+		var bestIndex = 0;
+		var bestDistance = Math.Abs(events[0].Epoch - targetEpoch);
+
+		for (var i = 1; i < events.Length; i++)
+		{
+			var distance = Math.Abs(events[i].Epoch - targetEpoch);
+			if (distance > bestDistance)
+			{
+				continue;
+			}
+
+			if (distance == bestDistance && events[i].Epoch < events[bestIndex].Epoch)
+			{
+				continue;
+			}
+
+			bestDistance = distance;
+			bestIndex = i;
+		}
+
+		return bestIndex;
+	}
+
+	private string BuildReplayStatusText(CivilizationEpochEvent[] events)
+	{
+		if (events.Length == 0)
+		{
+			return "回放: --/--";
+		}
+
+		var index = ResolveTimelineEventIndex(events, _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch);
+		if (index < 0)
+		{
+			return "回放: --/--";
+		}
+
+		return $"回放: {index + 1}/{events.Length}";
+	}
+
+	private CivilizationEpochEvent? GetFocusedTimelineEvent(CivilizationEpochEvent[] events)
+	{
+		if (events.Length == 0)
+		{
+			return null;
+		}
+
+		var index = ResolveTimelineEventIndex(events, _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch);
+		if (index < 0 || index >= events.Length)
+		{
+			return null;
+		}
+
+		return events[index];
+	}
+
+	private void ApplyTimelineHotspotOverlay(Image image, GeneratedWorldData world, MapLayer layer)
+	{
+		var civilization = world.CivilizationSimulation;
+		if (civilization == null)
+		{
+			return;
+		}
+
+		var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
+		if (focusedEvent == null)
+		{
+			return;
+		}
+
+		var hotspots = FindEventHotspots(world, civilization, focusedEvent);
+		if (hotspots.Count == 0)
+		{
+			return;
+		}
+
+		var baseColor = focusedEvent.Category switch
+		{
+			"战争" => new Color(1f, 0.34f, 0.30f, 1f),
+			"联盟" => new Color(0.40f, 0.82f, 1f, 1f),
+			"贸易" => new Color(1f, 0.80f, 0.36f, 1f),
+			_ => new Color(0.95f, 0.70f, 0.42f, 1f)
+		};
+
+		for (var i = 0; i < hotspots.Count; i++)
+		{
+			var hotspot = hotspots[i];
+			var mappedX = Mathf.RoundToInt((hotspot.X + 0.5f) * image.GetWidth() / Mathf.Max(MapWidth, 1)) - 1;
+			var mappedY = Mathf.RoundToInt((hotspot.Y + 0.5f) * image.GetHeight() / Mathf.Max(MapHeight, 1)) - 1;
+			var scale = Mathf.Max(image.GetWidth() / (float)Mathf.Max(MapWidth, 1), image.GetHeight() / (float)Mathf.Max(MapHeight, 1));
+			var radius = Mathf.Clamp(Mathf.RoundToInt((layer == MapLayer.Civilization ? 4f : 3f) * scale), 2, 20);
+			var intensity = Mathf.Clamp(0.28f + hotspot.Score * 0.46f, 0.22f, 0.72f);
+			DrawHotspotCircle(image, mappedX, mappedY, radius, baseColor, intensity);
+		}
+	}
+
+	private List<TimelineHotspotPoint> FindEventHotspots(
+		GeneratedWorldData world,
+		CivilizationSimulationResult civilization,
+		CivilizationEpochEvent focusedEvent)
+	{
+		var points = new List<TimelineHotspotPoint>(64);
+		var width = MapWidth;
+		var height = MapHeight;
+
+		for (var y = 0; y < height; y++)
+		{
+			for (var x = 0; x < width; x++)
+			{
+				if (world.Elevation[x, y] <= SeaLevel)
+				{
+					continue;
+				}
+
+				var influence = civilization.Influence[x, y];
+				var border = civilization.BorderMask[x, y];
+				var route = civilization.TradeRouteMask[x, y];
+				var flow = civilization.TradeFlow[x, y];
+
+				float score;
+				switch (focusedEvent.Category)
+				{
+					case "战争":
+						if (!border)
+						{
+							continue;
+						}
+						score = 0.56f * influence + 0.26f * flow + 0.18f * HashNoise01(Seed ^ focusedEvent.Epoch, x, y);
+						break;
+					case "联盟":
+						if (!border && !route)
+						{
+							continue;
+						}
+						score = 0.46f * influence + 0.34f * flow + 0.20f * HashNoise01(Seed ^ (focusedEvent.Epoch * 3), x, y);
+						break;
+					default:
+						if (!route)
+						{
+							continue;
+						}
+						score = 0.30f * influence + 0.50f * flow + 0.20f * HashNoise01(Seed ^ (focusedEvent.Epoch * 5), x, y);
+						break;
+				}
+
+				score = Mathf.Clamp(score, 0f, 1f);
+				if (score < 0.60f)
+				{
+					continue;
+				}
+
+				points.Add(new TimelineHotspotPoint(x, y, score));
+			}
+		}
+
+		if (points.Count <= 8)
+		{
+			return points;
+		}
+
+		points.Sort((left, right) => right.Score.CompareTo(left.Score));
+		var selected = new List<TimelineHotspotPoint>(8);
+		for (var i = 0; i < points.Count && selected.Count < 8; i++)
+		{
+			var candidate = points[i];
+			var tooClose = false;
+			for (var j = 0; j < selected.Count; j++)
+			{
+				var existing = selected[j];
+				var dx = Math.Abs(candidate.X - existing.X);
+				dx = Math.Min(dx, width - dx);
+				var dy = Math.Abs(candidate.Y - existing.Y);
+				if (dx * dx + dy * dy < 64)
+				{
+					tooClose = true;
+					break;
+				}
+			}
+
+			if (!tooClose)
+			{
+				selected.Add(candidate);
+			}
+		}
+
+		return selected;
+	}
+
+	private static void DrawHotspotCircle(Image image, int centerX, int centerY, int radius, Color tint, float intensity)
+	{
+		var width = image.GetWidth();
+		var height = image.GetHeight();
+		var radiusSq = radius * radius;
+
+		for (var oy = -radius; oy <= radius; oy++)
+		{
+			for (var ox = -radius; ox <= radius; ox++)
+			{
+				var distSq = ox * ox + oy * oy;
+				if (distSq > radiusSq)
+				{
+					continue;
+				}
+
+				var x = WrapX(centerX + ox, width);
+				var y = ClampY(centerY + oy, height);
+				var local = 1f - Mathf.Clamp(Mathf.Sqrt(distSq) / Mathf.Max(radius, 1), 0f, 1f);
+				var alpha = Mathf.Clamp(intensity * (0.45f + 0.55f * local), 0f, 0.85f);
+
+				var original = image.GetPixel(x, y);
+				image.SetPixel(x, y, LerpColor(original, tint, alpha));
+			}
+		}
+	}
+
+	private static float HashNoise01(int seed, int x, int y)
+	{
+		uint hash = (uint)seed;
+		hash ^= (uint)x * 1597334677u;
+		hash ^= (uint)y * 3812015801u;
+		hash = (hash ^ (hash >> 16)) * 2246822519u;
+		hash ^= hash >> 13;
+		return (hash & 0x00FFFFFFu) / 16777215f;
+	}
+
+	private static string BuildImpactIcons(int level)
+	{
+		var clamped = Mathf.Clamp(level, 1, 5);
+		var builder = new StringBuilder(clamped);
+		for (var i = 0; i < clamped; i++)
+		{
+			builder.Append("◆");
+		}
+
+		return builder.ToString();
 	}
 
 	private string BuildNarrativeText(int x, int y, BiomeType biome, LandformType landform, int threatSkulls)

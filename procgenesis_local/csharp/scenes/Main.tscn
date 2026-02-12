@@ -89,6 +89,18 @@ bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
 border_width_top = 1
 border_color = Color(0.117647, 0.14902, 0.192157, 1)
 
+[sub_resource type="StyleBoxFlat" id="14"]
+bg_color = Color(0.054902, 0.0705882, 0.0980392, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.192157, 0.243137, 0.313726, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="Main" type="Control" unique_id=1944867491]
 layout_mode = 3
 anchors_preset = 15
@@ -752,6 +764,161 @@ max_value = 2.0
 step = 0.01
 value = 1.0
 
+[node name="MountainControlGroup" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MountainControlTitle" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.819608, 0.909804, 1, 0.95)
+theme_override_font_sizes/font_size = 12
+text = "⛰ 山脉系统"
+
+[node name="MountainPresetWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MountainPresetLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainPresetWrap"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "山脉模板"
+
+[node name="MountainPresetOption" type="OptionButton" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainPresetWrap"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+[node name="MountainControlToggleButton" type="Button" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+size_flags_horizontal = 1
+theme_override_font_sizes/font_size = 10
+text = "展开山脉参数 ▼"
+
+[node name="MountainControlSummary" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 0.95)
+theme_override_font_sizes/font_size = 10
+text = "起伏:1.00 | 造山:1.00 | 俯冲:0.72 | 年龄:58"
+autowrap_mode = 2
+
+[node name="MountainControlBody" type="PanelContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="MountainControlBodyMargin" type="MarginContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="MountainControlBodyContent" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="InteriorReliefWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="InteriorReliefHeader" type="HBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/InteriorReliefWrap"]
+layout_mode = 2
+
+[node name="InteriorReliefLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/InteriorReliefWrap/InteriorReliefHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "内陆起伏度"
+
+[node name="InteriorReliefValue" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/InteriorReliefWrap/InteriorReliefHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+[node name="InteriorReliefSlider" type="HSlider" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/InteriorReliefWrap"]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="OrogenyStrengthWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OrogenyStrengthHeader" type="HBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/OrogenyStrengthWrap"]
+layout_mode = 2
+
+[node name="OrogenyStrengthLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/OrogenyStrengthWrap/OrogenyStrengthHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "环大陆造山带强度"
+
+[node name="OrogenyStrengthValue" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/OrogenyStrengthWrap/OrogenyStrengthHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+[node name="OrogenyStrengthSlider" type="HSlider" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/OrogenyStrengthWrap"]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+[node name="SubductionArcRatioWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SubductionArcRatioHeader" type="HBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/SubductionArcRatioWrap"]
+layout_mode = 2
+
+[node name="SubductionArcRatioLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/SubductionArcRatioWrap/SubductionArcRatioHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "俯冲弧成山率"
+
+[node name="SubductionArcRatioValue" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/SubductionArcRatioWrap/SubductionArcRatioHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "0.72"
+
+[node name="SubductionArcRatioSlider" type="HSlider" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/SubductionArcRatioWrap"]
+layout_mode = 2
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 0.72
+
+[node name="ContinentalAgeWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ContinentalAgeHeader" type="HBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/ContinentalAgeWrap"]
+layout_mode = 2
+
+[node name="ContinentalAgeLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/ContinentalAgeWrap/ContinentalAgeHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "大陆年龄层"
+
+[node name="ContinentalAgeValue" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/ContinentalAgeWrap/ContinentalAgeHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "58"
+
+[node name="ContinentalAgeSlider" type="HSlider" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyMargin/MountainControlBodyContent/ContinentalAgeWrap"]
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 58.0
+
 [node name="WindArrowDensityWrap" type="VBoxContainer" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000407]
 layout_mode = 2
 theme_override_constants/separation = 4
@@ -1093,6 +1260,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 11
 text = "历史进程"
 
+[node name="PrevEpochButton" type="Button" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsHBox/TimelineContainer"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "上一纪元"
+
 [node name="TimelineSlider" type="HSlider" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsHBox/TimelineContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -1106,6 +1279,18 @@ layout_mode = 2
 theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
 theme_override_font_sizes/font_size = 11
 text = "第 450 纪元"
+
+[node name="NextEpochButton" type="Button" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsHBox/TimelineContainer"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "下一纪元"
+
+[node name="EpochEventIndexLabel" type="Label" parent="Root/ContentHBox/RightMargin/RightVBox/PreviewPanel/MapRoot/StatsPanel/StatsMargin/StatsHBox/TimelineContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.737255, 0.823529, 0.933333, 0.95)
+theme_override_font_sizes/font_size = 10
+text = "事件 --/--"
 
 [node name="RightPanel" type="PanelContainer" parent="Root/ContentHBox"]
 custom_minimum_size = Vector2(300, 0)
