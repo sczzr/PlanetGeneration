@@ -1,0 +1,292 @@
+[gd_scene format=3 uid="uid://3uqs8euqxsu"]
+
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_right = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="6"]
+bg_color = Color(0.117647, 0.152941, 0.219608, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="7"]
+bg_color = Color(0.176471, 0.215686, 0.286275, 0.98)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="LeftPanel" type="PanelContainer" unique_id=1374329526]
+custom_minimum_size = Vector2(288, 0)
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("2")
+
+[node name="LeftScroll" type="ScrollContainer" parent="." unique_id=740548868]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="LeftMargin" type="MarginContainer" parent="LeftScroll" unique_id=1841768892]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 20
+
+[node name="LeftVBox" type="VBoxContainer" parent="LeftScroll/LeftMargin" unique_id=1657601616]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="BaseHeader" type="Label" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1223326048]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
+text = "基础配置 / BASE"
+
+[node name="BaseDivider" type="HSeparator" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=271594714]
+layout_mode = 2
+
+[node name="SeedLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=2003614942]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "种子 Seed"
+
+[node name="SeedRow" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=834585874]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SeedSpin" type="SpinBox" parent="LeftScroll/LeftMargin/LeftVBox/SeedRow" unique_id=103623424]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = -2147483600.0
+max_value = 2147483647.0
+rounded = true
+
+[node name="RandomButton" type="Button" parent="LeftScroll/LeftMargin/LeftVBox/SeedRow" unique_id=1067598772]
+custom_minimum_size = Vector2(58, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+text = "随机"
+
+[node name="MapSizeWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1404267360]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MapSizeText" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/MapSizeWrap" unique_id=585984327]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "地图信息"
+
+[node name="MapSizeOption" type="OptionButton" parent="LeftScroll/LeftMargin/LeftVBox/MapSizeWrap" unique_id=1390885125]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+[node name="TerrainPresetWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=336006202]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TerrainPresetText" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/TerrainPresetWrap" unique_id=1049304822]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "地形模板"
+
+[node name="TerrainPresetOption" type="OptionButton" parent="LeftScroll/LeftMargin/LeftVBox/TerrainPresetWrap" unique_id=239319434]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+[node name="ContinentCountWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1477538388]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ContinentCountText" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/ContinentCountWrap" unique_id=1255590301]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "大陆数量"
+
+[node name="ContinentCountOption" type="OptionButton" parent="LeftScroll/LeftMargin/LeftVBox/ContinentCountWrap" unique_id=2136131008]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+[node name="EnvironmentSpacer" type="Control" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1110348349]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="EnvironmentHeader" type="Label" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=256815202]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
+text = "环境算法 / ENVIRONMENT"
+
+[node name="EnvironmentDivider" type="HSeparator" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1319969813]
+layout_mode = 2
+
+[node name="SeaWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1095274317]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SeaHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/SeaWrap" unique_id=908118718]
+layout_mode = 2
+
+[node name="SeaLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader" unique_id=1265076445]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "海平面 Sea"
+
+[node name="SeaLevelValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/SeaWrap/SeaHeader" unique_id=68464643]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "0.50"
+
+[node name="SeaLevelSlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/SeaWrap" unique_id=1034760689]
+layout_mode = 2
+min_value = 0.1
+max_value = 0.9
+step = 0.01
+value = 0.5
+
+[node name="HeatWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=579027881]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeatHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/HeatWrap" unique_id=428946960]
+layout_mode = 2
+
+[node name="HeatLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader" unique_id=751802011]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "热量 Heat"
+
+[node name="HeatValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/HeatWrap/HeatHeader" unique_id=1530327441]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.980392, 0.603922, 0.32549, 1)
+theme_override_font_sizes/font_size = 11
+text = "0.50"
+
+[node name="HeatSlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/HeatWrap" unique_id=1046546981]
+layout_mode = 2
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="ErosionWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1251382558]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ErosionHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/ErosionWrap" unique_id=1771498046]
+layout_mode = 2
+
+[node name="ErosionLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader" unique_id=1468543993]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "侵蚀度 Erosion"
+
+[node name="ErosionValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/ErosionWrap/ErosionHeader" unique_id=1203344200]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "5"
+
+[node name="ErosionSlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/ErosionWrap" unique_id=2024104394]
+layout_mode = 2
+max_value = 20.0
+value = 5.0
+
+[node name="LoreHeader" type="Label" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1410462420]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
+text = "叙事设定 / NARRATIVE"
+
+[node name="LoreDivider" type="HSeparator" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=274088798]
+layout_mode = 2
+
+[node name="MagicWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1226013776]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MagicHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/MagicWrap" unique_id=1537583959]
+layout_mode = 2
+
+[node name="MagicLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/MagicWrap/MagicHeader" unique_id=1125162304]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "以太/魔法浓度"
+
+[node name="MagicValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/MagicWrap/MagicHeader" unique_id=990542608]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.737255, 0.584314, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "75"
+
+[node name="MagicSlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/MagicWrap" unique_id=1153550921]
+layout_mode = 2
+value = 75.0
+
+[node name="AggressionWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=170823426]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="AggressionHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/AggressionWrap" unique_id=1898319376]
+layout_mode = 2
+
+[node name="AggressionLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/AggressionWrap/AggressionHeader" unique_id=2103554749]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "文明侵略性"
+
+[node name="AggressionValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/AggressionWrap/AggressionHeader" unique_id=424944032]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.572549, 0.427451, 1)
+theme_override_font_sizes/font_size = 11
+text = "42"
+
+[node name="AggressionSlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/AggressionWrap" unique_id=75942157]
+layout_mode = 2
+value = 42.0
+
+[node name="DiversityWrap" type="VBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1298267528]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="DiversityHeader" type="HBoxContainer" parent="LeftScroll/LeftMargin/LeftVBox/DiversityWrap" unique_id=1441991782]
+layout_mode = 2
+
+[node name="DiversityLabel" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/DiversityWrap/DiversityHeader" unique_id=1667021175]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "种族多样性"
+
+[node name="DiversityValue" type="Label" parent="LeftScroll/LeftMargin/LeftVBox/DiversityWrap/DiversityHeader" unique_id=1174497410]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.541176, 0.831373, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "68"
+
+[node name="DiversitySlider" type="HSlider" parent="LeftScroll/LeftMargin/LeftVBox/DiversityWrap" unique_id=339914185]
+layout_mode = 2
+value = 68.0
+
+[node name="CompareToggle" type="CheckBox" parent="LeftScroll/LeftMargin/LeftVBox" unique_id=1449879870]
+visible = false
+layout_mode = 2
+text = "对比模式 Compare"

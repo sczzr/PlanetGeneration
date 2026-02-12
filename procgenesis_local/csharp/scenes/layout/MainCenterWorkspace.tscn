@@ -1,0 +1,977 @@
+[gd_scene format=3]
+
+
+[sub_resource type="StyleBoxFlat" id="1"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="4"]
+bg_color = Color(0.196078, 0.45098, 0.862745, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="5"]
+bg_color = Color(0.152941, 0.380392, 0.760784, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="6"]
+bg_color = Color(0.117647, 0.152941, 0.219608, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="7"]
+bg_color = Color(0.176471, 0.215686, 0.286275, 0.98)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="2"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_right = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+
+[sub_resource type="StyleBoxFlat" id="3"]
+bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="8"]
+bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="9"]
+bg_color = Color(0.0431373, 0.054902, 0.0784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="10"]
+bg_color = Color(0.0156863, 0.0196078, 0.0313726, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 1, 1, 0.08)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="13"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="12"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_top = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="14"]
+bg_color = Color(0.054902, 0.0705882, 0.0980392, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.192157, 0.243137, 0.313726, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[node name="RightMargin" type="MarginContainer" unique_id=1146850993]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+
+[node name="PreviewPanel" type="PanelContainer" parent="." unique_id=1671673744]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("3")
+
+
+[node name="MapRoot" type="Control" parent="PreviewPanel" unique_id=495523813]
+layout_mode = 2
+
+
+[node name="LayerRow" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=1243131895]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 156.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("8")
+
+
+[node name="LayerRowHBox" type="HBoxContainer" parent="PreviewPanel/MapRoot/LayerRow" unique_id=946430206]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+
+[node name="LayerButtonsScroll" type="ScrollContainer" parent="PreviewPanel/MapRoot/LayerRow/LayerRowHBox" unique_id=484254800]
+layout_mode = 2
+size_flags_horizontal = 3
+vertical_scroll_mode = 1
+
+
+[node name="LayerButtons" type="VBoxContainer" parent="PreviewPanel/MapRoot/LayerRow/LayerRowHBox/LayerButtonsScroll" unique_id=613073903]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+
+[node name="MapModeOption" type="OptionButton" parent="PreviewPanel/MapRoot/LayerRow/LayerRowHBox"]
+custom_minimum_size = Vector2(126, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+
+[node name="LayerOption" type="OptionButton" parent="PreviewPanel/MapRoot/LayerRow/LayerRowHBox" unique_id=357828885]
+visible = false
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+
+[node name="MapViewport" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=1422795377]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 156.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("9")
+
+
+[node name="MapViewportMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/MapViewport" unique_id=773229937]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+
+[node name="MapCenter" type="CenterContainer" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin" unique_id=1206939394]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+
+[node name="MapAspect" type="AspectRatioContainer" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter" unique_id=1961196017]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+ratio = 2.0
+
+
+[node name="MapTextureFrame" type="PanelContainer" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect" unique_id=2097853592]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("10")
+
+
+[node name="MapTexture" type="TextureRect" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect/MapTextureFrame" unique_id=814670618]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 6
+
+
+[node name="LegendPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=1673491028]
+visible = false
+z_index = 11
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -252.0
+offset_top = 54.0
+offset_right = -12.0
+offset_bottom = 114.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("13")
+
+
+[node name="AdvancedSettingsPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=2100000402]
+visible = false
+z_index = 12
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -252.0
+offset_top = 54.0
+offset_right = -12.0
+offset_bottom = 560.0
+theme_override_styles/panel = SubResource("13")
+
+
+[node name="AdvancedSettingsMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel" unique_id=2100000403]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+
+[node name="AdvancedSettingsVBox" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin" unique_id=2100000404]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+
+[node name="AdvancedSettingsTitle" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000405]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "高级设置 / ADVANCED"
+
+
+[node name="AdvancedSettingsDivider" type="HSeparator" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000406]
+layout_mode = 2
+
+
+[node name="UiFontScaleWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="UiFontScaleHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/UiFontScaleWrap"]
+layout_mode = 2
+
+
+[node name="UiFontScaleLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/UiFontScaleWrap/UiFontScaleHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "界面字体大小"
+
+
+[node name="UiFontScaleValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/UiFontScaleWrap/UiFontScaleHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "92%"
+
+
+[node name="UiFontScaleSlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/UiFontScaleWrap"]
+layout_mode = 2
+min_value = 60.0
+max_value = 140.0
+step = 1.0
+value = 92.0
+
+
+[node name="RiverToggle" type="CheckBox" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=1626677257]
+layout_mode = 2
+button_pressed = true
+text = "河流系统 Rivers"
+
+
+[node name="RiverDensityWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=784226101]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="RiverDensityHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/RiverDensityWrap" unique_id=1991733352]
+layout_mode = 2
+
+
+[node name="RiverDensityLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/RiverDensityWrap/RiverDensityHeader" unique_id=1089918681]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "河流密集度"
+
+
+[node name="RiverDensityValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/RiverDensityWrap/RiverDensityHeader" unique_id=1143508850]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+
+[node name="RiverDensitySlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/RiverDensityWrap" unique_id=932685915]
+layout_mode = 2
+min_value = 0.4
+max_value = 2.5
+step = 0.01
+value = 1.4
+
+
+[node name="BasinSensitivityWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000415]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="BasinSensitivityHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/BasinSensitivityWrap" unique_id=2100000416]
+layout_mode = 2
+
+
+[node name="BasinSensitivityLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/BasinSensitivityWrap/BasinSensitivityHeader" unique_id=2100000417]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "盆地判定灵敏度"
+
+
+[node name="BasinSensitivityValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/BasinSensitivityWrap/BasinSensitivityHeader" unique_id=2100000418]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+
+[node name="BasinSensitivitySlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/BasinSensitivityWrap" unique_id=2100000419]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+
+[node name="MountainControlGroup" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+
+[node name="MountainControlTitle" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.819608, 0.909804, 1, 0.95)
+theme_override_font_sizes/font_size = 12
+text = "⛰ 山脉系统"
+
+
+[node name="MountainPresetWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="MountainPresetLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainPresetWrap"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "山脉模板"
+
+
+[node name="MountainPresetOption" type="OptionButton" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainPresetWrap"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+
+[node name="MountainControlToggleButton" type="Button" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+size_flags_horizontal = 1
+theme_override_font_sizes/font_size = 10
+text = "展开山脉参数 ▼"
+
+
+[node name="MountainControlSummary" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 0.95)
+theme_override_font_sizes/font_size = 10
+text = "起伏:1.00 | 造山:1.00 | 俯冲:0.72 | 年龄:58"
+autowrap_mode = 2
+
+
+[node name="MountainControlBody" type="PanelContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+
+[node name="MountainControlBodyContent" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+
+[node name="InteriorReliefWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="InteriorReliefHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/InteriorReliefWrap"]
+layout_mode = 2
+
+
+[node name="InteriorReliefLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/InteriorReliefWrap/InteriorReliefHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "内陆起伏度"
+
+
+[node name="InteriorReliefValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/InteriorReliefWrap/InteriorReliefHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+
+[node name="InteriorReliefSlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/InteriorReliefWrap"]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+
+[node name="OrogenyStrengthWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="OrogenyStrengthHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/OrogenyStrengthWrap"]
+layout_mode = 2
+
+
+[node name="OrogenyStrengthLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/OrogenyStrengthWrap/OrogenyStrengthHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "环大陆造山带强度"
+
+
+[node name="OrogenyStrengthValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/OrogenyStrengthWrap/OrogenyStrengthHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+
+[node name="OrogenyStrengthSlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/OrogenyStrengthWrap"]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+
+[node name="SubductionArcRatioWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="SubductionArcRatioHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/SubductionArcRatioWrap"]
+layout_mode = 2
+
+
+[node name="SubductionArcRatioLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/SubductionArcRatioWrap/SubductionArcRatioHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "俯冲弧成山率"
+
+
+[node name="SubductionArcRatioValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/SubductionArcRatioWrap/SubductionArcRatioHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "0.72"
+
+
+[node name="SubductionArcRatioSlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/SubductionArcRatioWrap"]
+layout_mode = 2
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 0.72
+
+
+[node name="ContinentalAgeWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="ContinentalAgeHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/ContinentalAgeWrap"]
+layout_mode = 2
+
+
+[node name="ContinentalAgeLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/ContinentalAgeWrap/ContinentalAgeHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "大陆年龄层"
+
+
+[node name="ContinentalAgeValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/ContinentalAgeWrap/ContinentalAgeHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "58"
+
+
+[node name="ContinentalAgeSlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/MountainControlGroup/MountainControlBody/MountainControlBodyContent/ContinentalAgeWrap"]
+layout_mode = 2
+max_value = 100.0
+step = 1.0
+value = 58.0
+
+
+[node name="WindArrowDensityWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000407]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="WindArrowDensityHeader" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/WindArrowDensityWrap" unique_id=2100000408]
+layout_mode = 2
+
+
+[node name="WindArrowDensityLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/WindArrowDensityWrap/WindArrowDensityHeader" unique_id=2100000409]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "风场箭头密度"
+
+
+[node name="WindArrowDensityValue" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/WindArrowDensityWrap/WindArrowDensityHeader" unique_id=2100000410]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.313726, 0.835294, 0.584314, 1)
+theme_override_font_sizes/font_size = 11
+text = "1.00"
+
+
+[node name="WindArrowDensitySlider" type="HSlider" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/WindArrowDensityWrap" unique_id=2100000411]
+layout_mode = 2
+min_value = 0.5
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+
+[node name="ElevationStyleWrap" type="VBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000201]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="ElevationStyleText" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/ElevationStyleWrap" unique_id=2100000202]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "高程风格"
+
+
+[node name="ElevationStyleOption" type="OptionButton" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/ElevationStyleWrap" unique_id=2100000203]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+
+[node name="CacheDivider" type="HSeparator" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000500]
+layout_mode = 2
+
+
+[node name="CacheTitle" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000501]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 11
+text = "缓存管理"
+
+
+[node name="CacheGroupWrap" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000502]
+layout_mode = 2
+
+
+[node name="CacheGroupText" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/CacheGroupWrap" unique_id=2100000503]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "存档"
+
+
+[node name="ArchiveOption" type="OptionButton" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/CacheGroupWrap" unique_id=2100000504]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+
+
+[node name="CacheButtonsRow" type="HBoxContainer" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000505]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+
+[node name="PersistCacheGroupButton" type="Button" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/CacheButtonsRow" unique_id=2100000506]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+text = "保存当前存档"
+
+
+[node name="ClearCacheButton" type="Button" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox/CacheButtonsRow" unique_id=2100000507]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+text = "清理自动缓存"
+
+
+[node name="CacheStatsLabel" type="Label" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000508]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.647059, 0.713726, 1)
+theme_override_font_sizes/font_size = 10
+text = "自动缓存: 0 条 | 0 B\n存档: 0 份"
+autowrap_mode = 2
+
+
+[node name="ResetAdvancedSettingsButton" type="Button" parent="PreviewPanel/MapRoot/AdvancedSettingsPanel/AdvancedSettingsMargin/AdvancedSettingsVBox" unique_id=2100000420]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+text = "恢复默认设置"
+
+
+[node name="BiomeHoverPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=2100000412]
+visible = false
+z_index = 13
+layout_mode = 0
+offset_right = 280.0
+offset_bottom = 140.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("13")
+
+
+[node name="BiomeHoverMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/BiomeHoverPanel" unique_id=2100000413]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+
+[node name="BiomeHoverText" type="Label" parent="PreviewPanel/MapRoot/BiomeHoverPanel/BiomeHoverMargin" unique_id=2100000414]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.839216, 0.901961, 0.980392, 1)
+theme_override_font_sizes/font_size = 11
+text = "群系信息"
+autowrap_mode = 2
+
+
+[node name="LegendMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/LegendPanel" unique_id=1310652454]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+
+[node name="LegendVBox" type="VBoxContainer" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin" unique_id=1548036802]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+
+[node name="LegendTitle" type="Label" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox" unique_id=1555660744]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.839216, 0.901961, 0.980392, 1)
+theme_override_font_sizes/font_size = 11
+text = "图例"
+
+
+[node name="LegendTexture" type="TextureRect" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox" unique_id=517948385]
+custom_minimum_size = Vector2(220, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+expand_mode = 1
+stretch_mode = 6
+
+
+[node name="LegendLabels" type="HBoxContainer" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox" unique_id=1302408900]
+layout_mode = 2
+
+
+[node name="LegendMin" type="Label" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox/LegendLabels" unique_id=1574295056]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 1)
+theme_override_font_sizes/font_size = 10
+text = "低"
+
+
+[node name="LegendSpacer" type="Control" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox/LegendLabels" unique_id=2054359854]
+layout_mode = 2
+size_flags_horizontal = 3
+
+
+[node name="LegendMax" type="Label" parent="PreviewPanel/MapRoot/LegendPanel/LegendMargin/LegendVBox/LegendLabels" unique_id=581571514]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 1)
+theme_override_font_sizes/font_size = 10
+text = "高"
+
+
+[node name="BiomeLegendPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=2100000301]
+visible = false
+z_index = 11
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -332.0
+offset_top = 54.0
+offset_right = -12.0
+offset_bottom = 438.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("13")
+
+
+[node name="BiomeLegendMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/BiomeLegendPanel" unique_id=2100000302]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+
+[node name="BiomeLegendVBox" type="VBoxContainer" parent="PreviewPanel/MapRoot/BiomeLegendPanel/BiomeLegendMargin" unique_id=2100000303]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+
+[node name="BiomeLegendTitle" type="Label" parent="PreviewPanel/MapRoot/BiomeLegendPanel/BiomeLegendMargin/BiomeLegendVBox" unique_id=2100000304]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.839216, 0.901961, 0.980392, 1)
+theme_override_font_sizes/font_size = 11
+text = "生物群系图例"
+
+
+[node name="BiomeLegendText" type="RichTextLabel" parent="PreviewPanel/MapRoot/BiomeLegendPanel/BiomeLegendMargin/BiomeLegendVBox" unique_id=2100000305]
+custom_minimum_size = Vector2(292, 330)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_active = true
+selection_enabled = false
+context_menu_enabled = false
+shortcut_keys_enabled = false
+
+
+[node name="ProgressOverlay" type="Control" parent="PreviewPanel/MapRoot" unique_id=117480812]
+z_index = 20
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+
+[node name="OverlayTint" type="ColorRect" parent="PreviewPanel/MapRoot/ProgressOverlay" unique_id=1664853929]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+
+[node name="ProgressCenter" type="CenterContainer" parent="PreviewPanel/MapRoot/ProgressOverlay" unique_id=1912901247]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+
+[node name="ProgressPanel" type="PanelContainer" parent="PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter" unique_id=1987282758]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("13")
+
+
+[node name="ProgressMargin" type="MarginContainer" parent="PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel" unique_id=1785595586]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+
+[node name="ProgressVBox" type="VBoxContainer" parent="PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin" unique_id=1457754816]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+
+[node name="GenerateProgress" type="ProgressBar" parent="PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox" unique_id=1765816902]
+layout_mode = 2
+size_flags_horizontal = 3
+show_percentage = false
+
+
+[node name="ProgressStatus" type="Label" parent="PreviewPanel/MapRoot/ProgressOverlay/ProgressCenter/ProgressPanel/ProgressMargin/ProgressVBox" unique_id=562483759]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.768627, 0.819608, 0.890196, 1)
+theme_override_font_sizes/font_size = 11
+text = "待命"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+
+[node name="StatsPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=1617932963]
+z_index = 10
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -62.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("12")
+
+
+[node name="StatsHBox" type="HBoxContainer" parent="PreviewPanel/MapRoot/StatsPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+
+[node name="TechInfo" type="VBoxContainer" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+
+[node name="InfoLabel" type="Label" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TechInfo" unique_id=716308015]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.47451, 0.564706, 0.65098, 1)
+theme_override_font_sizes/font_size = 10
+text = "Out:4096x2048 | 地图信息:256x128"
+
+
+[node name="CompareStatsLabel" type="Label" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TechInfo" unique_id=595225636]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.639216, 0.878431, 0.984314, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "Compare stats"
+autowrap_mode = 2
+
+
+[node name="CityNamesLabel" type="RichTextLabel" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TechInfo" unique_id=1334653645]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 11
+text = "Cities"
+scroll_active = false
+autowrap_mode = 2
+
+
+[node name="TimelineContainer" type="HBoxContainer" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox"]
+custom_minimum_size = Vector2(380, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+
+[node name="TimelineLabel" type="Label" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "历史进程"
+
+
+[node name="PrevEpochButton" type="Button" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "上一纪元"
+
+
+[node name="TimelineSlider" type="HSlider" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1000.0
+step = 1.0
+value = 450.0
+
+
+[node name="EpochLabel" type="Label" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "第 450 纪元"
+
+
+[node name="NextEpochButton" type="Button" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "下一纪元"
+
+
+[node name="EpochEventIndexLabel" type="Label" parent="PreviewPanel/MapRoot/StatsPanel/StatsHBox/TimelineContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.737255, 0.823529, 0.933333, 0.95)
+theme_override_font_sizes/font_size = 10
+text = "事件 --/--"
+

@@ -1,0 +1,46 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/layout/MainHeader.tscn" id="1_header"]
+[ext_resource type="PackedScene" path="res://scenes/layout/MainLeftControls.tscn" id="2_left"]
+[ext_resource type="PackedScene" path="res://scenes/layout/MainCenterWorkspace.tscn" id="3_center"]
+[ext_resource type="PackedScene" path="res://scenes/layout/MainRightLore.tscn" id="4_right"]
+
+[node name="MainLayout" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0431373, 0.054902, 0.0784314, 1)
+
+[node name="HeaderPanel" parent="." instance=ExtResource("1_header")]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 64.0
+grow_horizontal = 2
+
+[node name="ContentHBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="LeftPanel" parent="ContentHBox" instance=ExtResource("2_left")]
+
+[node name="RightMargin" parent="ContentHBox" instance=ExtResource("3_center")]
+
+[node name="RightPanel" parent="ContentHBox" instance=ExtResource("4_right")]
