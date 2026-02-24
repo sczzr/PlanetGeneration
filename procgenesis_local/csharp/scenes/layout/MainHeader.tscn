@@ -182,3 +182,13 @@ theme_override_styles/pressed = SubResource("7")
 theme_override_styles/hover = SubResource("7")
 text = "</>"
 
+[node name="ThemeToggleButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1001]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("6")
+theme_override_styles/pressed = SubResource("7")
+theme_override_styles/hover = SubResource("7")
+text = "🎨"
+

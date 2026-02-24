@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" path="res://scripts/Main.cs" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/MainLayout.tscn" id="2_layout"]
+[ext_resource type="Script" path="res://scripts/ThemeManager.cs" id="3_theme"]
+[ext_resource type="Theme" path="res://resources/themes/ChineseTheme.tres" id="4_chinese"]
+[ext_resource type="Theme" path="res://resources/themes/SteampunkTheme.tres" id="5_steampunk"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -11,6 +14,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_script")
+
+[node name="ThemeManager" type="Node" parent="."]
+script = ExtResource("3_theme")
+ChineseTheme = ExtResource("4_chinese")
+SteampunkTheme = ExtResource("5_steampunk")
 
 [node name="MainLayout" parent="." instance=ExtResource("2_layout")]
 layout_mode = 1

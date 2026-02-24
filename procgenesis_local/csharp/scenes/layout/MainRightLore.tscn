@@ -104,43 +104,85 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="OraclePanel"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="OracleButtonNormal"]
+bg_color = Color(0.196078, 0.45098, 0.862745, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="OracleButtonHover"]
+bg_color = Color(0.247059, 0.501961, 0.901961, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="OracleButtonDisabled"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="RightPanel" type="PanelContainer"]
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("2")
 
-[node name="LoreVBox" type="VBoxContainer" parent="."]
+[node name="LoreTabs" type="TabContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+tab_align = 0
+
+[node name="LoreTab" type="Control" parent="LoreTabs"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LoreVBox" type="VBoxContainer" parent="LoreTabs/LoreTab"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 14
 
-[node name="RegionTitle" type="Label" parent="LoreVBox"]
+[node name="RegionTitle" type="Label" parent="LoreTabs/LoreTab/LoreVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
 theme_override_font_sizes/font_size = 18
 text = "区域详情 / REGION"
 
-[node name="LoreStateLabel" type="Label" parent="LoreVBox"]
+[node name="LoreStateLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
 theme_override_font_sizes/font_size = 11
 text = "模式：地理"
 
-[node name="LoreScroll" type="ScrollContainer" parent="LoreVBox"]
+[node name="LoreScroll" type="ScrollContainer" parent="LoreTabs/LoreTab/LoreVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LoreContent" type="VBoxContainer" parent="LoreVBox/LoreScroll"]
+[node name="LoreContent" type="VBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
 
-[node name="DescBox" type="PanelContainer" parent="LoreVBox/LoreScroll/LoreContent"]
+[node name="DescBox" type="PanelContainer" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("13")
 
-[node name="LoreText" type="RichTextLabel" parent="LoreVBox/LoreScroll/LoreContent/DescBox"]
+[node name="LoreText" type="RichTextLabel" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent/DescBox"]
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -148,15 +190,178 @@ bbcode_enabled = true
 text = "[b]选定区域地质：[/b] 等待选区分析..."
 autowrap_mode = 2
 
-[node name="ThreatLabel" type="Label" parent="LoreVBox/LoreScroll/LoreContent"]
+[node name="ThreatLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
 text = "生存威胁指数: 💀💀"
 
-[node name="LoreHint" type="Label" parent="LoreVBox/LoreScroll/LoreContent"]
+[node name="LoreHint" type="Label" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 1)
 theme_override_font_sizes/font_size = 11
 text = "提示：点击地图任意位置生成该区域叙事。"
 autowrap_mode = 2
 
+[node name="OracleTab" type="Control" parent="LoreTabs"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OracleVBox" type="VBoxContainer" parent="LoreTabs/OracleTab"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="OracleHeader" type="HBoxContainer" parent="LoreTabs/OracleTab/OracleVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="OracleTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleHeader"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "AI 文明推演"
+
+[node name="OracleLoadButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/OracleHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "加载模型"
+
+[node name="ActionButtons" type="HBoxContainer" parent="LoreTabs/OracleTab/OracleVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AnalyzeWorldButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "推演世界"
+
+[node name="AnalyzeRegionButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "推演区域"
+
+[node name="CancelButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "取消"
+
+[node name="OracleStatus" type="Label" parent="LoreTabs/OracleTab/OracleVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_font_sizes/font_size = 11
+text = "未加载模型"
+
+[node name="OracleOutputScroll" type="ScrollContainer" parent="LoreTabs/OracleTab/OracleVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OracleOutputVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="OracleSystemPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="OracleSystemVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OracleSystemTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel/OracleSystemVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.741176, 0.901961, 1)
+theme_override_font_sizes/font_size = 12
+text = "系统消息"
+
+[node name="OracleSystemOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel/OracleSystemVBox"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#9ab0c9]等待操作...[/color]"
+autowrap_mode = 2
+
+[node name="OracleWorldPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="OracleWorldVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OracleWorldTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel/OracleWorldVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94902, 0.780392, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "世界推演"
+
+[node name="OracleWorldOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel/OracleWorldVBox"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#9ab0c9]尚未进行世界推演。[/color]"
+autowrap_mode = 2
+
+[node name="OracleRegionPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="OracleRegionVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OracleRegionTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel/OracleRegionVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.635294, 0.870588, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "区域推演"
+
+[node name="OracleRegionOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel/OracleRegionVBox"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#9ab0c9]尚未进行区域推演。[/color]"
+autowrap_mode = 2
+
+[node name="OracleQuestPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="OracleQuestVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OracleQuestTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel/OracleQuestVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.533333, 0.929412, 0.552941, 1)
+theme_override_font_sizes/font_size = 12
+text = "任务草案"
+
+[node name="OracleQuestOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel/OracleQuestVBox"]
+custom_minimum_size = Vector2(0, 130)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#9ab0c9]尚未生成任务草案。[/color]"
+autowrap_mode = 2
+
+[node name="OracleErrorPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("14")
+
+[node name="OracleErrorVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OracleErrorTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel/OracleErrorVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.494118, 0.494118, 1)
+theme_override_font_sizes/font_size = 12
+text = "错误与告警"
+
+[node name="OracleErrorOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel/OracleErrorVBox"]
+custom_minimum_size = Vector2(0, 86)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#9ab0c9]当前无错误。[/color]"
+autowrap_mode = 2

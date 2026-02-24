@@ -87,6 +87,7 @@ public partial class Main : Control
 		sampleX = Mathf.Clamp((int)(tX * MapWidth), 0, MapWidth - 1);
 		sampleY = Mathf.Clamp((int)(tY * MapHeight), 0, MapHeight - 1);
 		biome = _primaryWorld.Biome[sampleX, sampleY];
+		UpdateOracleHoverPosition(sampleX, sampleY);
 		return true;
 	}
 
@@ -136,6 +137,9 @@ public partial class Main : Control
 		var localRelief = ComputeLocalRelief(elevation, x, y, MapWidth, MapHeight);
 		var nearSea = IsNearSea(elevation, x, y, safeSea, MapWidth, MapHeight);
 		var normalizedSensitivity = (basinSensitivity - 0.5f) / 1.5f;
+		var (meanNeighbor, minNeighbor, maxNeighbor) = SampleNeighborStats(elevation, x, y, MapWidth, MapHeight);
+		var depression = Mathf.Max(meanNeighbor - current, 0f);
+		var slopeSignal = Mathf.Max(maxNeighbor - current, current - minNeighbor);
 
 		var higherNeighborCount = 0;
 		var lowerNeighborCount = 0;
@@ -167,9 +171,20 @@ public partial class Main : Control
 		var basinHeightThreshold = Mathf.Lerp(0.32f, 0.18f, normalizedSensitivity);
 		var basinMoistureThreshold = Mathf.Lerp(0.42f, 0.55f, normalizedSensitivity);
 		var basinRiverThreshold = Mathf.Lerp(0.02f, 0.05f, normalizedSensitivity);
-		if (relativeHeight < basinHeightThreshold && enclosedByHigher && (moisture[x, y] > basinMoistureThreshold || river[x, y] > basinRiverThreshold))
+		if (relativeHeight < basinHeightThreshold && enclosedByHigher && (moisture[x, y] > basinMoistureThreshold || river[x, y] > basinRiverThreshold || depression > 0.009f))
 		{
 			return LandformType.Basin;
+		}
+
+		var dryBasinHeightThreshold = basinHeightThreshold * 1.15f;
+		if (relativeHeight < dryBasinHeightThreshold && enclosedByHigher && moisture[x, y] < 0.32f && river[x, y] < 0.03f && depression > 0.006f)
+		{
+			return LandformType.DryBasin;
+		}
+
+		if (!nearSea && river[x, y] > 0.20f && relativeHeight > 0.10f && relativeHeight < 0.66f && slopeSignal > 0.014f)
+		{
+			return LandformType.Valley;
 		}
 
 		if (nearSea && relativeHeight < 0.12f)
@@ -177,27 +192,74 @@ public partial class Main : Control
 			return LandformType.CoastalPlain;
 		}
 
-		if (relativeHeight < 0.28f && localRelief < 0.018f)
+		if (relativeHeight < 0.30f)
 		{
 			return LandformType.Plain;
 		}
 
-		if (relativeHeight < 0.45f && localRelief < 0.032f)
+		if (relativeHeight < 0.50f)
 		{
 			return LandformType.RollingHills;
 		}
 
-		if (relativeHeight > 0.62f && localRelief < 0.022f)
-		{
-			return LandformType.Plateau;
-		}
-
-		if (relativeHeight > 0.70f || localRelief > 0.055f)
+		if (relativeHeight > 0.78f || (relativeHeight > 0.68f && (localRelief > 0.045f || slopeSignal > 0.050f)))
 		{
 			return LandformType.Mountain;
 		}
 
-		return LandformType.Upland;
+		if (relativeHeight > 0.64f && localRelief < 0.026f)
+		{
+			return LandformType.Plateau;
+		}
+
+		if (relativeHeight > 0.52f)
+		{
+			return LandformType.Upland;
+		}
+
+		return LandformType.RollingHills;
+	}
+
+	private static (float Mean, float Min, float Max) SampleNeighborStats(float[,] elevation, int x, int y, int width, int height)
+	{
+		var minValue = elevation[x, y];
+		var maxValue = elevation[x, y];
+		var sum = 0f;
+		var count = 0;
+
+		for (var oy = -1; oy <= 1; oy++)
+		{
+			for (var ox = -1; ox <= 1; ox++)
+			{
+				if (ox == 0 && oy == 0)
+				{
+					continue;
+				}
+
+				var nx = WrapX(x + ox, width);
+				var ny = ClampY(y + oy, height);
+				var value = elevation[nx, ny];
+				if (value < minValue)
+				{
+					minValue = value;
+				}
+
+				if (value > maxValue)
+				{
+					maxValue = value;
+				}
+
+				sum += value;
+				count++;
+			}
+		}
+
+		if (count == 0)
+		{
+			return (elevation[x, y], elevation[x, y], elevation[x, y]);
+		}
+
+		return (sum / count, minValue, maxValue);
 	}
 
 	private static float ComputeLocalRelief(float[,] elevation, int x, int y, int width, int height)

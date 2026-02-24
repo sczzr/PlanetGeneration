@@ -166,6 +166,7 @@ public partial class Main : Control
 				var uplift = falloff * Mathf.Lerp(0.05f, upliftMax, bias);
 				var edgeDrop = (1f - falloff) * Mathf.Lerp(0.02f, edgeDropMax, bias);
 				var shifted = source[x, y] + uplift - edgeDrop;
+				var interiorRidgeLine = 0f;
 
 				if (falloff > 0.48f)
 				{
@@ -174,6 +175,23 @@ public partial class Main : Control
 						8.4f * nx + 13.7f,
 						8.4f * ny - 9.2f,
 						8.4f * nz + 4.6f);
+					var ridgeNoise = fragmentNoise.GetNoise3D(
+						12.8f * nx - 5.1f,
+						12.8f * ny + 7.9f,
+						12.8f * nz + 3.4f);
+					var ridgeSpineNoise = fragmentNoise.GetNoise3D(
+						5.0f * nx + 11.2f,
+						5.0f * ny - 4.8f,
+						5.0f * nz + 6.3f);
+					var ridgeShape = 1f - Mathf.Abs(ridgeNoise);
+					var ridgeSpineShape = 1f - Mathf.Abs(ridgeSpineNoise);
+					var ridgeCombined = ridgeShape * 0.58f + ridgeSpineShape * 0.42f;
+					interiorRidgeLine = Mathf.Pow(Mathf.Clamp((ridgeCombined - 0.26f) / 0.74f, 0f, 1f), 1.70f);
+					var ridgeCorridor = 0.5f + 0.5f * contourNoise.GetNoise3D(
+						1.9f * nx - 2.7f,
+						1.9f * ny + 5.4f,
+						1.9f * nz + 8.1f);
+					interiorRidgeLine = Mathf.Clamp(interiorRidgeLine * Mathf.Lerp(0.72f, 1.12f, ridgeCorridor), 0f, 1f);
 
 					var ridgeBias = morphology switch
 					{
@@ -186,8 +204,34 @@ public partial class Main : Control
 					var ridgeStrength = Mathf.Clamp((interiorNoise - ridgeBias) / Mathf.Max(1f - ridgeBias, 0.0001f), 0f, 1f);
 					var basinStrength = Mathf.Clamp((ridgeBias - interiorNoise) / Mathf.Max(ridgeBias, 0.0001f), 0f, 1f);
 
-					shifted += interiorMask * ridgeStrength * Mathf.Lerp(0.01f, 0.08f, bias) * relief * ageRoughnessFactor;
+					shifted += interiorMask * ridgeStrength * interiorRidgeLine * Mathf.Lerp(0.006f, 0.038f, bias) * relief * ageRoughnessFactor;
 					shifted -= interiorMask * basinStrength * Mathf.Lerp(0.01f, 0.06f, bias) * relief * ageRoughnessFactor;
+
+					var broadInteriorFlatten = Mathf.Clamp((falloff - 0.54f) / 0.46f, 0f, 1f);
+					shifted -= broadInteriorFlatten * (1f - interiorRidgeLine * 0.60f) * Mathf.Lerp(0.010f, 0.040f, bias) * (2.10f - relief) * Mathf.Lerp(0.94f, 1.34f, ageNorm);
+
+					var deepInteriorPlateau = Mathf.Clamp((falloff - 0.64f) / 0.36f, 0f, 1f);
+					shifted -= deepInteriorPlateau * (1f - interiorRidgeLine) * Mathf.Lerp(0.016f, 0.074f, bias) * (2.05f - relief) * Mathf.Lerp(0.96f, 1.42f, ageNorm);
+
+					var interiorCore = Mathf.Clamp((falloff - 0.56f) / 0.44f, 0f, 1f);
+					var plainField = 0.5f + 0.5f * contourNoise.GetNoise3D(
+						2.4f * nx + 3.8f,
+						2.4f * ny - 6.2f,
+						2.4f * nz + 1.9f);
+					var plainMask = Mathf.Pow(Mathf.Clamp((plainField - 0.26f) / 0.74f, 0f, 1f), 1.25f);
+					shifted -= interiorCore * plainMask * (1f - interiorRidgeLine) * Mathf.Lerp(0.008f, 0.034f, bias) * (2.02f - relief) * Mathf.Lerp(0.90f, 1.22f, ageNorm);
+
+					var basinNoiseA = fragmentNoise.GetNoise3D(
+						4.8f * nx - 10.4f,
+						4.8f * ny + 12.1f,
+						4.8f * nz - 7.6f);
+					var basinNoiseB = contourNoise.GetNoise3D(
+						3.2f * nx + 8.7f,
+						3.2f * ny - 2.5f,
+						3.2f * nz + 11.3f);
+					var basinField = Mathf.Abs(basinNoiseA * 0.68f + basinNoiseB * 0.32f);
+					var basinMask = Mathf.Pow(Mathf.Clamp((0.22f - basinField) / 0.22f, 0f, 1f), 1.55f);
+					shifted -= interiorCore * basinMask * (1f - interiorRidgeLine * 0.35f) * Mathf.Lerp(0.010f, 0.045f, bias) * Mathf.Lerp(0.92f, 1.28f, ageNorm);
 				}
 
 				var edgeBand = Mathf.Clamp((0.62f - falloff) / 0.34f, 0f, 1f);
@@ -205,7 +249,7 @@ public partial class Main : Control
 				else if (falloff > 0.70f)
 				{
 					var deepInterior = Mathf.Clamp((falloff - 0.70f) / 0.30f, 0f, 1f);
-					shifted -= deepInterior * Mathf.Lerp(0.004f, 0.030f, bias) * (2.1f - relief) * Mathf.Lerp(0.92f, 1.38f, ageNorm);
+					shifted -= deepInterior * Mathf.Lerp(0.008f, 0.045f, bias) * (2.1f - relief) * Mathf.Lerp(0.96f, 1.42f, ageNorm);
 				}
 
 				if (falloff < 0.22f)

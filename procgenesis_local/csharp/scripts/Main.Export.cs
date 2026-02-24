@@ -38,6 +38,15 @@ public partial class Main : Control
 		var defaultName = BuildDefaultExportName("data", ".json");
 		ConfigureAndShowSaveDialog(ExportKind.Json, "保存 JSON", defaultName, "*.json");
 	}
+	
+	private void OnThemeTogglePressed()
+	{
+		var themeManager = GetNode<ThemeManager>("/root/Main/ThemeManager");
+		if (themeManager != null)
+		{
+			themeManager.ToggleTheme();
+		}
+	}
 
 	private string BuildDefaultExportName(string prefix, string extension)
 	{

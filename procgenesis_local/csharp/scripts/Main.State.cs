@@ -96,6 +96,7 @@ public partial class Main : Control
 	private CheckBox _compareToggle = null!;
 	private Button _exportPngButton = null!;
 	private Button _exportJsonButton = null!;
+	private Button _themeToggleButton = null!;
 	private ProgressBar _generateProgress = null!;
 	private Label _progressStatus = null!;
 	private Label _cacheStatsLabel = null!;
@@ -176,6 +177,9 @@ public partial class Main : Control
 	private const int DefaultCivilAggression = 42;
 	private const int DefaultSpeciesDiversity = 68;
 	private const int DefaultEpoch = 450;
+	private const int DefaultOracleAutoUnloadIdleSeconds = 120;
+	private const int MinOracleAutoUnloadIdleSeconds = 30;
+	private const int MaxOracleAutoUnloadIdleSeconds = 1800;
 	private const float DefaultUiFontScale = 0.92f;
 	private const float MinUiFontScale = 0.60f;
 	private const float MaxUiFontScale = 1.40f;
@@ -197,7 +201,7 @@ public partial class Main : Control
 	private const int LayerRenderCacheCapacity = 20;
 	private const int WorldGenerationCacheCapacity = 6;
 	private const long WorldGenerationCacheMaxCells = 16_777_216;
-	private const int WorldGenerationAlgorithmVersion = 2;
+	private const int WorldGenerationAlgorithmVersion = 3;
 	private const string ArchiveSection = "archive";
 	private const string LastArchivePathKey = "last_path";
 	private const string CacheDirectoryName = "cache";
@@ -247,6 +251,7 @@ public partial class Main : Control
 	private int _speciesDiversity = DefaultSpeciesDiversity;
 	private float _uiFontScale = DefaultUiFontScale;
 	private int _currentEpoch = DefaultEpoch;
+	private int _oracleAutoUnloadIdleSeconds = DefaultOracleAutoUnloadIdleSeconds;
 	private int _selectedTimelineEventEpoch = -1;
 	private MapMode _mapMode = MapMode.Geographic;
 
@@ -292,6 +297,8 @@ public partial class Main : Control
 		CoastalPlain,
 		Plain,
 		Basin,
+		DryBasin,
+		Valley,
 		RollingHills,
 		Upland,
 		Plateau,

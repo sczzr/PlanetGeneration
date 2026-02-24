@@ -45,6 +45,7 @@ public partial class Main : Control
 		_speciesDiversity = DefaultSpeciesDiversity;
 		_uiFontScale = DefaultUiFontScale;
 		_currentEpoch = DefaultEpoch;
+		_oracleAutoUnloadIdleSeconds = DefaultOracleAutoUnloadIdleSeconds;
 		_selectedTimelineEventEpoch = _currentEpoch;
 		_mountainControlExpanded = true;
 		_mapMode = MapMode.Geographic;
@@ -107,6 +108,13 @@ public partial class Main : Control
 		_speciesDiversity = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "species_diversity", (long)DefaultSpeciesDiversity), 0, 100);
 		_uiFontScale = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "ui_font_scale", (double)DefaultUiFontScale), MinUiFontScale, MaxUiFontScale);
 		_currentEpoch = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "timeline_epoch", (long)DefaultEpoch), 0, MaxEpoch);
+		_oracleAutoUnloadIdleSeconds = Mathf.Clamp(
+			(int)(long)config.GetValue(
+				AdvancedSettingsSection,
+				"oracle_auto_unload_idle_seconds",
+				(long)DefaultOracleAutoUnloadIdleSeconds),
+			MinOracleAutoUnloadIdleSeconds,
+			MaxOracleAutoUnloadIdleSeconds);
 		_selectedTimelineEventEpoch = _currentEpoch;
 		var mapModeId = (int)(long)config.GetValue(AdvancedSettingsSection, "map_mode", (long)MapMode.Geographic);
 		_mapMode = Enum.IsDefined(typeof(MapMode), mapModeId)
@@ -150,6 +158,7 @@ public partial class Main : Control
 		config.SetValue(AdvancedSettingsSection, "species_diversity", (long)_speciesDiversity);
 		config.SetValue(AdvancedSettingsSection, "ui_font_scale", (double)_uiFontScale);
 		config.SetValue(AdvancedSettingsSection, "timeline_epoch", (long)_currentEpoch);
+		config.SetValue(AdvancedSettingsSection, "oracle_auto_unload_idle_seconds", (long)_oracleAutoUnloadIdleSeconds);
 		config.SetValue(AdvancedSettingsSection, "map_mode", (long)_mapMode);
 		config.SetValue(ArchiveSection, LastArchivePathKey, _lastArchivePath);
 		config.SetValue(PerformanceSection, PerformanceCpuScoreKey, _cpuPerformanceScore);

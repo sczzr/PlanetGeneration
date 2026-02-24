@@ -648,56 +648,57 @@ public sealed class WorldRenderer
         return landColor;
     }
 
-    private Color DrawSatellite(int y, int height, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
-    {
-        Color color;
-        var polarMask = ComputePolarMask(y, height);
+	private Color DrawSatellite(int y, int height, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
+	{
+		Color color;
+		var polarMask = ComputePolarMask(y, height);
+		var safeSea = Mathf.Clamp(seaLevel, 0.0001f, 0.9999f);
 
-        if (elevation < seaLevel)
-        {
-            color = DarkOcean;
-            if (elevation >= 0.5714f * seaLevel)
-            {
-                var alpha = Mathf.Clamp(elevation / Mathf.Max(seaLevel, 0.0001f), 0f, 1f);
-                color = Blend(color, Hex("#0d3f82"), alpha);
-            }
+		if (elevation < safeSea)
+		{
+			color = DrawElevationRealistic(elevation, safeSea);
+			color = Blend(color, DarkOcean, 0.18f);
 
-            if (polarMask > 0f)
-            {
-                var seaIceAlpha = polarMask * Mathf.Clamp((0.34f - temperature) / 0.34f, 0f, 1f);
+			if (polarMask > 0f)
+			{
+				var seaIceAlpha = polarMask * Mathf.Clamp((0.34f - temperature) / 0.34f, 0f, 1f);
                 if (seaIceAlpha > 0f)
                 {
                     color = Blend(color, new Color(0.84f, 0.92f, 0.98f), Mathf.Clamp(seaIceAlpha, 0f, 0.78f));
                 }
             }
-        }
-        else
-        {
-            var baseLand = Hex("#d8c28b");
+		}
+		else
+		{
+			var landT = Mathf.Clamp((elevation - safeSea) / Mathf.Max(1f - safeSea, 0.0001f), 0f, 1f);
+			var elevationBase = DrawElevationRealistic(elevation, safeSea);
 
-            var moistureOpacity = avgMoisture / (avgMoisture * 1.1f + 1f);
-            moistureOpacity = Mathf.Clamp(moistureOpacity, 0f, 1f);
+			var moisture = Mathf.Clamp(avgMoisture, 0f, 1f);
+			var vegetationStrength = Mathf.Clamp((1f - Mathf.Pow(landT, 1.22f)) * (0.35f + 0.65f * moisture), 0.14f, 0.78f);
+			var dryHue = Hex("#8f7b56");
+			var wetHue = Hex("#2f7b43");
+			var vegetationHue = Blend(dryHue, wetHue, moisture);
 
-            var colorFactor = moistureOpacity * 2f * avgMoisture * avgMoisture * 0.07f;
-            colorFactor = Mathf.Clamp(colorFactor, 0f, 1f);
+			color = Blend(elevationBase, vegetationHue, vegetationStrength);
 
-            var moistureTint = new Color(
-                ((1f - colorFactor) * 8f) / 255f,
-                (colorFactor * 48f + (1f - colorFactor) * 63f) / 255f,
-                (colorFactor * 12f + (1f - colorFactor) * 3f) / 255f
-            );
+			if (elevation <= safeSea + 0.01f)
+			{
+				color = Blend(color, new Color(222f / 255f, 232f / 255f, 187f / 255f), 0.2f);
+			}
 
-            color = Blend(baseLand, moistureTint, moistureOpacity);
+			var rockyAlpha = Mathf.Clamp((landT - 0.56f) / 0.30f, 0f, 1f);
+			if (rockyAlpha > 0f)
+			{
+				var rockTint = Blend(Hex("#7f6e57"), Hex("#b9ab95"), Mathf.Clamp((landT - 0.72f) / 0.22f, 0f, 1f));
+				color = Blend(color, rockTint, rockyAlpha * 0.54f);
+			}
 
-            if (elevation <= seaLevel + 0.01f)
-            {
-                color = Blend(color, new Color(222f / 255f, 232f / 255f, 187f / 255f), 0.2f);
-            }
-
-            var snowAlpha = ComputeSatelliteSnowAlpha(elevation, temperature, seaLevel);
-            if (biome == BiomeType.Ice)
-            {
-                snowAlpha = Mathf.Max(snowAlpha, 0.55f);
+			var snowAlpha = ComputeSatelliteSnowAlpha(elevation, temperature, seaLevel);
+			var peakSnowFloor = Mathf.Clamp((landT - 0.82f) / 0.18f, 0f, 1f) * 0.64f;
+			snowAlpha = Mathf.Max(snowAlpha, peakSnowFloor);
+			if (biome == BiomeType.Ice)
+			{
+				snowAlpha = Mathf.Max(snowAlpha, 0.55f);
             }
 
             if (snowAlpha > 0f)

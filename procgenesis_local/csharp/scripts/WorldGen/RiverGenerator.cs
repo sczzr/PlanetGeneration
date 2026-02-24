@@ -36,7 +36,7 @@ public sealed class RiverGenerator
 			var x = rng.RandiRange(0, width - 1);
 			var y = rng.RandiRange(0, height - 1);
 
-			if (!CanBeRiverSource(x, y, seaLevel, elevation, moisture, tuning))
+			if (!CanBeRiverSource(x, y, width, height, seaLevel, elevation, moisture, tuning))
 			{
 				continue;
 			}
@@ -49,9 +49,9 @@ public sealed class RiverGenerator
 		return riverLayer;
 	}
 
-	private bool CanBeRiverSource(int x, int y, float seaLevel, float[,] elevation, float[,] moisture, WorldTuning tuning)
+	private bool CanBeRiverSource(int x, int y, int width, int height, float seaLevel, float[,] elevation, float[,] moisture, WorldTuning tuning)
 	{
-		if (elevation[x, y] <= tuning.RiverSourceElevationThreshold)
+		if (elevation[x, y] <= tuning.RiverSourceElevationThreshold - 0.03f)
 		{
 			return false;
 		}
@@ -61,12 +61,55 @@ public sealed class RiverGenerator
 			return false;
 		}
 
-		if (elevation[x, y] <= seaLevel)
+		if (elevation[x, y] <= seaLevel + 0.05f)
+		{
+			return false;
+		}
+
+		var localRelief = ComputeLocalRelief(elevation, x, y, width, height);
+		if (localRelief < 0.012f)
 		{
 			return false;
 		}
 
 		return true;
+	}
+
+	private static float ComputeLocalRelief(float[,] elevation, int x, int y, int width, int height)
+	{
+		var minValue = elevation[x, y];
+		var maxValue = elevation[x, y];
+
+		for (var oy = -1; oy <= 1; oy++)
+		{
+			var ny = y + oy;
+			if (ny < 0 || ny >= height)
+			{
+				continue;
+			}
+
+			for (var ox = -1; ox <= 1; ox++)
+			{
+				if (ox == 0 && oy == 0)
+				{
+					continue;
+				}
+
+				var nx = WrapX(x + ox, width);
+				var value = elevation[nx, ny];
+				if (value < minValue)
+				{
+					minValue = value;
+				}
+
+				if (value > maxValue)
+				{
+					maxValue = value;
+				}
+			}
+		}
+
+		return maxValue - minValue;
 	}
 
 	private void TraceRiverFlow(

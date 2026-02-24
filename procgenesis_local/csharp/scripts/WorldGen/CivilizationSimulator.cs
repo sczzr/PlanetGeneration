@@ -36,19 +36,34 @@ public sealed class CivilizationSimulationResult
 
 public sealed class CivilizationSimulator
 {
+    private enum PolityArchetype
+    {
+        Generic,
+        Naval,
+        River,
+        Highland,
+        Nomadic
+    }
+
     private readonly struct PolitySeed
     {
         public int Id { get; }
         public int X { get; }
         public int Y { get; }
         public float Strength { get; }
+        public float Expansionism { get; }
+        public BiomeType NativeBiome { get; }
+        public PolityArchetype Archetype { get; }
 
-        public PolitySeed(int id, int x, int y, float strength)
+        public PolitySeed(int id, int x, int y, float strength, float expansionism, BiomeType nativeBiome, PolityArchetype archetype)
         {
             Id = id;
             X = x;
             Y = y;
             Strength = strength;
+            Expansionism = expansionism;
+            NativeBiome = nativeBiome;
+            Archetype = archetype;
         }
     }
 
@@ -96,7 +111,7 @@ public sealed class CivilizationSimulator
         var expansionRange = Mathf.Lerp(10f, 48f, epochFactor) * Mathf.Lerp(0.82f, 1.2f, diversityNorm);
         var claimThreshold = Mathf.Lerp(0.20f, 0.34f, aggressionNorm);
 
-        var seeds = BuildSeeds(width, height, seed, seaLevel, elevation, biome, cities, civilizationPotential, diversityNorm, aggressionNorm);
+        var seeds = BuildSeeds(width, height, seed, seaLevel, elevation, river, biome, cities, civilizationPotential, diversityNorm, aggressionNorm);
 
         for (var y = 0; y < height; y++)
         {
@@ -112,6 +127,8 @@ public sealed class CivilizationSimulator
                 var riverFactor = Mathf.Clamp(Mathf.Sqrt(Mathf.Clamp(river[x, y], 0f, 1f)), 0f, 1f);
                 var terrainPenalty = Mathf.Clamp((elevation[x, y] - seaLevel) / Mathf.Max(1f - seaLevel, 0.0001f), 0f, 1f);
                 var localSupport = Mathf.Clamp(potential * 0.72f + riverFactor * 0.28f, 0f, 1f);
+                var localCoastal = IsAdjacentToOcean(x, y, width, height, biome);
+                var localBiome = biome[x, y];
 
                 var bestScore = 0f;
                 var bestPolity = -1;
@@ -124,10 +141,22 @@ public sealed class CivilizationSimulator
                     var dy = Math.Abs(y - polity.Y);
                     var distance = Mathf.Sqrt(dx * dx + dy * dy);
 
-                    var effectiveRange = expansionRange * polity.Strength;
+                    var effectiveRange = expansionRange * polity.Strength * polity.Expansionism;
                     var distanceFactor = 1f / (1f + Mathf.Pow(distance / Mathf.Max(effectiveRange, 0.0001f), 1.35f) * 2.8f);
+                    var terrainCost = ComputeExpansionPenalty(
+                        polity.Archetype,
+                        polity.NativeBiome,
+                        localBiome,
+                        terrainPenalty,
+                        riverFactor,
+                        localCoastal);
+                    var terrainAdaptation = 1f / (1f + terrainCost * 0.55f);
+                    var nativeBiomeBonus = polity.NativeBiome == localBiome ? 1.07f : 1f;
+
                     var score = localSupport
                         * polity.Strength
+                        * terrainAdaptation
+                        * nativeBiomeBonus
                         * distanceFactor
                         * (1f - terrainPenalty * 0.42f)
                         * (0.85f + 0.15f * epochFactor)
@@ -535,6 +564,7 @@ public sealed class CivilizationSimulator
         int seed,
         float seaLevel,
         float[,] elevation,
+        float[,] river,
         BiomeType[,] biome,
         List<CityInfo> cities,
         float[,] civilizationPotential,
@@ -545,8 +575,8 @@ public sealed class CivilizationSimulator
         var seen = new HashSet<int>();
         var nextId = 0;
 
-        var cityBudget = Mathf.Clamp(cities.Count, 4, 24);
-        for (var i = 0; i < cities.Count && seeds.Count < cityBudget; i++)
+        var weightedCities = new List<(CityInfo City, float Importance)>(cities.Count);
+        for (var i = 0; i < cities.Count; i++)
         {
             var city = cities[i];
             var x = Mathf.Clamp(city.Position.X, 0, width - 1);
@@ -556,20 +586,84 @@ public sealed class CivilizationSimulator
                 continue;
             }
 
-            var key = y * width + x;
-            if (!seen.Add(key))
+            var populationWeight = city.Population switch
             {
-                continue;
-            }
-
-            var cityStrength = city.Population switch
-            {
-                CityPopulation.Small => 0.88f,
-                CityPopulation.Medium => 1.03f,
+                CityPopulation.Small => 0.78f,
+                CityPopulation.Medium => 1.00f,
                 _ => 1.22f
             };
-            cityStrength += Mathf.Clamp(city.Score, 0f, 1f) * 0.18f;
-            seeds.Add(new PolitySeed(nextId++, x, y, cityStrength));
+            var importance = populationWeight * 0.70f + Mathf.Clamp(city.Score, 0f, 1f) * 0.30f;
+            weightedCities.Add((city, importance));
+        }
+
+        weightedCities.Sort((left, right) => right.Importance.CompareTo(left.Importance));
+
+        var cityBudget = Mathf.Clamp(
+            4 + Mathf.RoundToInt(Mathf.Sqrt(Mathf.Max(weightedCities.Count, 1)) * 1.4f + diversityNorm * 6f - aggressionNorm * 1.2f),
+            4,
+            22);
+        cityBudget = Math.Min(cityBudget, weightedCities.Count);
+
+        if (cityBudget > 0)
+        {
+            var spacing = Mathf.Max(6f, (width + height) * 0.5f / MathF.Max(2.2f * MathF.Sqrt(cityBudget), 1f));
+            var minSpacing = Mathf.Max(3f, spacing * 0.45f);
+
+            while (seeds.Count < cityBudget && spacing >= minSpacing)
+            {
+                var addedThisRound = false;
+                for (var i = 0; i < weightedCities.Count && seeds.Count < cityBudget; i++)
+                {
+                    var city = weightedCities[i].City;
+                    var x = Mathf.Clamp(city.Position.X, 0, width - 1);
+                    var y = Mathf.Clamp(city.Position.Y, 0, height - 1);
+                    var key = y * width + x;
+                    if (!seen.Add(key))
+                    {
+                        continue;
+                    }
+
+                    var farEnough = true;
+                    for (var j = 0; j < seeds.Count; j++)
+                    {
+                        if (ToroidalDistance(width, x, y, seeds[j].X, seeds[j].Y) < spacing)
+                        {
+                            farEnough = false;
+                            break;
+                        }
+                    }
+
+                    if (!farEnough)
+                    {
+                        seen.Remove(key);
+                        continue;
+                    }
+
+                    var archetype = DeterminePolityArchetype(x, y, width, height, seaLevel, elevation, river, biome);
+                    var expansionism = archetype switch
+                    {
+                        PolityArchetype.Naval => 1.18f,
+                        PolityArchetype.River => 1.10f,
+                        PolityArchetype.Highland => 0.92f,
+                        PolityArchetype.Nomadic => 1.12f,
+                        _ => 1.00f
+                    };
+
+                    var cityStrength = city.Population switch
+                    {
+                        CityPopulation.Small => 0.86f,
+                        CityPopulation.Medium => 1.02f,
+                        _ => 1.24f
+                    };
+                    cityStrength += Mathf.Clamp(city.Score, 0f, 1f) * 0.24f;
+                    cityStrength = Mathf.Clamp(cityStrength, 0.72f, 1.58f);
+
+                    seeds.Add(new PolitySeed(nextId++, x, y, cityStrength, expansionism, biome[x, y], archetype));
+                    addedThisRound = true;
+                }
+
+                spacing *= addedThisRound ? 0.90f : 0.76f;
+            }
         }
 
         var fallbackBudget = Mathf.Clamp(6 + Mathf.RoundToInt(diversityNorm * 12f), 6, 20);
@@ -597,7 +691,16 @@ public sealed class CivilizationSimulator
 
                 var jitter = HashNoise01(seed, x, y);
                 var strength = Mathf.Clamp(0.86f + jitter * 0.36f - aggressionNorm * 0.08f, 0.72f, 1.34f);
-                seeds.Add(new PolitySeed(nextId++, x, y, strength));
+                var archetype = DeterminePolityArchetype(x, y, width, height, seaLevel, elevation, river, biome);
+                var expansionism = archetype switch
+                {
+                    PolityArchetype.Naval => 1.16f,
+                    PolityArchetype.River => 1.08f,
+                    PolityArchetype.Highland => 0.94f,
+                    PolityArchetype.Nomadic => 1.12f,
+                    _ => 1.00f
+                };
+                seeds.Add(new PolitySeed(nextId++, x, y, strength, expansionism, biome[x, y], archetype));
             }
         }
 
@@ -608,7 +711,8 @@ public sealed class CivilizationSimulator
 
         var centerX = width / 2;
         var centerY = height / 2;
-        seeds.Add(new PolitySeed(0, centerX, centerY, 1f));
+        var centerBiome = biome[Mathf.Clamp(centerX, 0, width - 1), Mathf.Clamp(centerY, 0, height - 1)];
+        seeds.Add(new PolitySeed(0, centerX, centerY, 1f, 1f, centerBiome, PolityArchetype.Generic));
         return seeds;
     }
 
@@ -875,6 +979,123 @@ public sealed class CivilizationSimulator
         var min = Math.Min(a, b);
         var max = Math.Max(a, b);
         return ((long)min << 32) | (uint)max;
+    }
+
+    private static PolityArchetype DeterminePolityArchetype(
+        int x,
+        int y,
+        int width,
+        int height,
+        float seaLevel,
+        float[,] elevation,
+        float[,] river,
+        BiomeType[,] biome)
+    {
+        if (elevation[x, y] > seaLevel + 0.36f && !IsAdjacentToRiver(x, y, width, height, river))
+        {
+            return PolityArchetype.Highland;
+        }
+
+        if (river[x, y] > 0.24f || IsAdjacentToRiver(x, y, width, height, river))
+        {
+            return PolityArchetype.River;
+        }
+
+        if (IsAdjacentToOcean(x, y, width, height, biome))
+        {
+            return PolityArchetype.Naval;
+        }
+
+        if (IsAridBiome(biome[x, y]))
+        {
+            return PolityArchetype.Nomadic;
+        }
+
+        return PolityArchetype.Generic;
+    }
+
+    private static float ComputeExpansionPenalty(
+        PolityArchetype archetype,
+        BiomeType nativeBiome,
+        BiomeType localBiome,
+        float terrainPenalty,
+        float riverFactor,
+        bool localCoastal)
+    {
+        var biomePenalty = localBiome == nativeBiome ? 0.08f : 0.24f;
+        var terrainCost = archetype switch
+        {
+            PolityArchetype.Naval => localCoastal ? 0.10f : 0.34f,
+            PolityArchetype.River => riverFactor > 0.25f ? 0.06f : 0.20f,
+            PolityArchetype.Highland => terrainPenalty > 0.60f ? 0.06f : 0.28f,
+            PolityArchetype.Nomadic => IsAridBiome(localBiome) ? 0.10f : 0.30f,
+            _ => 0.18f
+        };
+
+        return Mathf.Clamp(terrainCost + biomePenalty + terrainPenalty * 0.24f, 0f, 1.2f);
+    }
+
+    private static bool IsAdjacentToOcean(int x, int y, int width, int height, BiomeType[,] biome)
+    {
+        for (var oy = -1; oy <= 1; oy++)
+        {
+            var ny = y + oy;
+            if (ny < 0 || ny >= height)
+            {
+                continue;
+            }
+
+            for (var ox = -1; ox <= 1; ox++)
+            {
+                if (ox == 0 && oy == 0)
+                {
+                    continue;
+                }
+
+                var nx = WrapX(x + ox, width);
+                if (biome[nx, ny] == BiomeType.Ocean || biome[nx, ny] == BiomeType.ShallowOcean)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsAdjacentToRiver(int x, int y, int width, int height, float[,] river)
+    {
+        for (var oy = -1; oy <= 1; oy++)
+        {
+            var ny = y + oy;
+            if (ny < 0 || ny >= height)
+            {
+                continue;
+            }
+
+            for (var ox = -1; ox <= 1; ox++)
+            {
+                if (ox == 0 && oy == 0)
+                {
+                    continue;
+                }
+
+                var nx = WrapX(x + ox, width);
+                if (river[nx, ny] > 0.16f)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsAridBiome(BiomeType biome)
+    {
+        return biome == BiomeType.Steppe
+            || biome == BiomeType.TemperateDesert
+            || biome == BiomeType.TropicalDesert;
     }
 
     private static bool HasForeignNeighbor(int x, int y, int polityId, int[,] polityMap, int width, int height)

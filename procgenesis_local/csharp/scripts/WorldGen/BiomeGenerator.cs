@@ -38,15 +38,29 @@ public sealed class BiomeGenerator
                     continue;
                 }
 
+                var localRelief = ComputeLocalRelief(elevation, x, y, width, height);
+                var relativeHeight = (e - seaLevel) / Mathf.Max(1f - seaLevel, 0.0001f);
+
                 if (e < seaLevel + tuning.CoastBand)
                 {
                     biome[x, y] = BiomeType.Coastland;
                     continue;
                 }
 
-                if (e >= tuning.MountainThreshold)
+                var mountainFloor = tuning.MountainThreshold - 0.035f;
+                var ridgeReliefThreshold = Mathf.Lerp(0.020f, 0.036f, Mathf.Clamp((relativeHeight - 0.45f) / 0.55f, 0f, 1f));
+                var isMountain =
+                    e >= tuning.MountainThreshold + 0.04f ||
+                    (e >= mountainFloor && localRelief >= ridgeReliefThreshold);
+                if (isMountain)
                 {
                     biome[x, y] = t > 0.2f ? BiomeType.RockyMountain : BiomeType.SnowyMountain;
+                    continue;
+                }
+
+                if (riverLayer[x, y] > 0.24f && e < tuning.MountainThreshold + 0.06f)
+                {
+                    biome[x, y] = BiomeType.River;
                     continue;
                 }
 
@@ -139,5 +153,53 @@ public sealed class BiomeGenerator
         });
 
         return biome;
+    }
+
+    private static float ComputeLocalRelief(float[,] elevation, int x, int y, int width, int height)
+    {
+        var minValue = elevation[x, y];
+        var maxValue = elevation[x, y];
+
+        for (var oy = -1; oy <= 1; oy++)
+        {
+            var ny = y + oy;
+            if (ny < 0 || ny >= height)
+            {
+                continue;
+            }
+
+            for (var ox = -1; ox <= 1; ox++)
+            {
+                if (ox == 0 && oy == 0)
+                {
+                    continue;
+                }
+
+                var nx = WrapX(x + ox, width);
+                var value = elevation[nx, ny];
+                if (value < minValue)
+                {
+                    minValue = value;
+                }
+
+                if (value > maxValue)
+                {
+                    maxValue = value;
+                }
+            }
+        }
+
+        return maxValue - minValue;
+    }
+
+    private static int WrapX(int x, int width)
+    {
+        if (x >= 0)
+        {
+            return x % width;
+        }
+
+        var wrapped = x % width;
+        return wrapped == 0 ? 0 : wrapped + width;
     }
 }

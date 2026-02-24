@@ -5,3 +5,4 @@ bin/
 obj/
 *.tmp
 *.csproj.user
+models/

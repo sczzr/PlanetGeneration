@@ -51,6 +51,7 @@ public partial class Main : Control
 		_compareToggle = GetNodeByName<CheckBox>("CompareToggle");
 		_exportPngButton = GetNodeByName<Button>("ExportPngButton");
 		_exportJsonButton = GetNodeByName<Button>("ExportJsonButton");
+		_themeToggleButton = GetNodeByName<Button>("ThemeToggleButton");
 		_generateProgress = GetNodeByName<ProgressBar>("GenerateProgress");
 		_progressStatus = GetNodeByName<Label>("ProgressStatus");
 		_cacheStatsLabel = GetNodeByName<Label>("CacheStatsLabel");
@@ -143,6 +144,7 @@ public partial class Main : Control
 		_resetAdvancedSettingsButton.Pressed += OnResetAdvancedSettingsPressed;
 		_exportPngButton.Pressed += OnExportPngPressed;
 		_exportJsonButton.Pressed += OnExportJsonPressed;
+		_themeToggleButton.Pressed += OnThemeTogglePressed;
 		_persistCacheGroupButton.Pressed += OnSaveArchivePressed;
 		_clearCacheButton.Pressed += OnClearCachePressed;
 
@@ -234,6 +236,7 @@ public partial class Main : Control
 		UpdateLabels();
 		UpdateLorePanel();
 		RefreshCacheStatsLabel();
+		InitializeOracleUI();
 		GenerateWorld();
 	}
 

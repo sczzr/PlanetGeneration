@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://bh0bxkq0vqmci"]
+
+[ext_resource type="Script" path="res://scripts/UI/GeographyGeneratorUI.cs" id="1_6dpqc"]
+[ext_resource type="Theme" uid="uid://boxrbnmx0gaqv" id="2_boxrbn"]
+
+[node name="GeographyGeneratorUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_boxrbn")
+script = ExtResource("1_6dpqc")
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Header" type="PanelContainer" parent="MainContainer"]
+theme_override_styles/panel = SubResource("1")
+custom_minimum_size = Vector2(0, 60)
+
+[node name="Header/HBoxContainer" type="HBoxContainer" parent="Header"]
+theme_override_constants/separation = 20
+
+[node name="Header/HBoxContainer/Title" type="Label" parent="Header/HBoxContainer"]
+layout_mode = 2
+text = "🌍 地理文明生成器"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+
+[node name="Header/HBoxContainer/Status" type="Label" parent="Header/HBoxContainer"]
+layout_mode = 2
+text = "就绪 - 点击生成按钮开始创建世界"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+theme_override_colors/font_color = Color(0.7, 0.9, 0.7, 1.0)
+
+[node name="Content" type="HSplitContainer" parent="MainContainer"]
+theme_override_constants/separation = 15
+split_offset = 400
+
+[node name="Content/ParametersPanel" type="PanelContainer" parent="Content"]
+theme_override_styles/panel = SubResource("2")
+
+[node name="Content/ParametersPanel/VBoxContainer" type="VBoxContainer" parent="Content/ParametersPanel"]
+theme_override_constants/separation = 15
+
+[node name="Content/ParametersPanel/VBoxContainer/ParametersTitle" type="Label" parent="Content/ParametersPanel/VBoxContainer"]
+text = "⚙️ 生成参数"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.8, 0.8, 1.0, 1.0)
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer" type="GridContainer" parent="Content/ParametersPanel/VBoxContainer"]
+columns = 2
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 10
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/ContinentLabel" type="Label" parent="Content/ParametersPanel/VBoxContainer/GridContainer"]
+text = "大陆数量:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/ContinentSpinBox" type="SpinBox" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="1"]
+layout_mode = 2
+min = 1.0
+max = 10.0
+step = 1.0
+value = 4.0
+rounded = true
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/WorldSizeLabel" type="Label" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="2"]
+text = "世界大小 (km²):"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/WorldSizeSpinBox" type="SpinBox" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="3"]
+layout_mode = 2
+min = 1000000.0
+max = 1000000000.0
+step = 1000000.0
+value = 150000000.0
+rounded = true
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/ClimateLabel" type="Label" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="4"]
+text = "气候多样性:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/ClimateSpinBox" type="SpinBox" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="5"]
+layout_mode = 2
+min = 0.0
+max = 100.0
+step = 5.0
+value = 85.0
+rounded = true
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/CultureLabel" type="Label" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="6"]
+text = "文化多样性:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Content/ParametersPanel/VBoxContainer/GridContainer/CultureSpinBox" type="SpinBox" parent="Content/ParametersPanel/VBoxContainer/GridContainer" index="7"]
+layout_mode = 2
+min = 0.0
+max = 100.0
+step = 5.0
+value = 90.0
+rounded = true
+
+[node name="Content/ParametersPanel/VBoxContainer/GenerateButton" type="Button" parent="Content/ParametersPanel/VBoxContainer" index="2"]
+text = "🚀 生成世界"
+focus_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1.0)
+theme_override_colors/font_hover_color = Color(1.0, 1.0, 1.0, 1.0)
+
+[node name="Content/ParametersPanel/VBoxContainer/ExportJsonButton" type="Button" parent="Content/ParametersPanel/VBoxContainer" index="3"]
+text = "💾 导出JSON报告"
+focus_mode = 2
+theme_override_font_sizes/font_size = 15
+
+[node name="Content/ParametersPanel/VBoxContainer/ProgressBar" type="ProgressBar" parent="Content/ParametersPanel/VBoxContainer" index="4"]
+value = 100.0
+percent_visible = false
+visible = false
+
+[node name="Content/OutputPanel" type="PanelContainer" parent="Content"]
+theme_override_styles/panel = SubResource("2")
+
+[node name="Content/OutputPanel/VBoxContainer" type="VBoxContainer" parent="Content/OutputPanel"]
+theme_override_constants/separation = 10
+
+[node name="Content/OutputPanel/VBoxContainer/OutputTitle" type="Label" parent="Content/OutputPanel/VBoxContainer"]
+text = "📜 生成结果"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.8, 1.0, 0.8, 1.0)
+
+[node name="Content/OutputPanel/VBoxContainer/OutputText" type="TextEdit" parent="Content/OutputPanel/VBoxContainer" index="1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+wrap_mode = 2
+readonly = true
+show_line_numbers = false
+text = "点击\"生成世界\"按钮开始创建您的虚构世界...\n\n系统将为您生成：\n• 独特的大陆和地理特征\n• 多样化的国家和政治体系\n• 丰富的城市网络\n• 深度的文明习俗和文化特色\n• 与环境互动的社会结构"
+
+[node name="SaveFileDialog" type="FileDialog" parent="." index="2"]
+title = "导出世界报告(JSON)"
+initial_position = 2
+size = Vector2i(900, 560)
+exclusive = false
+ok_button_text = "保存"
+
+[resource]
+1/margin_left = 4.0
+1/margin_top = 4.0
+1/margin_right = 4.0
+1/margin_bottom = 4.0
+1/bg_color = Color(0.15, 0.15, 0.25, 1.0)
+1/border_width_left = 0.0
+1/border_width_top = 0.0
+1/border_width_right = 0.0
+1/border_width_bottom = 2.0
+1/border_color = Color(0.4, 0.6, 0.8, 1.0)
+
+2/margin_left = 4.0
+2/margin_top = 4.0
+2/margin_right = 4.0
+2/margin_bottom = 4.0
+2/bg_color = Color(0.12, 0.12, 0.18, 0.8)
+2/border_width_left = 1.0
+2/border_width_top = 1.0
+2/border_width_right = 1.0
+2/border_width_bottom = 1.0
+2/border_color = Color(0.3, 0.3, 0.4, 1.0)
