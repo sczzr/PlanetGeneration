@@ -15,10 +15,36 @@ namespace PlanetGeneration;
 
 public partial class Main : Control
 {
+	public override void _Process(double delta)
+	{
+		var direction = Vector2.Zero;
+		if (Input.IsKeyPressed(Key.A) || Input.IsKeyPressed(Key.Left)) direction.X -= 1f;
+		if (Input.IsKeyPressed(Key.D) || Input.IsKeyPressed(Key.Right)) direction.X += 1f;
+		if (Input.IsKeyPressed(Key.W) || Input.IsKeyPressed(Key.Up)) direction.Y -= 1f;
+		if (Input.IsKeyPressed(Key.S) || Input.IsKeyPressed(Key.Down)) direction.Y += 1f;
+
+		if (direction != Vector2.Zero)
+		{
+			var speed = 420f * Mathf.Max(1f, _mapZoom * 0.35f);
+			_mapAspect.Position += direction.Normalized() * speed * (float)delta;
+		}
+
+		UpdateMinimapViewportRect();
+	}
+
 	private void SyncMapAspectToCenter()
 	{
 		var size = _mapCenter.Size;
 		_mapAspect.CustomMinimumSize = new Vector2(Mathf.Max(size.X, 0f), Mathf.Max(size.Y, 0f));
+		_mapAspect.PivotOffset = size * 0.5f;
+		_mapAspect.Scale = Vector2.One * _mapZoom;
+	}
+
+	private void SetMapZoom(float zoom)
+	{
+		_mapZoom = Mathf.Clamp(zoom, MapZoomMin, MapZoomMax);
+		_mapAspect.PivotOffset = _mapCenter.Size * 0.5f;
+		_mapAspect.Scale = Vector2.One * _mapZoom;
 	}
 
 
@@ -32,10 +58,10 @@ public partial class Main : Control
 
 		var selectedId = _layerOption.GetSelectedId();
 		var layer = Enum.IsDefined(typeof(MapLayer), selectedId) ? (MapLayer)selectedId : MapLayer.Satellite;
-		SyncMapModeFromLayer(selectedId);
 
 		var primaryRender = GetOrRenderLayer(_primaryWorld, layer);
 		_mapTexture.Texture = primaryRender.Texture;
+		UpdateMinimapTexture(primaryRender.Texture, primaryRender.Image);
 		_lastRenderedImage = primaryRender.Image;
 		UpdateLegend(layer);
 
@@ -451,44 +477,46 @@ public partial class Main : Control
 
 	private Image BuildLandformImage(float[,] elevation, float[,] moisture, float[,] river, float seaLevel, int width, int height)
 	{
-		var image = Image.CreateEmpty(width, height, false, Image.Format.Rgba8);
+		var buffer = new byte[width * height * 4];
 
-		for (var y = 0; y < height; y++)
+		System.Threading.Tasks.Parallel.For(0, height, y =>
 		{
 			for (var x = 0; x < width; x++)
 			{
 				var landform = ClassifyLandform(x, y, seaLevel, elevation, moisture, river);
-				var color = GetLandformColor(landform);
-				image.SetPixel(x, y, color);
+				WritePixelRGBA(buffer, width, x, y, GetLandformColor(landform));
 			}
-		}
+		});
 
-		return image;
+		return Image.CreateFromData(width, height, false, Image.Format.Rgba8, buffer);
+	}
+
+	private static void WritePixelRGBA(byte[] buffer, int width, int x, int y, Color color)
+	{
+		var index = (y * width + x) * 4;
+		buffer[index] = ToChannelByte(color.R);
+		buffer[index + 1] = ToChannelByte(color.G);
+		buffer[index + 2] = ToChannelByte(color.B);
+		buffer[index + 3] = 255;
+	}
+
+	private static byte ToChannelByte(float channel)
+	{
+		var value = Mathf.Clamp(channel, 0f, 1f) * 255f + 0.5f;
+		return value >= 255f ? (byte)255 : (byte)value;
 	}
 
 	private static Image UpscaleImageNearest(Image source, int targetWidth, int targetHeight)
 	{
-		var sourceWidth = source.GetWidth();
-		var sourceHeight = source.GetHeight();
-
-		if (sourceWidth == targetWidth && sourceHeight == targetHeight)
+		if (source.GetWidth() == targetWidth && source.GetHeight() == targetHeight)
 		{
 			return source;
 		}
 
-		var scaled = Image.CreateEmpty(targetWidth, targetHeight, false, Image.Format.Rgba8);
-
-		for (var y = 0; y < targetHeight; y++)
-		{
-			var sampleY = Mathf.Clamp((int)((long)y * sourceHeight / targetHeight), 0, sourceHeight - 1);
-			for (var x = 0; x < targetWidth; x++)
-			{
-				var sampleX = Mathf.Clamp((int)((long)x * sourceWidth / targetWidth), 0, sourceWidth - 1);
-				scaled.SetPixel(x, y, source.GetPixel(sampleX, sampleY));
-			}
-		}
-
-		return scaled;
+		// Native resize: the previous managed loop did millions of GetPixel/
+		// SetPixel interop calls to fill the 4096x2048 output canvas.
+		source.Resize(targetWidth, targetHeight, Image.Interpolation.Nearest);
+		return source;
 	}
 
 	private string BuildCompareSummary(GeneratedWorldData primary, GeneratedWorldData compare)

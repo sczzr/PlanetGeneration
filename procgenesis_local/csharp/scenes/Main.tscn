@@ -1,32 +1,28 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bjtwn5cc4vrd"]
 
-[ext_resource type="Script" path="res://scripts/Main.cs" id="1_script"]
+[ext_resource type="Script" uid="uid://wvf3q3mtgfea" path="res://scripts/Main.cs" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/MainLayout.tscn" id="2_layout"]
-[ext_resource type="Script" path="res://scripts/ThemeManager.cs" id="3_theme"]
-[ext_resource type="Theme" path="res://resources/themes/ChineseTheme.tres" id="4_chinese"]
-[ext_resource type="Theme" path="res://resources/themes/SteampunkTheme.tres" id="5_steampunk"]
+[ext_resource type="Script" uid="uid://d0akra8y480bv" path="res://scripts/ThemeManager.cs" id="3_theme"]
+[ext_resource type="Theme" uid="uid://wy8e3hpiiulm" path="res://resources/themes/ChineseTheme.tres" id="4_chinese"]
+[ext_resource type="Theme" uid="uid://dxdup7k6lfxax" path="res://resources/themes/SteampunkTheme.tres" id="5_steampunk"]
 
-[node name="Main" type="Control"]
+[node name="Main" type="Control" unique_id=860675360]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("5_steampunk")
 script = ExtResource("1_script")
 
-[node name="ThemeManager" type="Node" parent="."]
+[node name="ThemeManager" type="Node" parent="." unique_id=674580393]
 script = ExtResource("3_theme")
 ChineseTheme = ExtResource("4_chinese")
 SteampunkTheme = ExtResource("5_steampunk")
 
-[node name="MainLayout" parent="." instance=ExtResource("2_layout")]
+[node name="MainLayout" parent="." unique_id=1368092432 instance=ExtResource("2_layout")]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="SaveFileDialog" type="FileDialog" parent="." unique_id=176884582]
 title = "保存"
@@ -52,7 +48,6 @@ ok_button_text = "继续"
 dialog_text = "你选择了高地图信息级别，生成耗时会明显增加。是否继续？"
 
 [node name="MapInfoWarningSkipCheck" type="CheckBox" parent="MapInfoWarningDialog" unique_id=2100000423]
-layout_mode = 0
 offset_left = 16.0
 offset_top = 132.0
 offset_right = 240.0

@@ -1,0 +1,160 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/MainMenu.cs" id="1_menu"]
+
+[sub_resource type="StyleBoxFlat" id="MenuButtonNormal"]
+bg_color = Color(0, 0, 0, 0)
+content_margin_left = 36.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+border_width_left = 0
+
+[sub_resource type="StyleBoxFlat" id="MenuButtonHover"]
+bg_color = Color(0.62, 0.55, 0.4, 0.18)
+content_margin_left = 36.0
+content_margin_top = 10.0
+content_margin_bottom = 10.0
+border_width_left = 3
+border_color = Color(0.72, 0.63, 0.43, 0.9)
+
+[sub_resource type="StyleBoxFlat" id="MenuPanel"]
+bg_color = Color(0.035, 0.04, 0.042, 0.97)
+border_width_right = 1
+border_color = Color(0.35, 0.33, 0.28, 0.55)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="MenuOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Dim" type="ColorRect" parent="MenuOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.025, 0.027, 0.028, 0.93)
+
+[node name="MenuPanel" type="PanelContainer" parent="MenuOverlay"]
+layout_mode = 1
+anchors_preset = 4
+anchor_left = 0.08
+anchor_top = 0.12
+anchor_right = 0.48
+anchor_bottom = 0.88
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("MenuPanel")
+
+[node name="Menu" type="VBoxContainer" parent="MenuOverlay/MenuPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="MenuOverlay/MenuPanel/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.77, 0.66, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 34
+text = "行星志 · 远古纪元"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MenuOverlay/MenuPanel/Menu"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.53, 0.47, 1)
+theme_override_font_sizes/font_size = 13
+text = "PLANET GENERATION  ·  ARCHIVE 01"
+horizontal_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="MenuOverlay/MenuPanel/Menu"]
+layout_mode = 2
+theme_override_colors/separator = Color(0.55, 0.49, 0.36, 0.65)
+
+[node name="ContinueButton" type="Button" parent="MenuOverlay/MenuPanel/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.8, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+text = "继续探索"
+alignment = 0
+
+[node name="NewWorldButton" type="Button" parent="MenuOverlay/MenuPanel/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.8, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+text = "新建世界"
+alignment = 0
+
+[node name="LoadButton" type="Button" parent="MenuOverlay/MenuPanel/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.8, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+text = "读取档案"
+alignment = 0
+
+[node name="SettingsButton" type="Button" parent="MenuOverlay/MenuPanel/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.8, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+text = "设置"
+alignment = 0
+
+[node name="ExitButton" type="Button" parent="MenuOverlay/MenuPanel/Menu"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.8, 0.73, 1)
+theme_override_colors/font_hover_color = Color(1, 0.94, 0.78, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("MenuButtonNormal")
+theme_override_styles/hover = SubResource("MenuButtonHover")
+text = "退出游戏"
+alignment = 0
+
+[node name="Hint" type="Label" parent="MenuOverlay"]
+layout_mode = 1
+anchors_preset = 12
+anchor_left = 0.08
+anchor_top = 0.9
+anchor_right = 0.48
+anchor_bottom = 0.94
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.45, 0.44, 0.4, 1)
+theme_override_font_sizes/font_size = 12
+text = "↑ ↓ 选择    Enter 确认"
+horizontal_alignment = 1

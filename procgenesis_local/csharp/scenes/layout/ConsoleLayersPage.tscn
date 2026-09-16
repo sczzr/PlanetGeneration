@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="sb_section"]
+bg_color = Color(0.36, 0.27, 0.2, 0.98)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="sb_field"]
+bg_color = Color(0.79, 0.7, 0.58, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5, 0.39, 0.29, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="sb_field_active"]
+bg_color = Color(0.84, 0.76, 0.64, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.66, 0.94, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="LayersPage" type="ScrollContainer"]
+custom_minimum_size = Vector2(320, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="LayersMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="LayersMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="MapLayersBar" type="PanelContainer" parent="LayersMargin/Content"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_section")
+
+[node name="MapLayersRow" type="HBoxContainer" parent="LayersMargin/Content/MapLayersBar"]
+layout_mode = 2
+
+[node name="MapLayersTitle" type="Label" parent="LayersMargin/Content/MapLayersBar/MapLayersRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
+theme_override_font_sizes/font_size = 15
+text = "MAP LAYERS"
+
+[node name="MapLayersSpacer" type="Control" parent="LayersMargin/Content/MapLayersBar/MapLayersRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MapLayersInfo" type="Label" parent="LayersMargin/Content/MapLayersBar/MapLayersRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.8, 0.68, 1)
+theme_override_font_sizes/font_size = 11
+text = "点击行切换图层 | 完整度: High"
+
+[node name="LayerOption" type="OptionButton" parent="LayersMargin/Content"]
+visible = false
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="LayerTree" type="Tree" parent="LayersMargin/Content"]
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+column_titles_visible = true
+allow_reselect = true
+select_mode = 1
+hide_root = true

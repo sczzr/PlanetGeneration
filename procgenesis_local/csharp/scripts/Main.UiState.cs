@@ -27,7 +27,6 @@ public partial class Main : Control
 		_orogenyStrengthValue.Text = _orogenyStrength.ToString("0.00");
 		_subductionArcRatioValue.Text = _subductionArcRatio.ToString("0.00");
 		_continentalAgeValue.Text = _continentalAge.ToString();
-		UpdateMountainControlSummary();
 		_magicValue.Text = _magicDensity.ToString();
 		_aggressionValue.Text = _civilAggression.ToString();
 		_diversityValue.Text = _speciesDiversity.ToString();

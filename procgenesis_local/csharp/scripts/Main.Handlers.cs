@@ -73,6 +73,15 @@ public partial class Main : Control
 		GenerateWorld();
 	}
 
+	private void OnRiversToggled(bool value)
+	{
+		EnableRivers = value;
+		UpdateRiverDensityControlState();
+		UpdateRiverLayerAvailability();
+		SaveAdvancedSettings();
+		GenerateWorld();
+	}
+
 	private void UpdateRiverDensityControlState()
 	{
 		var isEnabled = EnableRivers;
@@ -96,9 +105,12 @@ public partial class Main : Control
 			_layerOption.SetItemDisabled(riverItemIndex, !riverEnabled);
 		}
 
-		if (_layerButtonsById.TryGetValue(riverLayerId, out var riverButton))
+		if (_layerTreeItems.TryGetValue(riverLayerId, out var riverItem))
 		{
-			riverButton.Disabled = !riverEnabled;
+			riverItem.SetSelectable(0, riverEnabled);
+			riverItem.SetCustomColor(0, riverEnabled
+				? Colors.White
+				: new Color(0.60f, 0.65f, 0.72f, 0.8f));
 		}
 
 		if (!riverEnabled && _layerOption.GetSelectedId() == riverLayerId)

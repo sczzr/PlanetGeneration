@@ -5,279 +5,85 @@ namespace PlanetGeneration;
 public partial class ThemeManager : Node
 {
     public static ThemeManager? Instance { get; private set; }
-    
-    public enum ThemeType
-    {
-        Chinese,
-        Steampunk
-    }
-    
-    private ThemeType _currentTheme = ThemeType.Chinese;
+    public enum ThemeType { Chinese, Steampunk }
+    private ThemeType _currentTheme = ThemeType.Steampunk;
     public ThemeType CurrentTheme => _currentTheme;
-    
-    private Theme? _currentThemeResource;
-    
-    [Export]
-    public Theme? ChineseTheme { get; set; }
-    
-    [Export]
-    public Theme? SteampunkTheme { get; set; }
-    
-    public override void _Ready()
+    [Export] public Theme? ChineseTheme { get; set; }
+    [Export] public Theme? SteampunkTheme { get; set; }
+
+    public override void _Ready() => Instance = this;
+    public override void _ExitTree() { if (Instance == this) Instance = null; }
+    public void ToggleTheme() => SetTheme(_currentTheme == ThemeType.Chinese ? ThemeType.Steampunk : ThemeType.Chinese);
+    public void SetTheme(ThemeType theme) { _currentTheme = theme; RefreshTheme(); }
+
+    public void RefreshTheme()
     {
-        Instance = this;
+        var main = GetParent() as Control;
+        if (main == null) return;
+        var source = _currentTheme == ThemeType.Chinese ? ChineseTheme : SteampunkTheme;
+        if (source != null) main.Theme = (Theme)source.Duplicate(true);
+        ApplyColors(main);
     }
-    
-    public void ToggleTheme()
+
+    private void ApplyColors(Node node)
     {
-        _currentTheme = _currentTheme switch
+        var accent = _currentTheme == ThemeType.Chinese
+            ? new Color("64c9bb") : new Color("dfa778");
+        var text = new Color("e0e8ed");
+        var surface = new Color("17232f");
+        var field = new Color("1d2b38");
+        var border = new Color("344858");
+        if (node is ColorRect rect && rect.Name == "Background") rect.Color = new Color("0b1017");
+        if (node is Control control)
         {
-            ThemeType.Chinese => ThemeType.Steampunk,
-            ThemeType.Steampunk => ThemeType.Chinese,
-            _ => ThemeType.Chinese
-        };
-        ApplyTheme();
-    }
-    
-    public void SetTheme(ThemeType theme)
-    {
-        if (_currentTheme != theme)
-        {
-            _currentTheme = theme;
-            ApplyTheme();
-        }
-    }
-    
-    private void ApplyTheme()
-    {
-        var root = GetTree().Root;
-        if (root == null) return;
-        
-        var mainControl = root.GetNodeOrNull<Control>("Main");
-        if (mainControl == null) return;
-        
-        _currentThemeResource = _currentTheme switch
-        {
-            ThemeType.Chinese => ChineseTheme,
-            ThemeType.Steampunk => SteampunkTheme,
-            _ => ChineseTheme
-        };
-        
-        if (_currentThemeResource != null)
-        {
-            ApplyThemeResource(mainControl, _currentThemeResource);
-        }
-        
-        ApplyColorOverlays(mainControl, _currentTheme);
-    }
-    
-    private void ApplyThemeResource(Control root, Theme theme)
-    {
-        root.Theme = theme;
-        
-        foreach (var child in root.GetChildren())
-        {
-            if (child is Control control)
+            // Duplicate the resolved style instead of replacing it with an empty box:
+            // margins, radii, track thickness and layout metrics must survive theme changes.
+            foreach (var key in new[] { "panel", "normal", "hover", "pressed", "disabled", "focus",
+                         "background", "fill", "slider", "grabber_area", "grabber_area_highlight",
+                         "tab_selected", "tab_unselected", "tab_hovered", "tab_focus" })
             {
-                control.Theme = theme;
-                ApplyThemeToChildren(control, theme);
+                if (!control.HasThemeStylebox(key)) continue;
+                if (control.GetThemeStylebox(key) is not StyleBoxFlat original) continue;
+                // CheckButton paints its own switch icon; a box behind it is just noise.
+                if (control is CheckButton && key is "normal" or "hover" or "pressed" or "disabled") continue;
+                var style = (StyleBoxFlat)original.Duplicate();
+                var active = key is "pressed" or "tab_selected" or "fill" or "grabber_area" or "grabber_area_highlight";
+                style.BgColor = active ? new Color("284b50")
+                    : key is "hover" or "tab_hovered" ? new Color("293d4d")
+                    : key == "normal" ? field
+                    : surface;
+                if (key == "slider" || key == "background") style.BgColor = new Color("2a3a49");
+                if (key == "fill" || key == "grabber_area" || key == "grabber_area_highlight") style.BgColor = accent;
+                style.BorderColor = active || key == "focus" || key == "tab_focus" ? accent : border;
+                style.ShadowColor = Colors.Transparent;
+                if (control is Button button && button is not OptionButton && button is not CheckButton
+                    && button is not CheckBox && key is "normal" or "pressed")
+                {
+                    // Plain action buttons lean toward the accent so they read as clickable.
+                    style.BgColor = surface.Lerp(accent, key == "pressed" ? 0.3f : 0.16f);
+                    style.BorderColor = new Color(accent.R, accent.G, accent.B, key == "pressed" ? 1f : 0.7f);
+                }
+                if (key == "focus")
+                {
+                    // A hairline ring; the default opaque plate would hide the focused control.
+                    style.DrawCenter = false;
+                    style.SetBorderWidthAll(1);
+                    style.BorderColor = new Color(accent.R, accent.G, accent.B, 0.55f);
+                }
+                control.AddThemeStyleboxOverride(key, style);
+            }
+            foreach (var key in new[] { "font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_selected_color", "font_unselected_color", "default_color" })
+                control.AddThemeColorOverride(key, text);
+            control.AddThemeColorOverride("font_disabled_color", new Color("82929f"));
+            if (control is Label)
+            {
+                var name = control.Name.ToString();
+                if (name.Contains("Title") || name.EndsWith("Value"))
+                    control.AddThemeColorOverride("font_color", accent);
+                else if (name.StartsWith("Section"))
+                    control.AddThemeColorOverride("font_color", new Color(accent.R, accent.G, accent.B, 0.8f));
             }
         }
-    }
-    
-    private void ApplyThemeToChildren(Control control, Theme theme)
-    {
-        foreach (var child in control.GetChildren())
-        {
-            if (child is Control childControl)
-            {
-                childControl.Theme = theme;
-                ApplyThemeToChildren(childControl, theme);
-            }
-        }
-    }
-    
-    private void ApplyColorOverlays(Control root, ThemeType theme)
-    {
-        ApplyNodeColors(root, theme);
-    }
-    
-    private void ApplyNodeColors(Node node, ThemeType theme)
-    {
-        if (node is ColorRect colorRect)
-        {
-            var name = colorRect.Name.ToString();
-            if (name == "Background")
-            {
-                colorRect.Color = GetBackgroundColor(theme);
-            }
-            else if (name == "OverlayTint")
-            {
-                colorRect.Color = GetOverlayColor(theme);
-            }
-        }
-        
-        if (node is PanelContainer panel)
-        {
-            var bgColor = GetPanelBgColor(theme);
-            var borderColor = GetPanelBorderColor(theme);
-            
-            var newStyle = new StyleBoxFlat();
-            newStyle.BgColor = bgColor;
-            newStyle.BorderColor = borderColor;
-            newStyle.BorderWidthLeft = theme == ThemeType.Steampunk ? 2 : 1;
-            newStyle.BorderWidthTop = theme == ThemeType.Steampunk ? 2 : 1;
-            newStyle.BorderWidthRight = theme == ThemeType.Steampunk ? 2 : 1;
-            newStyle.BorderWidthBottom = theme == ThemeType.Steampunk ? 2 : 1;
-            newStyle.CornerRadiusTopLeft = 6;
-            newStyle.CornerRadiusTopRight = 6;
-            newStyle.CornerRadiusBottomRight = 6;
-            newStyle.CornerRadiusBottomLeft = 6;
-            
-            panel.AddThemeStyleboxOverride("panel", newStyle);
-        }
-        
-        if (node is Label label)
-        {
-            label.AddThemeColorOverride("font_color", GetLabelColor(theme, label.Name.ToString()));
-        }
-        
-        if (node is Button button)
-        {
-            var name = button.Name.ToString();
-            if (name == "GenerateButton")
-            {
-                button.AddThemeColorOverride("font_color", GetButtonAccentColor(theme));
-            }
-            else
-            {
-                button.AddThemeColorOverride("font_color", GetTextColor(theme));
-            }
-        }
-        
-        if (node is HSlider slider)
-        {
-            slider.AddThemeColorOverride("font_color", GetSliderColor(theme));
-        }
-        
-        if (node is OptionButton optionButton)
-        {
-            optionButton.AddThemeColorOverride("font_color", GetTextColor(theme));
-        }
-        
-        if (node is CheckBox checkBox)
-        {
-            checkBox.AddThemeColorOverride("font_color", GetTextColor(theme));
-        }
-        
-        if (node is SpinBox spinBox)
-        {
-            spinBox.AddThemeColorOverride("font_color", GetTextColor(theme));
-        }
-        
-        if (node is RichTextLabel richText)
-        {
-            richText.AddThemeColorOverride("default_color", GetTextColor(theme));
-        }
-        
-        if (node is ProgressBar progressBar)
-        {
-            progressBar.AddThemeColorOverride("font_color", GetTextColor(theme));
-        }
-        
-        foreach (var child in node.GetChildren())
-        {
-            ApplyNodeColors(child, theme);
-        }
-    }
-    
-    private Color GetBackgroundColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.95f, 0.92f, 0.86f, 1f),
-            ThemeType.Steampunk => new Color(0.17f, 0.11f, 0.09f, 1f),
-            _ => new Color(0.95f, 0.92f, 0.86f, 1f)
-        };
-    }
-    
-    private Color GetPanelBgColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.91f, 0.89f, 0.82f, 1f),
-            ThemeType.Steampunk => new Color(0.23f, 0.14f, 0.11f, 1f),
-            _ => new Color(0.91f, 0.89f, 0.82f, 1f)
-        };
-    }
-    
-    private Color GetPanelBorderColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.37f, 0.39f, 0.37f, 0.5f),
-            ThemeType.Steampunk => new Color(0.83f, 0.62f, 0.21f, 0.6f),
-            _ => new Color(0.37f, 0.39f, 0.37f, 0.5f)
-        };
-    }
-    
-    private Color GetOverlayColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.1f, 0.1f, 0.1f, 0.3f),
-            ThemeType.Steampunk => new Color(0.05f, 0.03f, 0.02f, 0.5f),
-            _ => new Color(0.1f, 0.1f, 0.1f, 0.3f)
-        };
-    }
-    
-    private Color GetLabelColor(ThemeType theme, string name)
-    {
-        if (name.Contains("Title") || name == "Title" || name == "Subtitle" || 
-            name.EndsWith("Value") || name.Contains("Value"))
-        {
-            return GetTitleColor(theme);
-        }
-        return GetTextColor(theme);
-    }
-    
-    private Color GetTitleColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.18f, 0.36f, 0.31f, 1f),
-            ThemeType.Steampunk => new Color(0.83f, 0.69f, 0.22f, 1f),
-            _ => new Color(0.18f, 0.36f, 0.31f, 1f)
-        };
-    }
-    
-    private Color GetTextColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.17f, 0.17f, 0.17f, 1f),
-            ThemeType.Steampunk => new Color(0.92f, 0.85f, 0.70f, 1f),
-            _ => new Color(0.17f, 0.17f, 0.17f, 1f)
-        };
-    }
-    
-    private Color GetSliderColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.69f, 0.71f, 0.17f, 1f),
-            ThemeType.Steampunk => new Color(1.00f, 0.44f, 0.26f, 1f),
-            _ => new Color(0.69f, 0.71f, 0.17f, 1f)
-        };
-    }
-    
-    private Color GetButtonAccentColor(ThemeType theme)
-    {
-        return theme switch
-        {
-            ThemeType.Chinese => new Color(0.75f, 0.28f, 0.32f, 1f),
-            ThemeType.Steampunk => new Color(0.90f, 0.70f, 0.35f, 1f),
-            _ => new Color(0.75f, 0.28f, 0.32f, 1f)
-        };
+        foreach (var child in node.GetChildren()) ApplyColors(child);
     }
 }

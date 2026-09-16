@@ -32,6 +32,8 @@ namespace PlanetGeneration.UI
         private IntegratedWorldGenerator _worldGenerator;
         private CancellationTokenSource _cancellationTokenSource;
         private IntegratedWorldResult? _lastResult;
+        private Tween _feedbackTween;
+        private Tween _progressTween;
 
         public override void _Ready()
         {
@@ -295,12 +297,19 @@ namespace PlanetGeneration.UI
             {
                 _generateButton.Disabled = isGenerating;
                 _generateButton.Text = isGenerating ? "生成中..." : "生成世界";
+                _feedbackTween?.Kill();
+                _feedbackTween = CreateTween();
+                _feedbackTween.SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+                _feedbackTween.TweenProperty(_generateButton, "scale", isGenerating ? new Vector2(0.97f, 0.97f) : Vector2.One, 0.16f);
             }
 
             if (_progressBar != null)
             {
                 _progressBar.Visible = isGenerating;
-                _progressBar.Value = isGenerating ? 0 : 100;
+                _progressTween?.Kill();
+                _progressTween = CreateTween();
+                _progressTween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+                _progressTween.TweenProperty(_progressBar, "value", isGenerating ? 0.0f : 100.0f, 0.18f);
             }
         }
 
@@ -309,6 +318,11 @@ namespace PlanetGeneration.UI
             if (_statusLabel != null)
             {
                 _statusLabel.Text = message;
+                var isError = message.Contains("失败", StringComparison.Ordinal) || message.Contains("必须", StringComparison.Ordinal);
+                var isDone = message.Contains("完成", StringComparison.Ordinal) || message.Contains("就绪", StringComparison.Ordinal);
+                _statusLabel.Modulate = isError
+                    ? new Color(1f, 0.46f, 0.42f)
+                    : isDone ? new Color(0.48f, 1f, 0.72f) : new Color(0.72f, 0.86f, 1f);
             }
             GD.Print($"[地理生成器] {message}");
         }

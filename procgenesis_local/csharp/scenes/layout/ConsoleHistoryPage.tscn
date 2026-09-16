@@ -1,0 +1,161 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="sb_section"]
+bg_color = Color(0.08, 0.16, 0.24, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.64, 0.8, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id="sb_body"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[node name="HistoryPage" type="ScrollContainer"]
+custom_minimum_size = Vector2(320, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="HistoryMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="Content" type="VBoxContainer" parent="HistoryMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="StatsBar" type="PanelContainer" parent="HistoryMargin/Content"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_section")
+
+[node name="StatsRow" type="HBoxContainer" parent="HistoryMargin/Content/StatsBar"]
+layout_mode = 2
+
+[node name="StatsTitle" type="Label" parent="HistoryMargin/Content/StatsBar/StatsRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
+theme_override_font_sizes/font_size = 15
+text = "HISTORY · 历史与统计"
+
+[node name="StatsSpacer" type="Control" parent="HistoryMargin/Content/StatsBar/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StatsGroup" type="PanelContainer" parent="HistoryMargin/Content"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_body")
+
+[node name="StatsVBox" type="VBoxContainer" parent="HistoryMargin/Content/StatsGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="InfoLabel" type="Label" parent="HistoryMargin/Content/StatsGroup/StatsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.47451, 0.564706, 0.65098, 1)
+theme_override_font_sizes/font_size = 10
+text = "Out:4096x2048 | 地图信息:256x128"
+
+[node name="CompareStatsLabel" type="Label" parent="HistoryMargin/Content/StatsGroup/StatsVBox"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.639216, 0.878431, 0.984314, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "Compare stats"
+autowrap_mode = 2
+
+[node name="CityNamesLabel" type="RichTextLabel" parent="HistoryMargin/Content/StatsGroup/StatsVBox"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 11
+text = "Cities"
+scroll_active = false
+autowrap_mode = 2
+
+[node name="TimelineGroup" type="PanelContainer" parent="HistoryMargin/Content"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_body")
+
+[node name="TimelineVBox" type="VBoxContainer" parent="HistoryMargin/Content/TimelineGroup"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TimelineLabel" type="Label" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
+theme_override_font_sizes/font_size = 13
+text = "历史进程"
+
+[node name="TimelineContainer" type="VBoxContainer" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TimelineRow" type="HBoxContainer" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PrevEpochButton" type="Button" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer/TimelineRow"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "上一纪元"
+
+[node name="TimelineSlider" type="HSlider" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer/TimelineRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1000.0
+value = 450.0
+
+[node name="NextEpochButton" type="Button" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer/TimelineRow"]
+custom_minimum_size = Vector2(62, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "下一纪元"
+
+[node name="EpochRow" type="HBoxContainer" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EpochLabel" type="Label" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer/EpochRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
+theme_override_font_sizes/font_size = 11
+text = "第 450 纪元"
+
+[node name="EpochEventIndexLabel" type="Label" parent="HistoryMargin/Content/TimelineGroup/TimelineVBox/TimelineContainer/EpochRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.737255, 0.823529, 0.933333, 0.95)
+theme_override_font_sizes/font_size = 10
+text = "事件 --/--"

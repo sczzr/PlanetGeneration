@@ -28,7 +28,9 @@ public partial class Main : Control
 
 	private async Task GenerateWorldAsync()
 	{
+		var generationTimer = Stopwatch.StartNew();
 		_isGenerating = true;
+		SetGenerationUiState(true);
 		_pendingRegenerate = false;
 		_generationStartedMsec = Time.GetTicksMsec();
 		_progressOverlay.Visible = true;
@@ -41,11 +43,13 @@ public partial class Main : Control
 		{
 			if (TryGetWorldGenerationCache(generationCacheKey, out var cachedPrimary, out var cachedCompare))
 			{
+				LogGenerationTiming("缓存读取", generationTimer.Elapsed);
 				_primaryWorld = cachedPrimary;
 				_compareWorld = _compareMode ? cachedCompare : null;
 				await SetProgressAsync(92f, "读取缓存");
 				await SetProgressAsync(97f, "渲染中");
 				RedrawCurrentLayer();
+				LogGenerationTiming("缓存渲染", generationTimer.Elapsed);
 				await SetProgressAsync(100f, "完成（缓存）");
 				generationSucceeded = true;
 				return;
@@ -77,18 +81,26 @@ public partial class Main : Control
 			generatedFromScratch = true;
 
 			await SetProgressAsync(97f, "渲染中");
+			var renderTimer = Stopwatch.StartNew();
 			RedrawCurrentLayer();
+			LogGenerationTiming("渲染", renderTimer.Elapsed);
 			await SetProgressAsync(100f, "完成");
 			generationSucceeded = true;
+			LogGenerationTiming("总生成", generationTimer.Elapsed);
 		}
 		finally
 		{
+			if (!generationSucceeded)
+			{
+				LogGenerationTiming("生成失败/中断", generationTimer.Elapsed);
+			}
 			if (generationSucceeded && generatedFromScratch)
 			{
 				RecordGenerationThroughput();
 			}
 
 			_isGenerating = false;
+			SetGenerationUiState(false);
 
 			if (_pendingRegenerate)
 			{
@@ -102,55 +114,118 @@ public partial class Main : Control
 		}
 	}
 
+	private void SetGenerationUiState(bool active)
+	{
+		if (!IsInstanceValid(_generateButton) || !IsInstanceValid(_randomButton) || !IsInstanceValid(_progressOverlay))
+		{
+			return;
+		}
+
+		_generateButton.Disabled = active;
+		_randomButton.Disabled = active;
+		_generationUiTween?.Kill();
+		_generationUiTween = CreateTween().SetParallel(true);
+		_generationUiTween.SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.Out);
+		_generationUiTween.TweenProperty(_progressOverlay, "modulate:a", active ? 1.0f : 0.0f, active ? 0.18f : 0.24f);
+		_generationUiTween.TweenProperty(_generateButton, "scale", active ? new Vector2(0.98f, 0.98f) : Vector2.One, 0.18f);
+		if (active)
+		{
+			_progressOverlay.Visible = true;
+		}
+		else
+		{
+			_generationUiTween.Finished += () =>
+			{
+				if (!_isGenerating && IsInstanceValid(_progressOverlay))
+				{
+					_progressOverlay.Visible = false;
+				}
+			};
+		}
+	}
+
 
 	private async Task<GeneratedWorldData> BuildWorldAsync(WorldTuning tuning, string label, float startProgress, float endProgress)
 	{
 		const int totalSteps = 10;
 		var step = 0;
+		var worldTimer = Stopwatch.StartNew();
+		var stageTimer = Stopwatch.StartNew();
 
 		var plateResult = await Task.Run(() => _plateGenerator.Generate(MapWidth, MapHeight, PlateCount, Seed, _terrainOceanicRatio));
+		LogGenerationStage(label, "板块", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "板块", ++step, totalSteps, startProgress, endProgress);
 
-		var resourceTask = Task.Run(() => _resourceGenerator.Generate(MapWidth, MapHeight, Seed, plateResult.BoundaryTypes));
+		stageTimer.Restart();
+		var resourceTask = Task.Run(() =>
+		{
+			var timer = Stopwatch.StartNew();
+			var result = _resourceGenerator.Generate(MapWidth, MapHeight, Seed, plateResult.BoundaryTypes);
+			return (Result: result, Elapsed: timer.Elapsed);
+		});
 
+		var elevationTimer = Stopwatch.StartNew();
 		var elevation = await Task.Run(() => _elevationGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, plateResult));
-		elevation = ApplyTerrainMorphologyMask(elevation, plateResult, MapWidth, MapHeight, SeaLevel, _terrainContinentBias, _interiorRelief, _orogenyStrength, _subductionArcRatio, _continentalAge, _terrainMorphology, Seed, _continentCount);
+		LogGenerationTiming($"{label}高度生成", elevationTimer.Elapsed);
+		var morphologyTimer = Stopwatch.StartNew();
+		elevation = await Task.Run(() => ApplyTerrainMorphologyMask(elevation, plateResult, MapWidth, MapHeight, SeaLevel, _terrainContinentBias, _interiorRelief, _orogenyStrength, _subductionArcRatio, _continentalAge, _terrainMorphology, Seed, _continentCount));
+		LogGenerationTiming($"{label}地貌掩膜", morphologyTimer.Elapsed);
+		LogGenerationStage(label, "高度与地貌", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "地形", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var waterLayer = Array2D.Create(MapWidth, MapHeight, 1f);
 		var emptyRiverLayer = Array2D.Create(MapWidth, MapHeight, 0f);
 		await Task.Run(() => _erosionSimulator.Run(MapWidth, MapHeight, ErosionIterations, elevation, waterLayer, emptyRiverLayer));
 		var targetOceanRatio = MapSeaLevelToTargetOceanRatio(SeaLevel);
 		elevation = NormalizeElevationForPipeline(elevation, MapWidth, MapHeight, SeaLevel, targetOceanRatio);
+		LogGenerationStage(label, "侵蚀与归一化", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "侵蚀", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var temperatureTask = Task.Run(() => _temperatureGenerator.Generate(MapWidth, MapHeight, Seed, elevation, HeatFactor));
 		var windTask = Task.Run(() => _moistureGenerator.GenerateBaseWind(MapWidth, MapHeight, Seed, WindCellCount));
 		var temperature = await temperatureTask;
+		LogGenerationStage(label, "温度", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "温度", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var baseMoistureTask = Task.Run(() => _moistureGenerator.GenerateBaseMoisture(MapWidth, MapHeight, SeaLevel, elevation, temperature));
 		var wind = await windTask;
 		var baseMoisture = await baseMoistureTask;
+		LogGenerationStage(label, "风场与湿度基础", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "湿度基础", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var moisture = await Task.Run(() => _moistureGenerator.DistributeMoisture(MapWidth, MapHeight, SeaLevel, elevation, baseMoisture, temperature, wind, MoistureIterations, Seed));
+		LogGenerationStage(label, "湿度扩散", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "湿度扩散", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var river = EnableRivers
 			? await Task.Run(() => _riverGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, elevation, moisture, tuning, RiverDensity))
 			: Array2D.Create(MapWidth, MapHeight, 0f);
+		LogGenerationStage(label, EnableRivers ? "河流" : "河流关闭", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, EnableRivers ? "河流" : "河流关闭", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var biome = await Task.Run(() => _biomeGenerator.Generate(MapWidth, MapHeight, SeaLevel, elevation, moisture, temperature, river, tuning));
+		LogGenerationStage(label, "生物群系", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "生物群系", ++step, totalSteps, startProgress, endProgress);
 
-		var resource = await resourceTask;
+		stageTimer.Restart();
+		var resourceWork = await resourceTask;
+		var resource = resourceWork.Result;
+		LogGenerationStage(label, "资源", resourceWork.Elapsed, worldTimer);
 		var cities = await Task.Run(() => _cityGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, elevation, moisture, river, biome));
+		LogGenerationStage(label, "资源与城市", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "资源与城市", ++step, totalSteps, startProgress, endProgress);
 
+		stageTimer.Restart();
 		var stats = await Task.Run(() => _statsCalculator.Calculate(MapWidth, MapHeight, biome, moisture, temperature, river, cities.Count));
+		LogGenerationStage(label, "统计", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "统计", ++step, totalSteps, startProgress, endProgress);
+		LogGenerationTiming($"{label}总计", worldTimer.Elapsed);
 
 		return new GeneratedWorldData
 		{
@@ -169,6 +244,21 @@ public partial class Main : Control
 		};
 	}
 
+	private void LogGenerationStage(string label, string stage, Stopwatch stageTimer, Stopwatch worldTimer)
+	{
+		LogGenerationStage(label, stage, stageTimer.Elapsed, worldTimer);
+	}
+
+	private void LogGenerationStage(string label, string stage, TimeSpan elapsed, Stopwatch worldTimer)
+	{
+		GD.Print($"[WorldGen][{label}][地图 {MapWidth}x{MapHeight}] {stage}: {elapsed.TotalMilliseconds:0} ms | 累计 {worldTimer.Elapsed.TotalSeconds:0.00} s");
+	}
+
+	private void LogGenerationTiming(string stage, TimeSpan elapsed)
+	{
+		GD.Print($"[WorldGen][地图 {MapWidth}x{MapHeight}] {stage}: {elapsed.TotalMilliseconds:0} ms ({elapsed.TotalSeconds:0.00} s)");
+	}
+
 	private async Task SetBuildProgressAsync(string label, string stage, int step, int totalSteps, float startProgress, float endProgress)
 	{
 		var t = totalSteps <= 0 ? 1f : Mathf.Clamp((float)step / totalSteps, 0f, 1f);
@@ -179,7 +269,10 @@ public partial class Main : Control
 	private async Task SetProgressAsync(float value, string status)
 	{
 		var clampedValue = Mathf.Clamp(value, 0f, 100f);
-		_generateProgress.Value = clampedValue;
+		_progressTween?.Kill();
+		_progressTween = CreateTween();
+		_progressTween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+		_progressTween.TweenProperty(_generateProgress, "value", clampedValue, 0.16f);
 		_progressStatus.Text = BuildProgressStatus(status, clampedValue);
 		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}

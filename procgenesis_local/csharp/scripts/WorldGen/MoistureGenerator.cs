@@ -1,4 +1,5 @@
 using Godot;
+using System.Threading.Tasks;
 
 namespace PlanetGeneration.WorldGen;
 
@@ -28,53 +29,64 @@ public sealed class MoistureGenerator
         var windCount = new float[width, height];
 
         var diag = Mathf.Sqrt(width * width + height * height);
+        // Very large maps otherwise make each source touch an O(diag^2)
+        // perimeter. A 512-cell radius still gives broad planetary wind bands
+        // while keeping generation time bounded as resolution increases.
+        var maxReach = Mathf.Min(Mathf.Max(2, Mathf.FloorToInt(diag / 4f)), 512);
 
         for (var i = 0; i < windCellCount; i++)
         {
             var originX = rng.RandiRange(0, width - 1);
             var originY = rng.RandiRange(0, height - 1);
             var intensity = rng.RandfRange(1f, 50f);
-            var reach = rng.RandiRange(1, Mathf.Max(2, Mathf.FloorToInt(diag / 4f)));
+            var reach = rng.RandiRange(1, maxReach);
             var clockwise = rng.Randf() > 0.5f;
 
+            void VisitRingCell(int p, int q, int r)
+            {
+                var x = originX + p;
+                var y = originY + q;
+
+                if (x < 0)
+                {
+                    x += width;
+                }
+                else if (x >= width)
+                {
+                    x -= width;
+                }
+
+                if (y < 0)
+                {
+                    y = 0;
+                }
+                else if (y >= height)
+                {
+                    y = height - 1;
+                }
+
+                var vx = clockwise ? intensity * (-q) / r : intensity * q / r;
+                var vy = clockwise ? intensity * p / r : intensity * (-p) / r;
+
+                wind[x, y] += new Vector2(vx, vy);
+                windCount[x, y] += 1f;
+            }
+
+            // Walk only the ring perimeter: (2r+1)^2 per radius degenerates to
+            // O(reach^3) per wind cell because interior points fail the edge
+            // test; the four edges are O(r) each, O(reach^2) per cell total.
             for (var r = 1; r <= reach; r++)
             {
                 for (var p = -r; p <= r; p++)
                 {
-                    for (var q = -r; q <= r; q++)
-                    {
-                        if (Mathf.Abs(p) != r && Mathf.Abs(q) != r)
-                        {
-                            continue;
-                        }
+                    VisitRingCell(p, -r, r);
+                    VisitRingCell(p, r, r);
+                }
 
-                        var x = originX + p;
-                        var y = originY + q;
-
-                        if (x < 0)
-                        {
-                            x += width;
-                        }
-                        else if (x >= width)
-                        {
-                            x -= width;
-                        }
-
-                        if (y < 0)
-                        {
-                            y = 0;
-                        }
-                        else if (y >= height)
-                        {
-                            y = height - 1;
-                        }
-
-                        var vx = clockwise ? intensity * (-q) / r : intensity * q / r;
-                        var vy = clockwise ? intensity * p / r : intensity * (-p) / r;
-
-                        wind[x, y] += new Vector2(vx, vy);
-                        windCount[x, y] += 1f;
-                    }
+                for (var q = -r + 1; q < r; q++)
+                {
+                    VisitRingCell(-r, q, r);
+                    VisitRingCell(r, q, r);
                 }
             }
         }
@@ -110,25 +122,37 @@ public sealed class MoistureGenerator
     {
         var distributed = Array2D.Create(width, height, 0f);
 
-        var noise = new FastNoiseLite
+        // The 5-octave legacy noise dominates this stage; sample it per row in
+        // parallel (stateless position-based noise, so per-row copies with the
+        // same seed produce identical values).
+        var noiseValues = new float[width, height];
+        Parallel.For(0, height, y =>
         {
-            Seed = seed ^ unchecked((int)0x6c8e9cf5),
-            NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
-            Frequency = 1f
-        };
+            var noise = new FastNoiseLite
+            {
+                Seed = seed ^ unchecked((int)0x6c8e9cf5),
+                NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
+                Frequency = 1f
+            };
+
+            for (var x = 0; x < width; x++)
+            {
+                noiseValues[x, y] = SampleLegacyNoise(noise, x, y, width, height);
+            }
+        });
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                var noiseValue = SampleLegacyNoise(noise, x, y, width, height);
+                var noiseValue = noiseValues[x, y];
 
-                if (elevation[x, y] >= seaLevel)
+                var isLand = elevation[x, y] >= seaLevel;
+                if (isLand)
                 {
                     distributed[x, y] += 0.15f * noiseValue;
                 }
-
-                if (elevation[x, y] >= seaLevel)
+                else
                 {
                     continue;
                 }
@@ -239,7 +263,7 @@ public sealed class MoistureGenerator
 
     private void FinalizeMoisture(float[,] values, float[,] elevation, int width, int height, float seaLevel)
     {
-        for (var y = 0; y < height; y++)
+        Parallel.For(0, height, y =>
         {
             for (var x = 0; x < width; x++)
             {
@@ -255,57 +279,57 @@ public sealed class MoistureGenerator
                     values[x, y] = 0f;
                 }
             }
-        }
+        });
     }
 
     private float[,] AverageLandValues(float[,] input, float[,] elevation, int width, int height, float seaLevel, int radius)
     {
-        var averaged = new float[width, height];
-
-        for (var y = 0; y < height; y++)
+        // The original implementation visited (2r+1)^2 cells for every output
+        // cell. Two box-filter passes produce the same rectangular window in
+        // O(width*height*r) time and avoid tens of millions of repeated bounds
+        // calculations on normal maps.
+        var horizontalSum = new float[width, height];
+        var horizontalCount = new int[width, height];
+        Parallel.For(0, height, y =>
         {
             for (var x = 0; x < width; x++)
             {
                 var sum = 0f;
-                var count = 1;
-
-                for (var oy = -radius; oy <= radius; oy++)
+                var count = 0;
+                for (var ox = -radius; ox <= radius; ox++)
                 {
-                    for (var ox = -radius; ox <= radius; ox++)
+                    var nx = x + ox;
+                    if (nx < 0) nx += width;
+                    else if (nx >= width) nx -= width;
+                    if (elevation[nx, y] > seaLevel)
                     {
-                        var nx = x + ox;
-                        var ny = y + oy;
-
-                        if (nx < 0)
-                        {
-                            nx = width + nx;
-                        }
-                        else if (nx >= width)
-                        {
-                            nx %= width;
-                        }
-
-                        if (ny < 0)
-                        {
-                            ny = 0;
-                        }
-                        else if (ny >= height)
-                        {
-                            ny = height - 1;
-                        }
-
-                        if (elevation[nx, ny] > seaLevel)
-                        {
-                            sum += input[nx, ny];
-                            count++;
-                        }
+                        sum += input[nx, y];
+                        count++;
                     }
                 }
-
-                averaged[x, y] = sum / Mathf.Max(count, 1);
+                horizontalSum[x, y] = sum;
+                horizontalCount[x, y] = count;
             }
-        }
+        });
 
+        var averaged = new float[width, height];
+        Parallel.For(0, height, y =>
+        {
+            for (var x = 0; x < width; x++)
+            {
+                var sum = 0f;
+                var count = 1; // Preserve the original denominator baseline.
+                for (var oy = -radius; oy <= radius; oy++)
+                {
+                    var ny = y + oy;
+                    if (ny < 0) ny = 0;
+                    else if (ny >= height) ny = height - 1;
+                    sum += horizontalSum[x, ny];
+                    count += horizontalCount[x, ny];
+                }
+                averaged[x, y] = sum / count;
+            }
+        });
         return averaged;
     }
 

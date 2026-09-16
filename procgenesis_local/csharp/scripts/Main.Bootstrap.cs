@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.WorldGen;
+using PlanetGeneration.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,16 +16,24 @@ namespace PlanetGeneration;
 
 public partial class Main : Control
 {
+	private PlanetGeneration.UI.GeneratorControlsController? _controlsController;
+
 	public override void _Ready()
 	{
+		var headerController = GetNodeOrNull<MainHeaderController>("MainLayout/ConsolePanel/ConsoleVBox/HeaderPanel");
+		var controlsController = GetNodeOrNull<GeneratorControlsController>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs");
+		_controlsController = controlsController;
 		_mapTexture = GetNodeByName<TextureRect>("MapTexture");
-		_seedSpin = GetNodeByName<SpinBox>("SeedSpin");
-		_seaLevelSlider = GetNodeByName<HSlider>("SeaLevelSlider");
-		_heatSlider = GetNodeByName<HSlider>("HeatSlider");
-		_erosionSlider = GetNodeByName<HSlider>("ErosionSlider");
-		_seaLevelValue = GetNodeByName<Label>("SeaLevelValue");
-		_heatValue = GetNodeByName<Label>("HeatValue");
-		_erosionValue = GetNodeByName<Label>("ErosionValue");
+		_generateButton = headerController?.GenerateButton
+			?? GetNodeByName<Button>("GenerateButton");
+		_randomButton = controlsController?.RandomButton ?? GetNodeByName<Button>("RandomButton");
+		_seedSpin = controlsController?.SeedSpin ?? GetNodeByName<SpinBox>("SeedSpin");
+		_seaLevelSlider = controlsController?.SeaLevelSlider ?? GetNodeByName<HSlider>("SeaLevelSlider");
+		_heatSlider = controlsController?.HeatSlider ?? GetNodeByName<HSlider>("HeatSlider");
+		_erosionSlider = controlsController?.ErosionSlider ?? GetNodeByName<HSlider>("ErosionSlider");
+		_seaLevelValue = controlsController?.SeaLevelValue ?? GetNodeByName<Label>("SeaLevelValue");
+		_heatValue = controlsController?.HeatValue ?? GetNodeByName<Label>("HeatValue");
+		_erosionValue = controlsController?.ErosionValue ?? GetNodeByName<Label>("ErosionValue");
 		_infoLabel = GetNodeByName<Label>("InfoLabel");
 		_compareStatsLabel = GetNodeByName<Label>("CompareStatsLabel");
 		_cityNamesLabel = GetNodeByName<RichTextLabel>("CityNamesLabel");
@@ -42,25 +51,22 @@ public partial class Main : Control
 		_elevationStyleOption = GetNodeByName<OptionButton>("ElevationStyleOption");
 		_continentCountOption = GetNodeByName<OptionButton>("ContinentCountOption");
 		_archiveOption = GetNodeByName<OptionButton>("ArchiveOption");
-		_mapModeOption = GetNodeByName<OptionButton>("MapModeOption");
-		_advancedSettingsButton = GetNodeByName<Button>("AdvancedSettingsButton");
+		_advancedSettingsButton = headerController?.AdvancedSettingsButton ?? GetNodeByName<Button>("AdvancedSettingsButton");
 		_resetAdvancedSettingsButton = GetNodeByName<Button>("ResetAdvancedSettingsButton");
 		_persistCacheGroupButton = GetNodeByName<Button>("PersistCacheGroupButton");
 		_clearCacheButton = GetNodeByName<Button>("ClearCacheButton");
-		_riverToggle = GetNodeByName<CheckBox>("RiverToggle");
-		_compareToggle = GetNodeByName<CheckBox>("CompareToggle");
-		_exportPngButton = GetNodeByName<Button>("ExportPngButton");
-		_exportJsonButton = GetNodeByName<Button>("ExportJsonButton");
-		_themeToggleButton = GetNodeByName<Button>("ThemeToggleButton");
+		_riverToggle = GetNodeByName<BaseButton>("RiversSwitch");
+		_compareToggle = GetNodeByName<BaseButton>("CompareToggle");
+		_exportPngButton = headerController?.ExportPngButton ?? GetNodeByName<Button>("ExportPngButton");
+		_exportJsonButton = headerController?.ExportJsonButton ?? GetNodeByName<Button>("ExportJsonButton");
+		_themeToggleButton = headerController?.ThemeToggleButton ?? GetNodeByName<Button>("ThemeToggleButton");
 		_generateProgress = GetNodeByName<ProgressBar>("GenerateProgress");
 		_progressStatus = GetNodeByName<Label>("ProgressStatus");
 		_cacheStatsLabel = GetNodeByName<Label>("CacheStatsLabel");
 		_progressOverlay = GetNodeByName<Control>("ProgressOverlay");
-		_layerButtons = GetNodeByName<Container>("LayerButtons");
-		_layerRow = GetNodeByName<Control>("LayerRow");
+		_layerTree = GetNodeByName<Tree>("LayerTree");
 		_mapCenter = GetNodeByName<Control>("MapCenter");
 		_mapRoot = GetNodeByName<Control>("MapRoot");
-		_advancedSettingsPanel = GetNodeByName<Control>("AdvancedSettingsPanel");
 		_biomeHoverPanel = GetNodeByName<Control>("BiomeHoverPanel");
 		_biomeHoverText = GetNodeByName<Label>("BiomeHoverText");
 		_continentCountWrap = GetNodeByName<Control>("ContinentCountWrap");
@@ -83,9 +89,6 @@ public partial class Main : Control
 		_subductionArcRatioValue = GetNodeByName<Label>("SubductionArcRatioValue");
 		_continentalAgeSlider = GetNodeByName<HSlider>("ContinentalAgeSlider");
 		_continentalAgeValue = GetNodeByName<Label>("ContinentalAgeValue");
-		_mountainControlToggleButton = GetNodeByName<Button>("MountainControlToggleButton");
-		_mountainControlBody = GetNodeByName<Control>("MountainControlBody");
-		_mountainControlSummaryLabel = GetNodeByName<Label>("MountainControlSummary");
 		_magicSlider = GetNodeByName<HSlider>("MagicSlider");
 		_magicValue = GetNodeByName<Label>("MagicValue");
 		_aggressionSlider = GetNodeByName<HSlider>("AggressionSlider");
@@ -102,11 +105,16 @@ public partial class Main : Control
 		_loreStateLabel = GetNodeByName<Label>("LoreStateLabel");
 		_threatLabel = GetNodeByName<Label>("ThreatLabel");
 		_loreText = GetNodeByName<RichTextLabel>("LoreText");
+		_consolePanel = GetNodeByName<Control>("ConsolePanel");
+		_consoleCollapseTab = GetNodeByName<Button>("ConsoleCollapseTab");
+		_consoleSummonTab = GetNodeByName<Button>("ConsoleSummonTab");
+		_minimapPanel = GetNodeByName<Control>("MinimapPanel");
+		_minimapTexture = GetNodeByName<TextureRect>("MinimapTexture");
+		_minimapViewRect = GetNodeByName<ReferenceRect>("MinimapViewRect");
 
 		_generateProgress.Value = 0;
 		_progressStatus.Text = "待命";
 		_progressOverlay.Visible = false;
-		_advancedSettingsPanel.Visible = false;
 		_biomeHoverPanel.Visible = false;
 		_pendingExportKind = ExportKind.None;
 
@@ -125,6 +133,12 @@ public partial class Main : Control
 		_mapCenter.Resized += SyncMapAspectToCenter;
 		CallDeferred(nameof(SyncMapAspectToCenter));
 		LoadAdvancedSettings();
+		ApplyConsolePanelVisibility();
+
+		_consoleCollapseTab.Pressed += OnConsoleCollapseTabPressed;
+		_consoleSummonTab.Pressed += OnConsoleSummonTabPressed;
+		_minimapTexture.GuiInput += OnMinimapGuiInput;
+		_minimapTexture.MouseExited += () => _minimapDragging = false;
 
 		SetupLayerOptions();
 		SetupMapSizeOptions();
@@ -133,60 +147,78 @@ public partial class Main : Control
 		SetupMountainPresetOptions();
 		SetupElevationStyleOptions();
 		SetupArchiveOptions();
-		SetupMapModeOptions();
 		DisableMouseWheelForAllSliders();
 		CaptureUiFontSizeBaselines();
 		ApplyUiFontScale();
 
-		GetNodeByName<Button>("GenerateButton").Pressed += OnGeneratePressed;
-		GetNodeByName<Button>("RandomButton").Pressed += OnRandomPressed;
-		_advancedSettingsButton.Pressed += ToggleAdvancedSettings;
+		if (headerController != null)
+		{
+			headerController.GenerateRequested += OnGeneratePressed;
+			headerController.AdvancedSettingsRequested += ShowAdvancedSettingsPage;
+			headerController.ExportPngRequested += OnExportPngPressed;
+			headerController.ExportJsonRequested += OnExportJsonPressed;
+			headerController.ThemeToggleRequested += OnThemeTogglePressed;
+		}
+		else
+		{
+			_generateButton.Pressed += OnGeneratePressed;
+			_advancedSettingsButton.Pressed += ShowAdvancedSettingsPage;
+		}
 		_resetAdvancedSettingsButton.Pressed += OnResetAdvancedSettingsPressed;
-		_exportPngButton.Pressed += OnExportPngPressed;
-		_exportJsonButton.Pressed += OnExportJsonPressed;
-		_themeToggleButton.Pressed += OnThemeTogglePressed;
+		if (headerController == null)
+		{
+			_exportPngButton.Pressed += OnExportPngPressed;
+			_exportJsonButton.Pressed += OnExportJsonPressed;
+			_themeToggleButton.Pressed += OnThemeTogglePressed;
+		}
 		_persistCacheGroupButton.Pressed += OnSaveArchivePressed;
 		_clearCacheButton.Pressed += OnClearCachePressed;
 
-		_seaLevelSlider.ValueChanged += OnSeaLevelChanged;
-		_heatSlider.ValueChanged += OnHeatChanged;
-		_erosionSlider.ValueChanged += OnErosionChanged;
-		_riverDensitySlider.ValueChanged += OnRiverDensityChanged;
-		_windArrowDensitySlider.ValueChanged += OnWindArrowDensityChanged;
-		_basinSensitivitySlider.ValueChanged += OnBasinSensitivityChanged;
-		_interiorReliefSlider.ValueChanged += OnInteriorReliefChanged;
-		_orogenyStrengthSlider.ValueChanged += OnOrogenyStrengthChanged;
-		_subductionArcRatioSlider.ValueChanged += OnSubductionArcRatioChanged;
-		_continentalAgeSlider.ValueChanged += OnContinentalAgeChanged;
-		_mountainControlToggleButton.Pressed += ToggleMountainControlGroup;
+		if (controlsController != null)
+		{
+			controlsController.ApplyRequested += OnGeneratePressed;
+			controlsController.RandomRequested += OnRandomPressed;
+			controlsController.SeaLevelChanged += OnSeaLevelChanged;
+			controlsController.HeatChanged += OnHeatChanged;
+			controlsController.ErosionChanged += OnErosionChanged;
+			controlsController.InteriorReliefChanged += OnInteriorReliefChanged;
+			controlsController.OrogenyStrengthChanged += OnOrogenyStrengthChanged;
+			controlsController.SubductionArcRatioChanged += OnSubductionArcRatioChanged;
+			controlsController.ContinentalAgeChanged += OnContinentalAgeChanged;
+			controlsController.RiversToggled += OnRiversToggled;
+			controlsController.RiverDensityChanged += OnRiverDensityChanged;
+			SetupLeftPanelSwitches();
+		}
+		else
+		{
+			_randomButton.Pressed += OnRandomPressed;
+			_seaLevelSlider.ValueChanged += OnSeaLevelChanged;
+			_heatSlider.ValueChanged += OnHeatChanged;
+			_erosionSlider.ValueChanged += OnErosionChanged;
+			_riverToggle.Toggled += OnRiversToggled;
+			_riverDensitySlider.ValueChanged += OnRiverDensityChanged;
+			_interiorReliefSlider.ValueChanged += OnInteriorReliefChanged;
+			_orogenyStrengthSlider.ValueChanged += OnOrogenyStrengthChanged;
+			_subductionArcRatioSlider.ValueChanged += OnSubductionArcRatioChanged;
+			_continentalAgeSlider.ValueChanged += OnContinentalAgeChanged;
+		}
 		_magicSlider.ValueChanged += OnMagicDensityChanged;
 		_aggressionSlider.ValueChanged += OnCivilAggressionChanged;
 		_diversitySlider.ValueChanged += OnSpeciesDiversityChanged;
+		_windArrowDensitySlider.ValueChanged += OnWindArrowDensityChanged;
+		_basinSensitivitySlider.ValueChanged += OnBasinSensitivityChanged;
 		_uiFontScaleSlider.ValueChanged += OnUiFontScaleChanged;
 		_timelineSlider.ValueChanged += OnTimelineChanged;
 		_prevEpochButton.Pressed += OnPrevEpochPressed;
 		_nextEpochButton.Pressed += OnNextEpochPressed;
 		_layerOption.ItemSelected += _ =>
 		{
-			SyncMapModeFromLayer(_layerOption.GetSelectedId());
 			RedrawCurrentLayer();
-			UpdateLayerQuickButtons();
+			SyncLayerTreeSelection();
 			SaveAdvancedSettings();
 		};
 
-		_mapModeOption.ItemSelected += id =>
-		{
-			ApplyMapModeSelection((MapMode)_mapModeOption.GetItemId((int)id), persist: true, applyRecommendedLayer: true);
-		};
-
-		_riverToggle.Toggled += value =>
-		{
-			EnableRivers = value;
-			UpdateRiverDensityControlState();
-			UpdateRiverLayerAvailability();
-			SaveAdvancedSettings();
-			GenerateWorld();
-		};
+		_layerTree.ItemSelected += OnLayerTreeItemSelected;
 
 		_compareToggle.Toggled += value =>
 		{
@@ -212,27 +244,24 @@ public partial class Main : Control
 		_uiFontScaleSlider.SetValueNoSignal(_uiFontScale * 100f);
 		_timelineSlider.Value = _currentEpoch;
 		UpdateTimelineReplayCursor(Array.Empty<CivilizationEpochEvent>());
-		_riverToggle.ButtonPressed = EnableRivers;
+		_riverToggle.SetPressedNoSignal(EnableRivers);
 		UpdateRiverDensityControlState();
 		UpdateRiverLayerAvailability();
 		_compareToggle.ButtonPressed = false;
-		_compareToggle.Visible = false;
-		_compareToggle.Disabled = true;
 		_legendPanel.Visible = false;
 		_biomeLegendPanel.Visible = false;
 		_compareStatsLabel.Visible = false;
 		_cityNamesLabel.Visible = false;
 		_layerOption.Visible = false;
-		_layerRow.Visible = true;
-		_layerRow.ZIndex = 10;
 		ApplySavedUiState();
-		ApplyMapModeSelection(_mapMode, persist: false, applyRecommendedLayer: false);
-		UpdateLayerQuickButtons();
+		SyncLayerTreeSelection();
 
 		_mapTexture.MouseFilter = Control.MouseFilterEnum.Stop;
 		_mapTexture.GuiInput += OnMapTextureGuiInput;
 		_mapTexture.MouseExited += OnMapTextureMouseExited;
 
+		ConnectMainMenu();
+		ThemeManager.Instance?.RefreshTheme();
 		UpdateLabels();
 		UpdateLorePanel();
 		RefreshCacheStatsLabel();
@@ -240,81 +269,49 @@ public partial class Main : Control
 		GenerateWorld();
 	}
 
-	private void ToggleAdvancedSettings()
+	private void SetupLeftPanelSwitches()
 	{
-		SetAdvancedSettingsPanelVisible(!_advancedSettingsPanel.Visible);
+		var epochReplaySwitch = GetNodeByName<BaseButton>("EpochReplaySwitch");
+		epochReplaySwitch.SetPressedNoSignal(true);
+		epochReplaySwitch.Toggled += value =>
+		{
+			_timelineSlider.Editable = value;
+			_prevEpochButton.Disabled = !value;
+			_nextEpochButton.Disabled = !value;
+			SaveAdvancedSettings();
+		};
+	}
+
+	private void ShowAdvancedSettingsPage()
+	{
+		SetConsolePanelVisible(true);
+		_controlsController?.ShowPage(2);
 	}
 
 	public override void _Input(InputEvent @event)
 	{
-		if (!_advancedSettingsPanel.Visible)
+		if (@event is InputEventKey mapZoomKey && mapZoomKey.Pressed && !mapZoomKey.Echo)
 		{
-			return;
+			if (mapZoomKey.Keycode == Key.Equal || mapZoomKey.Keycode == Key.KpAdd)
+			{
+				SetMapZoom(_mapZoom + MapZoomStep);
+				GetViewport().SetInputAsHandled();
+				return;
+			}
+			if (mapZoomKey.Keycode == Key.Minus || mapZoomKey.Keycode == Key.KpSubtract)
+			{
+				SetMapZoom(_mapZoom - MapZoomStep);
+				GetViewport().SetInputAsHandled();
+				return;
+			}
+			if (mapZoomKey.Keycode == Key.Key0 || mapZoomKey.Keycode == Key.Kp0)
+			{
+				SetMapZoom(1.0f);
+				GetViewport().SetInputAsHandled();
+				return;
+			}
 		}
 
-		if (@event is InputEventKey keyEvent &&
-			keyEvent.Pressed &&
-			!keyEvent.Echo &&
-			keyEvent.Keycode == Key.Escape)
-		{
-			SetAdvancedSettingsPanelVisible(false);
-			return;
-		}
-
-		if (@event is not InputEventMouseButton mouseButton ||
-			mouseButton.ButtonIndex != MouseButton.Left ||
-			!mouseButton.Pressed)
-		{
-			return;
-		}
-
-		var clickPosition = mouseButton.Position;
-		if (IsPointInsideControl(_advancedSettingsPanel, clickPosition) ||
-			IsPointInsideControl(_advancedSettingsButton, clickPosition))
-		{
-			return;
-		}
-
-		SetAdvancedSettingsPanelVisible(false);
-	}
-
-	private void SetAdvancedSettingsPanelVisible(bool visible, bool persist = true)
-	{
-		if (_advancedSettingsPanel.Visible == visible)
-		{
-			return;
-		}
-
-		_advancedSettingsPanel.Visible = visible;
-		if (persist)
-		{
-			SaveAdvancedSettings();
-		}
-	}
-
-	private void ToggleMountainControlGroup()
-	{
-		SetMountainControlExpanded(!_mountainControlExpanded);
-	}
-
-	private void SetMountainControlExpanded(bool expanded, bool persist = true)
-	{
-		_mountainControlExpanded = expanded;
-		_mountainControlToggleButton.Text = expanded ? "收起山脉参数 ▲" : "展开山脉参数 ▼";
-		UpdateMountainControlSummary();
-		_mountainControlBody.Visible = expanded;
-		_mountainControlSummaryLabel.Visible = !expanded;
-
-		if (persist)
-		{
-			SaveAdvancedSettings();
-		}
-	}
-
-	private void UpdateMountainControlSummary()
-	{
-		_mountainControlSummaryLabel.Text =
-			$"起伏:{_interiorRelief:0.00} | 造山:{_orogenyStrength:0.00} | 俯冲:{_subductionArcRatio:0.00} | 年龄:{_continentalAge}";
 	}
 
 	private void ApplySavedUiState()
@@ -334,10 +331,7 @@ public partial class Main : Control
 		_aggressionSlider.SetValueNoSignal(_civilAggression);
 		_diversitySlider.SetValueNoSignal(_speciesDiversity);
 		_timelineSlider.SetValueNoSignal(_currentEpoch);
-		SelectMapModeOption(_mapMode);
 		SelectLayerById(canUsePreferredLayer ? _preferredLayerId : (int)MapLayer.Satellite, persist: false);
-		SetAdvancedSettingsPanelVisible(_preferredAdvancedPanelVisible, persist: false);
-		SetMountainControlExpanded(_mountainControlExpanded, persist: false);
 	}
 
 	private static bool IsPointInsideControl(Control control, Vector2 point)

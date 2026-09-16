@@ -1,6 +1,7 @@
 using Godot;
 using PlanetGeneration.WorldGen;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -17,7 +18,7 @@ public partial class Main : Control
 {
 	private float[,] NormalizeElevationForPipeline(float[,] source, int width, int height, float seaLevel, float targetOceanRatio)
 	{
-		var samples = new float[width * height];
+		var samples = ArrayPool<float>.Shared.Rent(width * height);
 		var count = 0;
 
 		for (var y = 0; y < height; y++)
@@ -36,6 +37,7 @@ public partial class Main : Control
 
 		if (count <= 1)
 		{
+			ArrayPool<float>.Shared.Return(samples);
 			return source;
 		}
 
@@ -53,8 +55,6 @@ public partial class Main : Control
 
 		var lowerRange = Mathf.Max(oceanPivot - min, 0.00001f);
 		var upperRange = Mathf.Max(max - oceanPivot, 0.00001f);
-		var normalized = new float[width, height];
-
 		for (var y = 0; y < height; y++)
 		{
 			for (var x = 0; x < width; x++)
@@ -62,29 +62,32 @@ public partial class Main : Control
 				var value = source[x, y];
 				if (float.IsNaN(value) || float.IsInfinity(value))
 				{
-					normalized[x, y] = 0f;
+					source[x, y] = 0f;
 					continue;
 				}
 
 				if (value <= oceanPivot)
 				{
 					var waterT = Mathf.Clamp((value - min) / lowerRange, 0f, 1f);
-					normalized[x, y] = waterT * seaLevel;
+					source[x, y] = waterT * seaLevel;
 					continue;
 				}
 
 				var landT = Mathf.Clamp((value - oceanPivot) / upperRange, 0f, 1f);
-				normalized[x, y] = seaLevel + (1f - seaLevel) * Mathf.Pow(landT, 1.05f);
+				source[x, y] = seaLevel + (1f - seaLevel) * Mathf.Pow(landT, 1.05f);
 			}
 		}
 
-		return normalized;
+		ArrayPool<float>.Shared.Return(samples);
+		return source;
 	}
 
 	private float[,] ApplyTerrainMorphologyMask(float[,] source, PlateResult plateResult, int width, int height, float seaLevel, float continentBias, float interiorRelief, float orogenyStrength, float subductionArcRatio, int continentalAge, TerrainMorphology morphology, int seed, int continentCount)
 	{
+		var morphologyTimer = Stopwatch.StartNew();
 		if (continentBias <= 0.001f && morphology == TerrainMorphology.Balanced)
 		{
+			GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 已跳过形态掩膜: {morphologyTimer.Elapsed.TotalMilliseconds:0} ms");
 			return source;
 		}
 
@@ -93,22 +96,10 @@ public partial class Main : Control
 		var orogenyScale = Mathf.Clamp(orogenyStrength, 0.5f, 2.5f);
 		var ageNorm = Mathf.Clamp(continentalAge / 100f, 0f, 1f);
 		var ageRoughnessFactor = Mathf.Lerp(1.24f, 0.72f, ageNorm);
-		var result = new float[width, height];
+		var maskTimer = Stopwatch.StartNew();
 		var orogenyMask = BuildOrogenyMask(plateResult, source, width, height, seaLevel, morphology, seed, subductionArcRatio);
-
-		var contourNoise = new FastNoiseLite
-		{
-			Seed = seed ^ unchecked((int)0x6f1d3a89),
-			NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
-			Frequency = 1f
-		};
-
-		var fragmentNoise = new FastNoiseLite
-		{
-			Seed = seed ^ unchecked((int)0x3f84d5b5),
-			NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
-			Frequency = 1f
-		};
+		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 山脉掩膜: {maskTimer.Elapsed.TotalMilliseconds:0} ms");
+		var noiseTimer = Stopwatch.StartNew();
 
 		var (shapePower, upliftMax, edgeDropMax, contourAmp, fragmentAmp) = morphology switch
 		{
@@ -121,9 +112,24 @@ public partial class Main : Control
 			TerrainMorphology.HotWasteland => (1.08f, 0.27f, 0.17f, 0.15f, 0.09f),
 			_ => (1.20f, 0.24f, 0.16f, 0.16f, 0.08f)
 		};
+		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 噪声与参数初始化: {noiseTimer.Elapsed.TotalMilliseconds:0} ms");
+		var result = new float[width, height];
+		var gridTimer = Stopwatch.StartNew();
 
-		for (var y = 0; y < height; y++)
+		Parallel.For(0, height, y =>
 		{
+			var contourNoise = new FastNoiseLite
+			{
+				Seed = seed ^ unchecked((int)0x6f1d3a89),
+				NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
+				Frequency = 1f
+			};
+			var fragmentNoise = new FastNoiseLite
+			{
+				Seed = seed ^ unchecked((int)0x3f84d5b5),
+				NoiseType = FastNoiseLite.NoiseTypeEnum.Perlin,
+				Frequency = 1f
+			};
 			var ny = 4f * y / Mathf.Max(height, 1);
 			var py = height <= 1 ? 0f : (float)y / (height - 1);
 
@@ -259,8 +265,10 @@ public partial class Main : Control
 
 				result[x, y] = Mathf.Clamp(shifted, 0f, 1f);
 			}
-		}
+		});
 
+		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 主网格循环: {gridTimer.Elapsed.TotalMilliseconds:0} ms | 单元格 {width * (long)height:N0}");
+		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 形态掩膜总计: {morphologyTimer.Elapsed.TotalMilliseconds:0} ms");
 		return result;
 	}
 
@@ -349,7 +357,7 @@ public partial class Main : Control
 		var mask = new float[width, height];
 		var arcRatio = Mathf.Clamp(subductionArcRatio, 0.2f, 1.0f);
 
-		for (var y = 0; y < height; y++)
+		Parallel.For(0, height, y =>
 		{
 			for (var x = 0; x < width; x++)
 			{
@@ -408,7 +416,7 @@ public partial class Main : Control
 					mask[x, y] = Mathf.Clamp(baseWeight, 0f, 1.2f);
 				}
 			}
-		}
+		});
 
 		return BlurMask(mask, width, height, 3);
 	}
@@ -446,7 +454,7 @@ public partial class Main : Control
 		var blurred = new float[width, height];
 		var sigma = Mathf.Max(radius * 0.65f, 0.5f);
 
-		for (var y = 0; y < height; y++)
+		Parallel.For(0, height, y =>
 		{
 			for (var x = 0; x < width; x++)
 			{
@@ -469,7 +477,7 @@ public partial class Main : Control
 
 				blurred[x, y] = weightSum > 0f ? accum / weightSum : source[x, y];
 			}
-		}
+		});
 
 		return blurred;
 	}

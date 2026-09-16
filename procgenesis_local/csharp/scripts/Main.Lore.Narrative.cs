@@ -17,13 +17,7 @@ public partial class Main : Control
 {
 	private void UpdateLorePanel()
 	{
-		var modeText = _mapMode switch
-		{
-			MapMode.Geographic => "地理",
-			MapMode.Geopolitical => "政区",
-			MapMode.Arcane => "奥术",
-			_ => "地理"
-		};
+		var modeText = GetViewModeText();
 
 		var timelineEvents = GetTimelineEventsForCurrentWorld();
 		UpdateTimelineReplayCursor(timelineEvents);
@@ -471,11 +465,10 @@ public partial class Main : Control
 			_ => "地势缓变塑造了扩张可达性与资源分布边界"
 		};
 
-		var societyConsequence = _mapMode switch
+		var societyConsequence = GetViewModeText() switch
 		{
-			MapMode.Geographic => "地理约束主导人口迁移与产业布局",
-			MapMode.Geopolitical => "政体在资源瓶颈下向同盟或征服两极分化",
-			MapMode.Arcane => "灵脉走向决定法术学院与禁区的权力半径",
+			"政区" => "政体在资源瓶颈下向同盟或征服两极分化",
+			"奥术" => "灵脉走向决定法术学院与禁区的权力半径",
 			_ => "地理约束主导人口迁移与产业布局"
 		};
 

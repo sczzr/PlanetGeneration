@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.WorldGen;
+using PlanetGeneration.UI.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,8 +48,6 @@ public partial class Main : Control
 		_currentEpoch = DefaultEpoch;
 		_oracleAutoUnloadIdleSeconds = DefaultOracleAutoUnloadIdleSeconds;
 		_selectedTimelineEventEpoch = _currentEpoch;
-		_mountainControlExpanded = true;
-		_mapMode = MapMode.Geographic;
 
 		_riverToggle.ButtonPressed = EnableRivers;
 		_riverDensitySlider.SetValueNoSignal(RiverDensity);
@@ -65,7 +64,6 @@ public partial class Main : Control
 		_uiFontScaleSlider.SetValueNoSignal(_uiFontScale * 100f);
 		_timelineSlider.SetValueNoSignal(_currentEpoch);
 		SelectElevationStyleOption(_elevationStyle);
-		SelectMapModeOption(_mapMode);
 		ApplyUiFontScale();
 
 		UpdateRiverDensityControlState();
@@ -75,96 +73,74 @@ public partial class Main : Control
 
 	private void LoadAdvancedSettings()
 	{
-		var config = new ConfigFile();
-		if (config.Load(AdvancedSettingsPath) != Error.Ok)
-		{
-			return;
-		}
+		var snapshot = new UiSettingsService().Load(AdvancedSettingsPath);
+		var generation = snapshot.Generation;
+		var preferences = snapshot.Preferences;
 
-		EnableRivers = (bool)config.GetValue(AdvancedSettingsSection, "enable_rivers", DefaultEnableRivers);
-		RiverDensity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "river_density", (double)DefaultRiverDensity), 0.4f, 2.5f);
-		WindArrowDensity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "wind_arrow_density", (double)DefaultWindArrowDensity), 0.5f, 2.5f);
-		BasinSensitivity = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "basin_sensitivity", (double)DefaultBasinSensitivity), 0.5f, 2.0f);
-		_interiorRelief = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "interior_relief", (double)DefaultInteriorRelief), 0.5f, 2.0f);
-		_orogenyStrength = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "orogeny_strength", (double)DefaultOrogenyStrength), 0.5f, 2.5f);
-		_subductionArcRatio = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "subduction_arc_ratio", (double)DefaultSubductionArcRatio), 0.2f, 1.0f);
-		_continentalAge = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "continental_age", (long)DefaultContinentalAge), 0, 100);
-		var defaultMountainPresetId = (long)ResolveMountainPresetIdFromCurrentValues();
-		var mountainPresetId = (int)(long)config.GetValue(AdvancedSettingsSection, "mountain_preset", defaultMountainPresetId);
-		_mountainPresetId = Enum.IsDefined(typeof(MountainPresetId), mountainPresetId)
-			? (MountainPresetId)mountainPresetId
+		EnableRivers = generation.EnableRivers;
+		RiverDensity = generation.RiverDensity;
+		WindArrowDensity = generation.WindArrowDensity;
+		BasinSensitivity = generation.BasinSensitivity;
+		_interiorRelief = generation.InteriorRelief;
+		_orogenyStrength = generation.OrogenyStrength;
+		_subductionArcRatio = generation.SubductionArcRatio;
+		_continentalAge = generation.ContinentalAge;
+		_mountainPresetId = Enum.IsDefined(typeof(MountainPresetId), generation.MountainPresetId)
+			? (MountainPresetId)generation.MountainPresetId
 			: ResolveMountainPresetIdFromCurrentValues();
-
-		var styleId = (int)(long)config.GetValue(AdvancedSettingsSection, "elevation_style", (long)DefaultElevationStyle);
-		_elevationStyle = Enum.IsDefined(typeof(ElevationStyle), styleId)
-			? (ElevationStyle)styleId
+		_elevationStyle = Enum.IsDefined(typeof(ElevationStyle), generation.ElevationStyleId)
+			? (ElevationStyle)generation.ElevationStyleId
 			: DefaultElevationStyle;
-
-		_preferredLayerId = (int)(long)config.GetValue(AdvancedSettingsSection, "selected_layer", (long)_preferredLayerId);
-		_preferredAdvancedPanelVisible = (bool)config.GetValue(AdvancedSettingsSection, "advanced_panel_visible", _preferredAdvancedPanelVisible);
-		_mountainControlExpanded = (bool)config.GetValue(AdvancedSettingsSection, "mountain_control_expanded", _mountainControlExpanded);
-		_magicDensity = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "magic_density", (long)DefaultMagicDensity), 0, 100);
-		_civilAggression = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "civil_aggression", (long)DefaultCivilAggression), 0, 100);
-		_speciesDiversity = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "species_diversity", (long)DefaultSpeciesDiversity), 0, 100);
-		_uiFontScale = Mathf.Clamp((float)(double)config.GetValue(AdvancedSettingsSection, "ui_font_scale", (double)DefaultUiFontScale), MinUiFontScale, MaxUiFontScale);
-		_currentEpoch = Mathf.Clamp((int)(long)config.GetValue(AdvancedSettingsSection, "timeline_epoch", (long)DefaultEpoch), 0, MaxEpoch);
-		_oracleAutoUnloadIdleSeconds = Mathf.Clamp(
-			(int)(long)config.GetValue(
-				AdvancedSettingsSection,
-				"oracle_auto_unload_idle_seconds",
-				(long)DefaultOracleAutoUnloadIdleSeconds),
-			MinOracleAutoUnloadIdleSeconds,
-			MaxOracleAutoUnloadIdleSeconds);
+		_preferredLayerId = preferences.PreferredLayerId;
+		_consolePanelVisible = preferences.ConsolePanelVisible;
+		_magicDensity = generation.MagicDensity;
+		_civilAggression = generation.CivilAggression;
+		_speciesDiversity = generation.SpeciesDiversity;
+		_uiFontScale = preferences.UiFontScale;
+		_currentEpoch = preferences.CurrentEpoch;
+		_oracleAutoUnloadIdleSeconds = preferences.OracleAutoUnloadIdleSeconds;
 		_selectedTimelineEventEpoch = _currentEpoch;
-		var mapModeId = (int)(long)config.GetValue(AdvancedSettingsSection, "map_mode", (long)MapMode.Geographic);
-		_mapMode = Enum.IsDefined(typeof(MapMode), mapModeId)
-			? (MapMode)mapModeId
-			: MapMode.Geographic;
-		_lastArchivePath = (string)config.GetValue(ArchiveSection, LastArchivePathKey, string.Empty);
+		_lastArchivePath = snapshot.LastArchivePath;
 
-		if (config.HasSectionKey(PerformanceSection, PerformanceCpuScoreKey))
+		if (snapshot.PerformanceSampleReady)
 		{
-			_cpuPerformanceScore = ClampDouble((double)config.GetValue(PerformanceSection, PerformanceCpuScoreKey, 1.0), MinCpuPerformanceScore, MaxCpuPerformanceScore);
+			_cpuPerformanceScore = ClampDouble(snapshot.CpuPerformanceScore, MinCpuPerformanceScore, MaxCpuPerformanceScore);
 			_performanceSampleReady = true;
 		}
-
-		if (config.HasSectionKey(PerformanceSection, PerformanceSecondsPerUnitKey))
+		if (snapshot.HistoricalThroughput)
 		{
-			_secondsPerWorkUnit = ClampDouble((double)config.GetValue(PerformanceSection, PerformanceSecondsPerUnitKey, DefaultSecondsPerWorkUnit), MinSecondsPerWorkUnit, MaxSecondsPerWorkUnit);
+			_secondsPerWorkUnit = ClampDouble(snapshot.SecondsPerWorkUnit, MinSecondsPerWorkUnit, MaxSecondsPerWorkUnit);
 			_hasHistoricalThroughput = true;
 		}
 	}
 
 	private void SaveAdvancedSettings()
 	{
-		var config = new ConfigFile();
-		_ = config.Load(AdvancedSettingsPath);
-
-		config.SetValue(AdvancedSettingsSection, "enable_rivers", EnableRivers);
-		config.SetValue(AdvancedSettingsSection, "river_density", (double)RiverDensity);
-		config.SetValue(AdvancedSettingsSection, "wind_arrow_density", (double)WindArrowDensity);
-		config.SetValue(AdvancedSettingsSection, "basin_sensitivity", (double)BasinSensitivity);
-		config.SetValue(AdvancedSettingsSection, "interior_relief", (double)_interiorRelief);
-		config.SetValue(AdvancedSettingsSection, "orogeny_strength", (double)_orogenyStrength);
-		config.SetValue(AdvancedSettingsSection, "subduction_arc_ratio", (double)_subductionArcRatio);
-		config.SetValue(AdvancedSettingsSection, "continental_age", (long)_continentalAge);
-		config.SetValue(AdvancedSettingsSection, "mountain_preset", (long)_mountainPresetId);
-		config.SetValue(AdvancedSettingsSection, "elevation_style", (long)_elevationStyle);
-		config.SetValue(AdvancedSettingsSection, "selected_layer", (long)_layerOption.GetSelectedId());
-		config.SetValue(AdvancedSettingsSection, "advanced_panel_visible", _advancedSettingsPanel.Visible);
-		config.SetValue(AdvancedSettingsSection, "mountain_control_expanded", _mountainControlExpanded);
-		config.SetValue(AdvancedSettingsSection, "magic_density", (long)_magicDensity);
-		config.SetValue(AdvancedSettingsSection, "civil_aggression", (long)_civilAggression);
-		config.SetValue(AdvancedSettingsSection, "species_diversity", (long)_speciesDiversity);
-		config.SetValue(AdvancedSettingsSection, "ui_font_scale", (double)_uiFontScale);
-		config.SetValue(AdvancedSettingsSection, "timeline_epoch", (long)_currentEpoch);
-		config.SetValue(AdvancedSettingsSection, "oracle_auto_unload_idle_seconds", (long)_oracleAutoUnloadIdleSeconds);
-		config.SetValue(AdvancedSettingsSection, "map_mode", (long)_mapMode);
-		config.SetValue(ArchiveSection, LastArchivePathKey, _lastArchivePath);
-		config.SetValue(PerformanceSection, PerformanceCpuScoreKey, _cpuPerformanceScore);
-		config.SetValue(PerformanceSection, PerformanceSecondsPerUnitKey, _secondsPerWorkUnit);
-
-		_ = config.Save(AdvancedSettingsPath);
+		var snapshot = new UiSettingsSnapshot();
+		var generation = snapshot.Generation;
+		var preferences = snapshot.Preferences;
+		generation.EnableRivers = EnableRivers;
+		generation.RiverDensity = RiverDensity;
+		generation.WindArrowDensity = WindArrowDensity;
+		generation.BasinSensitivity = BasinSensitivity;
+		generation.InteriorRelief = _interiorRelief;
+		generation.OrogenyStrength = _orogenyStrength;
+		generation.SubductionArcRatio = _subductionArcRatio;
+		generation.ContinentalAge = _continentalAge;
+		generation.MountainPresetId = (int)_mountainPresetId;
+		generation.ElevationStyleId = (int)_elevationStyle;
+		generation.MagicDensity = _magicDensity;
+		generation.CivilAggression = _civilAggression;
+		generation.SpeciesDiversity = _speciesDiversity;
+		preferences.PreferredLayerId = _layerOption.GetSelectedId();
+		preferences.ConsolePanelVisible = _consolePanelVisible;
+		preferences.UiFontScale = _uiFontScale;
+		preferences.CurrentEpoch = _currentEpoch;
+		preferences.OracleAutoUnloadIdleSeconds = _oracleAutoUnloadIdleSeconds;
+		snapshot.LastArchivePath = _lastArchivePath;
+		snapshot.CpuPerformanceScore = _cpuPerformanceScore;
+		snapshot.SecondsPerWorkUnit = _secondsPerWorkUnit;
+		_ = new UiSettingsService().Save(snapshot, AdvancedSettingsPath);
 	}
 
 }

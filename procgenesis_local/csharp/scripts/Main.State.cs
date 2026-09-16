@@ -30,6 +30,8 @@ public partial class Main : Control
 	[Export] public bool EnableRivers { get; set; } = true;
 
 	private TextureRect _mapTexture = null!;
+	private Button _generateButton = null!;
+	private Button _randomButton = null!;
 	private SpinBox _seedSpin = null!;
 	private HSlider _seaLevelSlider = null!;
 	private HSlider _heatSlider = null!;
@@ -58,9 +60,6 @@ public partial class Main : Control
 	private Label _orogenyStrengthValue = null!;
 	private Label _subductionArcRatioValue = null!;
 	private Label _continentalAgeValue = null!;
-	private Button _mountainControlToggleButton = null!;
-	private Control _mountainControlBody = null!;
-	private Label _mountainControlSummaryLabel = null!;
 	private Label _magicValue = null!;
 	private Label _aggressionValue = null!;
 	private Label _diversityValue = null!;
@@ -87,13 +86,12 @@ public partial class Main : Control
 	private OptionButton _elevationStyleOption = null!;
 	private OptionButton _continentCountOption = null!;
 	private OptionButton _archiveOption = null!;
-	private OptionButton _mapModeOption = null!;
 	private Button _advancedSettingsButton = null!;
 	private Button _resetAdvancedSettingsButton = null!;
 	private Button _persistCacheGroupButton = null!;
 	private Button _clearCacheButton = null!;
-	private CheckBox _riverToggle = null!;
-	private CheckBox _compareToggle = null!;
+	private BaseButton _riverToggle = null!;
+	private BaseButton _compareToggle = null!;
 	private Button _exportPngButton = null!;
 	private Button _exportJsonButton = null!;
 	private Button _themeToggleButton = null!;
@@ -101,20 +99,28 @@ public partial class Main : Control
 	private Label _progressStatus = null!;
 	private Label _cacheStatsLabel = null!;
 	private Control _progressOverlay = null!;
-	private Container _layerButtons = null!;
-	private Control _layerRow = null!;
+	private Tree _layerTree = null!;
 	private Control _mapCenter = null!;
 	private Control _mapRoot = null!;
-	private Control _advancedSettingsPanel = null!;
 	private Control _biomeHoverPanel = null!;
 	private Label _biomeHoverText = null!;
 	private Control _continentCountWrap = null!;
 	private AspectRatioContainer _mapAspect = null!;
+	private Control _consolePanel = null!;
+	private Button _consoleCollapseTab = null!;
+	private Button _consoleSummonTab = null!;
+	private bool _consolePanelVisible = true;
+	private Control _minimapPanel = null!;
+	private TextureRect _minimapTexture = null!;
+	private ReferenceRect _minimapViewRect = null!;
+	private bool _minimapDragging;
+	private Texture? _minimapSourceTexture;
+	private Rect2 _lastMinimapViewRect = new(0f, 0f, -1f, -1f);
 	private FileDialog _saveFileDialog = null!;
 	private ConfirmationDialog _resetAdvancedConfirmDialog = null!;
 	private ConfirmationDialog _mapInfoWarningDialog = null!;
 	private CheckBox _mapInfoWarningSkipCheck = null!;
-	private readonly Dictionary<int, Button> _layerButtonsById = new();
+	private readonly Dictionary<int, TreeItem> _layerTreeItems = new();
 	private readonly Dictionary<Control, int> _baseFontSizeByControl = new();
 	private readonly Dictionary<RichTextLabel, int> _baseRichTextFontSizeByControl = new();
 
@@ -164,6 +170,9 @@ public partial class Main : Control
 	private const float EarthDeepestTrenchMeters = 10994f;
 	private const float ReliefExaggerationMin = 1.5f;
 	private const float ReliefExaggerationMax = 3.2f;
+	private const float MapZoomMin = 1.0f;
+	private const float MapZoomMax = 40.0f;
+	private const float MapZoomStep = 0.25f;
 	private const bool DefaultEnableRivers = true;
 	private const float DefaultRiverDensity = 1.0f;
 	private const float DefaultWindArrowDensity = 1.0f;
@@ -213,6 +222,8 @@ public partial class Main : Control
 	private const long ApproxBytesPerCachedCell = 40;
 
 	private bool _isGenerating;
+	private Tween? _generationUiTween;
+	private Tween? _progressTween;
 	private bool _pendingRegenerate;
 	private ulong _generationStartedMsec;
 	private double _cpuPerformanceScore = 1.0;
@@ -233,7 +244,6 @@ public partial class Main : Control
 	private long _renderCacheAccessCounter;
 	private long _worldCacheAccessCounter;
 	private int _preferredLayerId = (int)MapLayer.Satellite;
-	private bool _preferredAdvancedPanelVisible;
 	private float _terrainOceanicRatio = 0.48f;
 	private float _terrainContinentBias = 0.18f;
 	private float _interiorRelief = DefaultInteriorRelief;
@@ -241,7 +251,6 @@ public partial class Main : Control
 	private float _subductionArcRatio = DefaultSubductionArcRatio;
 	private int _continentalAge = DefaultContinentalAge;
 	private MountainPresetId _mountainPresetId = MountainPresetId.EarthLike;
-	private bool _mountainControlExpanded = true;
 	private TerrainMorphology _terrainMorphology = TerrainMorphology.Balanced;
 	private int _continentCount = 3;
 	private float _currentReliefExaggeration = ReliefExaggerationMin;
@@ -250,10 +259,10 @@ public partial class Main : Control
 	private int _civilAggression = DefaultCivilAggression;
 	private int _speciesDiversity = DefaultSpeciesDiversity;
 	private float _uiFontScale = DefaultUiFontScale;
+	private float _mapZoom = 1.0f;
 	private int _currentEpoch = DefaultEpoch;
 	private int _oracleAutoUnloadIdleSeconds = DefaultOracleAutoUnloadIdleSeconds;
 	private int _selectedTimelineEventEpoch = -1;
-	private MapMode _mapMode = MapMode.Geographic;
 
 	private enum ExportKind
 	{
@@ -272,13 +281,6 @@ public partial class Main : Control
 		ShallowFragments,
 		ColdContinent,
 		HotWasteland
-	}
-
-	private enum MapMode
-	{
-		Geographic,
-		Geopolitical,
-		Arcane
 	}
 
 	private enum MountainPresetId

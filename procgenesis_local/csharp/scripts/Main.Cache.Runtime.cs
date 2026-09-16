@@ -100,7 +100,11 @@ public partial class Main : Control
 
 		if (persistToDisk)
 		{
-			SaveWorldGenerationCacheToDisk(cacheKey, primaryWorld, compareWorld);
+			// JSON-stringifying every world array took seconds on large maps and
+			// blocked generation completion; persist off the hot path instead.
+			// The world arrays are read-only after generation, so a worker
+			// thread can serialize them safely.
+			_ = Task.Run(() => SaveWorldGenerationCacheToDisk(cacheKey, primaryWorld, compareWorld));
 		}
 
 		RefreshCacheStatsLabel();

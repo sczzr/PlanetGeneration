@@ -17,6 +17,22 @@ public partial class Main : Control
 {
 	private void OnMapTextureGuiInput(InputEvent @event)
 	{
+		if (@event is InputEventMouseButton zoomButton && zoomButton.Pressed)
+		{
+			if (zoomButton.ButtonIndex == MouseButton.WheelUp)
+			{
+				SetMapZoom(_mapZoom + GetMapZoomStep());
+				_mapTexture.AcceptEvent();
+				return;
+			}
+			if (zoomButton.ButtonIndex == MouseButton.WheelDown)
+			{
+				SetMapZoom(_mapZoom - GetMapZoomStep());
+				_mapTexture.AcceptEvent();
+				return;
+			}
+		}
+
 		if (@event is InputEventMouseButton loreMouseButton &&
 			loreMouseButton.ButtonIndex == MouseButton.Left &&
 			loreMouseButton.Pressed)
@@ -53,6 +69,12 @@ public partial class Main : Control
 
 		PositionBiomeHoverPanel(local);
 		_biomeHoverPanel.Visible = true;
+	}
+
+	private float GetMapZoomStep()
+	{
+		// Increase the step at high magnification so users do not need many wheel ticks.
+		return MapZoomStep * Mathf.Max(1f, _mapZoom * 0.18f);
 	}
 
 	private void OnMapTextureMouseExited()
@@ -365,13 +387,7 @@ public partial class Main : Control
 		var hazardSkulls = ComputeThreatSkulls(sampleX, sampleY, biome, landform);
 		_threatLabel.Text = $"生存威胁指数: {BuildThreatIcons(hazardSkulls)}";
 
-		var modeText = _mapMode switch
-		{
-			MapMode.Geographic => "地理",
-			MapMode.Geopolitical => "政区",
-			MapMode.Arcane => "奥术",
-			_ => "地理"
-		};
+		var modeText = GetViewModeText();
 		var timelineEvents = GetTimelineEventsForCurrentWorld();
 		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch} | {BuildReplayStatusText(timelineEvents)}";
 

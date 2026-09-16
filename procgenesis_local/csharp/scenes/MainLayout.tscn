@@ -1,9 +1,30 @@
 [gd_scene format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/layout/MainHeader.tscn" id="1_header"]
-[ext_resource type="PackedScene" path="res://scenes/layout/MainLeftControls.tscn" id="2_left"]
-[ext_resource type="PackedScene" path="res://scenes/layout/MainCenterWorkspace.tscn" id="3_center"]
-[ext_resource type="PackedScene" path="res://scenes/layout/MainRightLore.tscn" id="4_right"]
+[ext_resource type="PackedScene" path="res://scenes/layout/ConsoleParamsPage.tscn" id="2_params"]
+[ext_resource type="PackedScene" path="res://scenes/layout/ConsoleLayersPage.tscn" id="3_layers"]
+[ext_resource type="PackedScene" path="res://scenes/layout/ConsoleAdvancedPage.tscn" id="4_advanced"]
+[ext_resource type="PackedScene" path="res://scenes/layout/MainRightLore.tscn" id="5_lore"]
+[ext_resource type="PackedScene" path="res://scenes/layout/ConsoleHistoryPage.tscn" id="6_history"]
+[ext_resource type="PackedScene" path="res://scenes/layout/MainCenterWorkspace.tscn" id="7_center"]
+[ext_resource type="PackedScene" path="res://scenes/MainMenu.tscn" id="8_menu"]
+[ext_resource type="Script" path="res://scripts/UI/GeneratorControlsController.cs" id="9_console_controller"]
+
+[sub_resource type="StyleBoxFlat" id="ConsolePanelStyle"]
+bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.117647, 0.14902, 0.192157, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
 
 [node name="MainLayout" type="Control"]
 layout_mode = 3
@@ -20,27 +41,94 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0431373, 0.054902, 0.0784314, 1)
+mouse_filter = 2
+color = Color(0.043, 0.059, 0.078, 1)
 
-[node name="HeaderPanel" parent="." instance=ExtResource("1_header")]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 64.0
-grow_horizontal = 2
-
-[node name="ContentHBox" type="HBoxContainer" parent="."]
+[node name="WorkspaceHBox" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 64.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 12
 
-[node name="LeftPanel" parent="ContentHBox" instance=ExtResource("2_left")]
+[node name="MapWorkspace" parent="WorkspaceHBox" instance=ExtResource("7_center")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="RightMargin" parent="ContentHBox" instance=ExtResource("3_center")]
+[node name="ConsolePanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchor_top = 0.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 372.0
+offset_bottom = -12.0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("ConsolePanelStyle")
 
-[node name="RightPanel" parent="ContentHBox" instance=ExtResource("4_right")]
+[node name="ConsoleVBox" type="VBoxContainer" parent="ConsolePanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderPanel" parent="ConsolePanel/ConsoleVBox" instance=ExtResource("1_header")]
+layout_mode = 2
+
+[node name="ConsoleTabs" type="TabContainer" parent="ConsolePanel/ConsoleVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("9_console_controller")
+
+[node name="ParamsPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("2_params")]
+layout_mode = 2
+metadata/_tab_title = "生成参数"
+
+[node name="LayersPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("3_layers")]
+layout_mode = 2
+metadata/_tab_title = "图层"
+
+[node name="AdvancedPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("4_advanced")]
+layout_mode = 2
+metadata/_tab_title = "高级设置"
+
+[node name="LorePanel" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("5_lore")]
+custom_minimum_size = Vector2(0, 0)
+layout_mode = 2
+metadata/_tab_title = "世界与AI"
+
+[node name="HistoryPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("6_history")]
+layout_mode = 2
+metadata/_tab_title = "历史统计"
+
+[node name="ConsoleCollapseTab" type="Button" parent="."]
+layout_mode = 1
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 372.0
+offset_top = -14.0
+offset_right = 394.0
+offset_bottom = 14.0
+grow_vertical = 2
+theme_override_font_sizes/font_size = 14
+text = "⟨"
+tooltip_text = "收起控制台"
+
+[node name="ConsoleSummonTab" type="Button" parent="."]
+visible = false
+layout_mode = 1
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 116.0
+offset_bottom = 44.0
+text = "☰ 控制台"
+tooltip_text = "展开控制台"
+
+[node name="MainMenu" parent="." instance=ExtResource("8_menu")]
+layout_mode = 1

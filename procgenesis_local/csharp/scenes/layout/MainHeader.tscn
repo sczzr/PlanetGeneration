@@ -1,14 +1,16 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/UI/MainHeaderController.cs" id="1_header_controller"]
+
 
 [sub_resource type="StyleBoxFlat" id="1"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+bg_color = Color(0.075, 0.055, 0.10, 0.92)
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-content_margin_left = 24.0
-content_margin_top = 10.0
-content_margin_right = 24.0
-content_margin_bottom = 10.0
+border_color = Color(0.34, 0.25, 0.38, 1)
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id="4"]
 bg_color = Color(0.196078, 0.45098, 0.862745, 1)
@@ -105,10 +107,11 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [node name="HeaderPanel" type="PanelContainer" unique_id=1086275998]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("1")
+script = ExtResource("1_header_controller")
 
 [node name="HeaderHBox" type="HBoxContainer" parent="." unique_id=1872963194]
 layout_mode = 2
@@ -123,16 +126,16 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="HeaderHBox/TitleHBox" unique_id=1992850706]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
-theme_override_font_sizes/font_size = 26
-text = "行星生成系统"
+theme_override_colors/font_color = Color(0.95, 0.91, 0.87, 1)
+theme_override_font_sizes/font_size = 18
+text = "PLANET / 控制台"
 vertical_alignment = 1
 
 [node name="Subtitle" type="Label" parent="HeaderHBox/TitleHBox" unique_id=257500347]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
-theme_override_font_sizes/font_size = 15
-text = "Planet Generation V2.0"
+theme_override_colors/font_color = Color(0.94, 0.65, 0.34, 1)
+theme_override_font_sizes/font_size = 14
+text = "PLANET GENERATION  /  VERSION 4"
 vertical_alignment = 1
 
 [node name="HeaderButtons" type="HBoxContainer" parent="HeaderHBox" unique_id=1374639486]
@@ -147,10 +150,11 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("6")
 theme_override_styles/pressed = SubResource("7")
 theme_override_styles/hover = SubResource("7")
-text = "⚙ 高级设置"
+text = "高级设置"
 
 
 [node name="GenerateButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1151155859]
+visible = true
 custom_minimum_size = Vector2(118, 36)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -158,37 +162,40 @@ theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("4")
 theme_override_styles/pressed = SubResource("5")
 theme_override_styles/hover = SubResource("5")
-text = "⟳ 重新生成"
+text = "重新生成"
 
 
 [node name="ExportPngButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1387368488]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(52, 36)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("6")
 theme_override_styles/pressed = SubResource("7")
 theme_override_styles/hover = SubResource("7")
-text = "🖼"
+text = "PNG"
+tooltip_text = "导出 PNG 地图"
 
 
 [node name="ExportJsonButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=517701688]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(58, 36)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("6")
 theme_override_styles/pressed = SubResource("7")
 theme_override_styles/hover = SubResource("7")
-text = "</>"
+text = "JSON"
+tooltip_text = "导出 JSON 报告"
 
 [node name="ThemeToggleButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1001]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(52, 36)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
 theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("6")
 theme_override_styles/pressed = SubResource("7")
 theme_override_styles/hover = SubResource("7")
-text = "🎨"
+text = "主题"
+tooltip_text = "切换界面主题"
 
