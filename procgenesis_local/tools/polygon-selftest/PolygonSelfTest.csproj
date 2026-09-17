@@ -1,0 +1,52 @@
+<Project>
+
+  <!--
+    多边形地块核心的独立自检工程。
+    刻意放在 csharp/ 之外：Godot 工程目录下再放一个 csproj 会让 dotnet build 报 MSB1011（多个工程文件）。
+    本工程直接引用地块核心的源码文件，因此几何部分改一行就能立刻验证。
+
+    这里用显式 Import 而不是 Sdk 属性，是为了能在 SDK 目标之后覆盖 ResolvePackageAssets：
+    本机非交互 shell 里 NuGet 解析不到用户配置路径（连 dotnet nuget locals 单独执行也失败），
+    资产文件加载环节报路径为空；而本工程没有任何 NuGet 包依赖，
+    框架引用由 ResolveFrameworkReferences 单独提供，覆盖掉该目标即可正常编译。
+    若在环境正常的终端里使用，把这两个空目标删掉即可恢复标准行为。
+  -->
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>PolygonSelfTest</RootNamespace>
+    <AssemblyName>PolygonSelfTest</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnableDefaultCompileItems>true</EnableDefaultCompileItems>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\csharp\scripts\WorldGen\Polygon\*.cs" LinkBase="Polygon" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      运行时配置由 GenerateBuildRuntimeConfigurationFiles 生成，而该目标需要读资产文件，
+      在本机被覆盖掉了，所以这里直接提供一份并复制到输出目录。
+      在环境正常的终端里可以删掉这一项，交给 SDK 自己生成。
+    -->
+    <None Update="PolygonSelfTest.runtimeconfig.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <Target Name="ResolvePackageAssets" />
+  <Target Name="ResolvePackageDependenciesForBuild" />
+  <Target Name="GenerateBuildDependencyFile" />
+  <Target Name="GenerateBuildRuntimeConfigurationFiles" />
+
+</Project>

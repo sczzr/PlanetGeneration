@@ -1,0 +1,62 @@
+<Project>
+
+  <!--
+    Godot 工程的类型检查工程。
+    本机 NuGet 不可用，无法正常编译 PlanetGeneration.csproj；
+    这里直接引用本地缓存里的 GodotSharp / LLamaSharp 程序集，把工程的全部脚本编译一遍，
+    用来在做改造接线时拿到真实的编译错误，而不是盲改。
+
+    它只做类型检查（OutputType=Library，不产出可运行的 Godot 程序集），
+    不能替代 Godot 编辑器里的实际构建。
+  -->
+
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>PlanetGeneration</RootNamespace>
+    <AssemblyName>PlanetGenerationTypeCheck</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <NoWarn>$(NoWarn);CS8632</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NuGetCache>$(UserProfile)\.nuget\packages</NuGetCache>
+    <GodotSharpVersion>4.7.2</GodotSharpVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\csharp\scripts\**\*.cs" LinkBase="scripts" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GodotSharp">
+      <HintPath>$(NuGetCache)\godotsharp\$(GodotSharpVersion)\lib\net8.0\GodotSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="LLamaSharp">
+      <HintPath>$(NuGetCache)\llamasharp\0.25.0\lib\net8.0\LLamaSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- LLamaSharp 的传递依赖：ILogger 在 Logging.Abstractions 里 -->
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>$(NuGetCache)\microsoft.extensions.logging.abstractions\9.0.8\lib\net9.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- 见 tools/polygon-selftest 的同名说明：本机资产文件加载不可用，覆盖掉相关目标。 -->
+  <Target Name="ResolvePackageAssets" />
+  <Target Name="ResolvePackageDependenciesForBuild" />
+  <Target Name="GenerateBuildDependencyFile" />
+  <Target Name="GenerateBuildRuntimeConfigurationFiles" />
+
+</Project>
