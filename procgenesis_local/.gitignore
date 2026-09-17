@@ -6,3 +6,7 @@ obj/
 *.tmp
 *.csproj.user
 models/
+
+# 离线预览的裸 RGBA 中间产物（每个 2 MB，且随时可由 PolygonSelfTest.dll preview 重新生成）。
+# 只忽略 .raw，不忽略同目录的 .png——后者是"当前结果长什么样"的证据，值得留在仓库里对照。
+tools/**/preview/*.raw
