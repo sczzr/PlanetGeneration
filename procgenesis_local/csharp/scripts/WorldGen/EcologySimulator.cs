@@ -1,4 +1,5 @@
 using Godot;
+using PlanetGeneration.WorldGen.Polygon;
 
 namespace PlanetGeneration.WorldGen;
 
@@ -145,30 +146,11 @@ public sealed class EcologySimulator
         return (hash & 0x00FFFFFFu) / 16777215f;
     }
 
+    /// <summary>
+    /// 取群系生产力。
+    /// 表放在多边形核心层（<see cref="PolygonEcologySimulator.BiomeProductivity"/>），
+    /// 栅格版与地块版共用同一份，避免两条路径出现"同一群系两种生产力"。
+    /// </summary>
     private static float GetBiomeProductivity(BiomeType biome)
-    {
-        return biome switch
-        {
-            BiomeType.River => 0.95f,
-            BiomeType.TropicalRainForest => 0.93f,
-            BiomeType.TropicalSeasonalForest => 0.84f,
-            BiomeType.TemperateRainForest => 0.86f,
-            BiomeType.TemperateSeasonalForest => 0.79f,
-            BiomeType.Savanna => 0.67f,
-            BiomeType.Grassland => 0.70f,
-            BiomeType.Shrubland => 0.60f,
-            BiomeType.Chaparral => 0.57f,
-            BiomeType.BorealForest => 0.56f,
-            BiomeType.Taiga => 0.51f,
-            BiomeType.Coastland => 0.63f,
-            BiomeType.Steppe => 0.35f,
-            BiomeType.Tundra => 0.24f,
-            BiomeType.TropicalDesert => 0.11f,
-            BiomeType.TemperateDesert => 0.15f,
-            BiomeType.RockyMountain => 0.18f,
-            BiomeType.SnowyMountain => 0.10f,
-            BiomeType.Ice => 0.04f,
-            _ => 0.22f
-        };
-    }
+        => PolygonEcologySimulator.GetBiomeProductivity((byte)(int)biome);
 }

@@ -25,6 +25,12 @@ public partial class Main
     private bool _oracleInitialized;
     private int _oracleLastX = -1;
     private int _oracleLastY = -1;
+
+    /// <summary>
+    /// 最近一次悬停命中的地块编号；-1 表示走的是栅格路径。
+    /// 地块来源时区域分析直接读地块属性，不再回退到像素。
+    /// </summary>
+    private int _oracleLastCell = -1;
     private CancellationTokenSource? _oracleAutoUnloadCts;
     private TaskCompletionSource<bool>? _oracleLoadAwaiter;
     private CancellationTokenSource? _oraclePrewarmCts;
@@ -142,8 +148,28 @@ public partial class Main
 
     public void UpdateOracleHoverPosition(int x, int y)
     {
+        _oracleLastCell = -1;
         _oracleLastX = x;
         _oracleLastY = y;
+    }
+
+    /// <summary>
+    /// 记录一次悬停命中。地块来源时同时记下地块编号，区域分析会优先读地块属性。
+    /// 栅格来源（地块层未启用）时退回像素路径，行为与改造前一致。
+    /// </summary>
+    private void UpdateOracleHoverFromSample(CellSample sample)
+    {
+        if (sample.IsCell)
+        {
+            _oracleLastCell = sample.CellId;
+        }
+        else
+        {
+            _oracleLastCell = -1;
+        }
+
+        _oracleLastX = sample.AnchorX;
+        _oracleLastY = sample.AnchorY;
     }
 
     private static void ConfigureOracleOutputLabel(RichTextLabel? label)
@@ -576,12 +602,25 @@ public partial class Main
         SetOraclePanelMessage(_oracleRegionOutput, "[color=#9ab0c9]区域推演中...[/color]");
         SetOraclePanelMessage(_oracleErrorOutput, "[color=#9ab0c9]当前无错误。[/color]");
 
-        var biome = world.Biome[_oracleLastX, _oracleLastY];
-        var landform = ClassifyLandform(_oracleLastX, _oracleLastY, SeaLevel, world.Elevation, world.Moisture, world.River);
-        var biomeName = GetBiomeDisplayName(biome);
-        var landformName = GetLandformDisplayName(landform);
-        
-        OracleLog($"Analyzing region ({_oracleLastX}, {_oracleLastY}) - {biomeName}, {landformName}", verbose: true);
+        var grid = EnsurePolygonLayer(world);
+
+        // 自校验：缓存的地块编号必须仍然对应同一个锚点像素。
+        // 重新生成世界后编号可能失效（种子变了就是另一张地块图），
+        // 与其到处埋重置逻辑，不如在这里验一次、不匹配就退回像素路径。
+        var regionIsCell = _oracleLastCell >= 0
+            && grid != null
+            && _oracleLastCell < grid.Count
+            && grid.FindCell(_oracleLastX + 0.5d, _oracleLastY + 0.5d) == _oracleLastCell;
+
+        var region = regionIsCell
+            ? SampleFromCell(world, grid!, _oracleLastCell)
+            : SampleFromPixel(world, _oracleLastX, _oracleLastY);
+
+        var biomeName = GetBiomeDisplayName(region.Biome);
+        var landformName = GetLandformDisplayName(region.Landform);
+        var regionTag = region.IsCell ? $"地块 #{region.CellId}" : $"像素 ({region.AnchorX}, {region.AnchorY})";
+
+        OracleLog($"Analyzing region {regionTag} - {biomeName}, {landformName}", verbose: true);
 
         var result = await oracle.AnalyzeRegion(
             civilization,

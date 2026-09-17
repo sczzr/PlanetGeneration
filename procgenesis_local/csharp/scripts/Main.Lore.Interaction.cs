@@ -55,17 +55,21 @@ public partial class Main : Control
 		}
 
 		var local = mouseButton.Position;
-		if (!TrySampleBiome(local, out var sampleX, out var sampleY, out var biome))
+		if (!TrySampleAtLocalPosition(local, out var hoverSample))
 		{
 			ResetBiomeHoverState();
 			return;
 		}
 
-		var detailText = BuildBiomeHoverText(sampleX, sampleY, biome);
+		UpdateOracleHoverFromSample(hoverSample);
+
+		var detailText = BuildCellHoverText(hoverSample);
 		if (_biomeHoverText.Text != detailText)
 		{
 			_biomeHoverText.Text = detailText;
 		}
+
+		UpdateCellHighlight(hoverSample.IsCell ? hoverSample.CellId : -1);
 
 		PositionBiomeHoverPanel(local);
 		_biomeHoverPanel.Visible = true;
@@ -85,62 +89,34 @@ public partial class Main : Control
 	private void ResetBiomeHoverState()
 	{
 		_biomeHoverPanel.Visible = false;
+		UpdateCellHighlight(-1);
 	}
 
-	private bool TrySampleBiome(Vector2 localPosition, out int sampleX, out int sampleY, out BiomeType biome)
-	{
-		sampleX = 0;
-		sampleY = 0;
-		biome = BiomeType.Ocean;
-
-		if (_primaryWorld == null)
-		{
-			return false;
-		}
-
-		var textureSize = _mapTexture.Size;
-		if (textureSize.X <= 1f || textureSize.Y <= 1f)
-		{
-			return false;
-		}
-
-		var tX = Mathf.Clamp(localPosition.X / textureSize.X, 0f, 0.999999f);
-		var tY = Mathf.Clamp(localPosition.Y / textureSize.Y, 0f, 0.999999f);
-		sampleX = Mathf.Clamp((int)(tX * MapWidth), 0, MapWidth - 1);
-		sampleY = Mathf.Clamp((int)(tY * MapHeight), 0, MapHeight - 1);
-		biome = _primaryWorld.Biome[sampleX, sampleY];
-		UpdateOracleHoverPosition(sampleX, sampleY);
-		return true;
-	}
-
-	private string BuildBiomeHoverText(int x, int y, BiomeType biome)
+	private void UpdateLoreFromMapSelection(Vector2 localMousePosition)
 	{
 		if (_primaryWorld == null)
 		{
-			return string.Empty;
+			UpdateLorePanel();
+			return;
 		}
 
-		var elevationValue = _primaryWorld.Elevation[x, y];
-		var temperatureValue = _primaryWorld.Temperature[x, y];
-		var moistureValue = _primaryWorld.Moisture[x, y];
-		var riverValue = _primaryWorld.River[x, y];
-		var landform = ClassifyLandform(x, y, SeaLevel, _primaryWorld.Elevation, _primaryWorld.Moisture, _primaryWorld.River);
-		var biomeName = GetBiomeDisplayName(biome);
-		var biomeInfo = GetBiomeDetailText(biome);
-		var landformName = GetLandformDisplayName(landform);
-		var landformInfo = GetLandformDetailText(landform);
-		var altitudeText = BuildAltitudeDisplayText(elevationValue, SeaLevel, _currentReliefExaggeration);
+		if (!TrySampleAtLocalPosition(localMousePosition, out var sample))
+		{
+			return;
+		}
 
-		return string.Concat(
-			"群系：", biomeName, "\n",
-			"说明：", biomeInfo, "\n",
-			"地貌：", landformName, "\n",
-			"地貌说明：", landformInfo, "\n",
-			"坐标：", x.ToString(), ", ", y.ToString(), "\n",
-			"高度：", altitudeText, "\n",
-			"温度：", NormalizedTemperatureToCelsius(temperatureValue).ToString("0.0"), "℃\n",
-			"湿度：", moistureValue.ToString("0.00"), "\n",
-			"河流强度：", riverValue.ToString("0.00"));
+		// 点击地图就要更新 Oracle 的"最近一次选定区域"，与当前图层无关——
+		// 改造前这条链路在 TrySampleBiome 里，改造后必须显式保留。
+		UpdateOracleHoverFromSample(sample);
+
+		var hazardSkulls = ComputeThreatSkulls(sample);
+		_threatLabel.Text = $"生存威胁指数: {BuildThreatIcons(hazardSkulls)}";
+
+		var modeText = GetViewModeText();
+		var timelineEvents = GetTimelineEventsForCurrentWorld();
+		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch} | {BuildReplayStatusText(timelineEvents)}";
+
+		_loreText.Text = BuildNarrativeText(sample, hazardSkulls);
 	}
 
 	private LandformType ClassifyLandform(int x, int y, float seaLevel, float[,] elevation, float[,] moisture, float[,] river)
@@ -368,30 +344,6 @@ public partial class Main : Control
 		var clampedY = Mathf.Clamp(targetY, BiomeHoverPanelMargin, maxY);
 
 		panel.Position = new Vector2(clampedX, clampedY);
-	}
-
-	private void UpdateLoreFromMapSelection(Vector2 localMousePosition)
-	{
-		if (_primaryWorld == null)
-		{
-			UpdateLorePanel();
-			return;
-		}
-
-		if (!TrySampleBiome(localMousePosition, out var sampleX, out var sampleY, out var biome))
-		{
-			return;
-		}
-
-		var landform = ClassifyLandform(sampleX, sampleY, SeaLevel, _primaryWorld.Elevation, _primaryWorld.Moisture, _primaryWorld.River);
-		var hazardSkulls = ComputeThreatSkulls(sampleX, sampleY, biome, landform);
-		_threatLabel.Text = $"生存威胁指数: {BuildThreatIcons(hazardSkulls)}";
-
-		var modeText = GetViewModeText();
-		var timelineEvents = GetTimelineEventsForCurrentWorld();
-		_loreStateLabel.Text = $"模式：{modeText} | 纪元：{_currentEpoch} | {BuildReplayStatusText(timelineEvents)}";
-
-		_loreText.Text = BuildNarrativeText(sampleX, sampleY, biome, landform, hazardSkulls);
 	}
 
 }

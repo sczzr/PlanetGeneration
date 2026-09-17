@@ -20,7 +20,13 @@ public enum MapLayer
     Landform,
     Ecology,
     Civilization,
-    TradeRoutes
+    TradeRoutes,
+
+    /// <summary>
+    /// 多边形地块网格：按地块填充 + 地块边界描边。
+    /// 配色与 <see cref="Biomes"/> 一致，便于与栅格版本做逐像素 A/B 对照。
+    /// </summary>
+    PolygonGrid
 }
 
 public enum ElevationStyle
@@ -255,6 +261,13 @@ public sealed class WorldRenderer
         return value >= 255f ? (byte)255 : (byte)value;
     }
 
+    /// <summary>按生态健康度取色，与 <see cref="MapLayer.Ecology"/> 图层完全一致。</summary>
+    public Color GetEcologyColor(float ecology, float elevation, float seaLevel)
+        => DrawEcologyColor(ecology, elevation, seaLevel);
+
+    /// <summary>城市标记色，与 <see cref="MapLayer.Cities"/> 图层里的标记完全一致。</summary>
+    public Color GetCityMarkerColor() => CityMarker;
+
     private Color DrawEcologyColor(float ecology, float elevation, float seaLevel)
     {
         if (elevation <= seaLevel)
@@ -380,13 +393,21 @@ public sealed class WorldRenderer
     private Color DrawPlates(PlateResult plate, int x, int y)
     {
         var site = plate.Sites[plate.PlateIds[x, y]];
+        return GetPlateColor(site.DebugColor, plate.BoundaryTypes[x, y]);
+    }
 
-        return plate.BoundaryTypes[x, y] switch
+    /// <summary>
+    /// 按板块取色：边界类型优先，否则用板块自身的调色。
+    /// 逐像素与逐地块两条路径共用这一份实现，配色不可能分叉。
+    /// </summary>
+    public Color GetPlateColor(Color debugColor, PlateBoundaryType boundary)
+    {
+        return boundary switch
         {
             PlateBoundaryType.Convergent => new Color(0.98f, 0.22f, 0.22f),
             PlateBoundaryType.Divergent => new Color(0.22f, 0.92f, 0.95f),
             PlateBoundaryType.Transform => new Color(0.98f, 0.80f, 0.28f),
-            _ => site.DebugColor
+            _ => debugColor
         };
     }
 
@@ -727,9 +748,15 @@ public sealed class WorldRenderer
     }
 
 	private Color DrawSatellite(int y, int height, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
+		=> GetSatelliteColor(ComputePolarMask(y, height), elevation, temperature, avgMoisture, biome, river, seaLevel);
+
+	/// <summary>
+	/// 按地形总览取色。逐像素路径传"该行的极区掩膜"，地块路径传"该地块中心的极区掩膜"，
+	/// 两者共用这一份实现，配色不可能分叉。
+	/// </summary>
+	public Color GetSatelliteColor(float polarMask, float elevation, float temperature, float avgMoisture, BiomeType biome, float river, float seaLevel)
 	{
 		Color color;
-		var polarMask = ComputePolarMask(y, height);
 		var safeSea = Mathf.Clamp(seaLevel, 0.0001f, 0.9999f);
 
 		if (elevation < safeSea)
@@ -801,7 +828,11 @@ public sealed class WorldRenderer
 		return color;
 	}
 
-    private static float ComputePolarMask(int y, int height)
+    /// <summary>
+    /// 按行号计算极区掩膜（0 = 赤道，1 = 极点附近）。
+    /// 公开出来是为了让地块渲染能按"地块中心所在行"取同一个掩膜。
+    /// </summary>
+    public static float ComputePolarMask(int y, int height)
     {
         if (height <= 1)
         {
@@ -994,4 +1025,52 @@ public sealed class WorldRenderer
 
         return new Color(r / 255f, g / 255f, b / 255f, 1f);
     }
+
+    // ── 多边形渲染用的取色接口 ──────────────────────────────────────
+    //
+    // 多边形渲染是"逐地块一次"取色，而不是逐像素，所以需要把内部配色函数开放出来。
+    // 刻意只开放取色，不开放整套 DrawXxx：这样栅格渲染与多边形渲染永远共用同一套配色，
+    // 两边的 A/B 对照才有意义（差异只可能来自几何，不可能来自调色）。
+
+    /// <summary>按生物群系取色，与 <see cref="MapLayer.Biomes"/> 图层完全一致。</summary>
+    public Color GetBiomeColor(BiomeType biome) => DrawBiomeColor(biome);
+
+    /// <summary>按高程取色，与 <see cref="MapLayer.Elevation"/> 图层完全一致。</summary>
+    public Color GetElevationColor(float elevation, float seaLevel, ElevationStyle style)
+        => DrawElevation(elevation, seaLevel, style);
+
+    /// <summary>
+    /// 按政体编号取色，与 <see cref="MapLayer.Civilization"/> 图层完全一致。
+    /// </summary>
+    public Color GetPolityColor(int polityId) => ColorForPolity(polityId);
+
+    /// <summary>
+    /// 文明图层的取色（逐地块调用）。
+    /// 与逐像素路径共用同一份实现——<see cref="DrawCivilizationColor"/> 就是它，
+    /// 这里只是把可见性放开，保证栅格与多边形两条路径的配色不可能分叉。
+    /// </summary>
+    public Color GetCivilizationColor(float influence, int polityId, bool isBorder, float elevation, float seaLevel)
+        => DrawCivilizationColor(influence, polityId, isBorder, elevation, seaLevel);
+
+    /// <summary>贸易图层的取色（逐地块调用）；与逐像素路径共用实现，理由同上。</summary>
+    public Color GetTradeRouteColor(bool hasRoute, float flow, float influence, float elevation, float seaLevel)
+        => DrawTradeRouteColor(hasRoute, flow, influence, elevation, seaLevel);
+
+    /// <summary>按岩石类型取色，与 <see cref="MapLayer.RockTypes"/> 图层完全一致。</summary>
+    public Color GetRockColor(RockType rock, float elevation, float seaLevel)
+        => DrawRock(rock, elevation, seaLevel);
+
+    /// <summary>按矿产类型取色，与 <see cref="MapLayer.Ores"/> 图层完全一致。</summary>
+    public Color GetOreColor(OreType ore, float elevation, float seaLevel)
+        => DrawOre(ore, elevation, seaLevel);
+
+    /// <summary>按温度取色，与 <see cref="MapLayer.Temperature"/> 图层完全一致。</summary>
+    public Color GetTemperatureColor(float value) => DrawTemperature(value);
+
+    /// <summary>按湿度取色，与 <see cref="MapLayer.Moisture"/> 图层完全一致。</summary>
+    public Color GetMoistureColor(float value) => DrawMoisture(value);
+
+    /// <summary>按河流取色，与 <see cref="MapLayer.Rivers"/> 图层完全一致。</summary>
+    public Color GetRiverColor(float elevation, float seaLevel, float river)
+        => DrawRivers(elevation, seaLevel, river);
 }

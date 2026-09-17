@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.WorldGen;
+using PlanetGeneration.WorldGen.Polygon;
 using PlanetGeneration.UI.Services;
 using System;
 using System.Collections.Generic;
@@ -96,6 +97,10 @@ public partial class Main : Control
 		_magicDensity = generation.MagicDensity;
 		_civilAggression = generation.CivilAggression;
 		_speciesDiversity = generation.SpeciesDiversity;
+		_polygonTileMode = Enum.IsDefined(typeof(PolygonTileMode), generation.PolygonTileModeId)
+			? (PolygonTileMode)generation.PolygonTileModeId
+			: PolygonTileMode.Cells;
+		_cellsDesired = generation.CellsDesired > 0 ? generation.CellsDesired : 0;
 		_uiFontScale = preferences.UiFontScale;
 		_currentEpoch = preferences.CurrentEpoch;
 		_oracleAutoUnloadIdleSeconds = preferences.OracleAutoUnloadIdleSeconds;
@@ -132,6 +137,8 @@ public partial class Main : Control
 		generation.MagicDensity = _magicDensity;
 		generation.CivilAggression = _civilAggression;
 		generation.SpeciesDiversity = _speciesDiversity;
+		generation.PolygonTileModeId = (int)_polygonTileMode;
+		generation.CellsDesired = _cellsDesired;
 		preferences.PreferredLayerId = _layerOption.GetSelectedId();
 		preferences.ConsolePanelVisible = _consolePanelVisible;
 		preferences.UiFontScale = _uiFontScale;

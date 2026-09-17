@@ -32,4 +32,10 @@ public sealed class GeneratorSettings
 	public int MagicDensity { get; set; } = 75;
 	public int CivilAggression { get; set; } = 42;
 	public int SpeciesDiversity { get; set; } = 68;
+
+	/// <summary>地块系统模式，取值对应 PolygonTileMode（0=栅格 1=混合 2=单元格 3=单元格+描边）。</summary>
+	public int PolygonTileModeId { get; set; } = 2;
+
+	/// <summary>目标地块数；0 表示按地图尺寸自动取值。</summary>
+	public int CellsDesired { get; set; }
 }

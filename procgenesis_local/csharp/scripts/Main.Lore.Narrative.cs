@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.WorldGen;
+using PlanetGeneration.WorldGen.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,38 +36,34 @@ public partial class Main : Control
 		_loreText.Text = BuildNarrativeOverviewText();
 	}
 
-	private int ComputeThreatSkulls(int x, int y, BiomeType biome, LandformType landform)
+	private int ComputeThreatSkulls(CellSample sample)
 	{
 		if (_primaryWorld == null)
 		{
 			return 1;
 		}
 
-		var elevation = _primaryWorld.Elevation[x, y];
-		var river = _primaryWorld.River[x, y];
-		var temperature = _primaryWorld.Temperature[x, y];
-
 		var threat = 1;
 		threat += _civilAggression > 55 ? 1 : 0;
 		threat += _magicDensity > 70 ? 1 : 0;
 		threat += _speciesDiversity > 80 ? 1 : 0;
 
-		if (biome == BiomeType.TropicalDesert || biome == BiomeType.TemperateDesert || biome == BiomeType.SnowyMountain)
+		if (sample.Biome == BiomeType.TropicalDesert || sample.Biome == BiomeType.TemperateDesert || sample.Biome == BiomeType.SnowyMountain)
 		{
 			threat += 1;
 		}
 
-		if (landform == LandformType.Mountain || landform == LandformType.DeepOcean)
+		if (sample.Landform == LandformType.Mountain || sample.Landform == LandformType.DeepOcean)
 		{
 			threat += 1;
 		}
 
-		if (temperature < 0.22f || temperature > 0.82f)
+		if (sample.Temperature < 0.22f || sample.Temperature > 0.82f)
 		{
 			threat += 1;
 		}
 
-		if (elevation < SeaLevel + 0.02f && river > 0.12f)
+		if (sample.Elevation < SeaLevel + 0.02f && sample.River > 0.12f)
 		{
 			threat += 1;
 		}
@@ -231,6 +228,44 @@ public partial class Main : Control
 		return bestIndex;
 	}
 
+	/// <summary>
+	/// 地块版文明事件的同名重载。
+	///
+	/// 两份事件类型字段完全同构，之所以不合并成一个类型：
+	/// <see cref="PolygonCivilizationEvent"/> 在**不引用 Godot 的核心层**，
+	/// 而 <see cref="CivilizationEpochEvent"/> 在 Godot 侧——合并会把 Godot 依赖带进核心层。
+	/// 这里只做一次转发，逻辑仍然是同一套（见上面的栅格版实现）。
+	/// </summary>
+	private static int ResolveTimelineEventIndex(PolygonCivilizationEvent[] events, int targetEpoch)
+	{
+		if (events.Length == 0)
+		{
+			return -1;
+		}
+
+		var bestIndex = 0;
+		var bestDistance = Math.Abs(events[0].Epoch - targetEpoch);
+
+		for (var i = 1; i < events.Length; i++)
+		{
+			var distance = Math.Abs(events[i].Epoch - targetEpoch);
+			if (distance > bestDistance)
+			{
+				continue;
+			}
+
+			if (distance == bestDistance && events[i].Epoch < events[bestIndex].Epoch)
+			{
+				continue;
+			}
+
+			bestDistance = distance;
+			bestIndex = i;
+		}
+
+		return bestIndex;
+	}
+
 	private string BuildReplayStatusText(CivilizationEpochEvent[] events)
 	{
 		if (events.Length == 0)
@@ -248,6 +283,27 @@ public partial class Main : Control
 	}
 
 	private CivilizationEpochEvent? GetFocusedTimelineEvent(CivilizationEpochEvent[] events)
+	{
+		if (events.Length == 0)
+		{
+			return null;
+		}
+
+		var index = ResolveTimelineEventIndex(events, _selectedTimelineEventEpoch >= 0 ? _selectedTimelineEventEpoch : _currentEpoch);
+		if (index < 0 || index >= events.Length)
+		{
+			return null;
+		}
+
+		return events[index];
+	}
+
+	/// <summary>
+	/// 地块版文明事件的同名重载；返回类型是 <see cref="PolygonCivilizationEvent"/>。
+	/// 索引逻辑与栅格版共用同一套（<see cref="ResolveTimelineEventIndex(PolygonCivilizationEvent[], int)"/>），
+	/// 因此两条路径的"回放焦点"永远指向同一个纪元的同一类事件。
+	/// </summary>
+	private PolygonCivilizationEvent? GetFocusedTimelineEvent(PolygonCivilizationEvent[] events)
 	{
 		if (events.Length == 0)
 		{
@@ -444,17 +500,17 @@ public partial class Main : Control
 		return builder.ToString();
 	}
 
-	private string BuildNarrativeText(int x, int y, BiomeType biome, LandformType landform, int threatSkulls)
+	private string BuildNarrativeText(CellSample sample, int threatSkulls)
 	{
 		if (_primaryWorld == null)
 		{
 			return "[b]选定区域地质：[/b] 数据不可用。";
 		}
 
-		var elevationText = BuildAltitudeDisplayText(_primaryWorld.Elevation[x, y], SeaLevel, _currentReliefExaggeration);
-		var biomeName = GetBiomeDisplayName(biome);
-		var landformName = GetLandformDisplayName(landform);
-		var geoCause = landform switch
+		var elevationText = BuildAltitudeDisplayText(sample.Elevation, SeaLevel, _currentReliefExaggeration);
+		var biomeName = GetBiomeDisplayName(sample.Biome);
+		var landformName = GetLandformDisplayName(sample.Landform);
+		var geoCause = sample.Landform switch
 		{
 			LandformType.Basin => "地势封闭促使水汽滞留，形成稳定内陆聚落带",
 			LandformType.DryBasin => "封闭低地蒸发强于补给，形成季节性水系与盐沼盆地",
@@ -476,10 +532,13 @@ public partial class Main : Control
 			? "该区存在高能以太回廊，稀有矿脉与仪式遗迹重叠。"
 			: "该区以低能以太背景为主，奥术活动受地貌限制。";
 
+		// 地块来源时把地块编号也写进叙事，方便与"地块划分"图层对照。
+		var regionTag = sample.IsCell ? $"地块 #{sample.CellId}" : "像素区域";
+
 		return string.Concat(
-			"[b]选定区域地质：[/b] ", landformName, " / ", biomeName, "\n",
+			"[b]选定区域地质：[/b] ", landformName, " / ", biomeName, "（", regionTag, "）\n",
 			"高度：", elevationText, "\n",
-			"坐标：", x.ToString(), ", ", y.ToString(), "\n",
+			"坐标：", sample.AnchorX.ToString(), ", ", sample.AnchorY.ToString(), "\n",
 			"[b]地理因果：[/b] ", geoCause, "。\n",
 			"[b]社会演化：[/b] ", societyConsequence, "。\n",
 			"[b]奥术线索：[/b] ", arcaneSignal, "\n",

@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.WorldGen;
+using PlanetGeneration.WorldGen.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,42 +108,96 @@ public partial class Main : Control
 
 		if (layer == MapLayer.Ecology)
 		{
-			EnsureEcologySimulation(_primaryWorld);
-			var ecology = _primaryWorld.EcologySimulation;
-			if (ecology != null)
+			// 多边形模式读地块版生态的统计，栅格模式读逐像素版——两者的口径不同，
+			// 所以分别取各自的结果，避免出现"画的是地块、说的是像素"。
+			if (ShouldRenderAsPolygon(layer))
 			{
-				baseInfoText += $" | 生态健康:{ecology.AvgEcologyHealth * 100f:0.0}% | 文明潜力:{ecology.AvgCivilizationPotential * 100f:0.0}% | 文明萌发区:{ecology.CivilizationEmergencePercent:0.0}%";
+				EnsurePolygonEcology(_primaryWorld);
+				var polygonEcology = _primaryWorld.PolygonEcology;
+				if (polygonEcology != null)
+				{
+					baseInfoText += $" | 生态健康:{polygonEcology.AvgEcologyHealth * 100f:0.0}% | 文明潜力:{polygonEcology.AvgCivilizationPotential * 100f:0.0}% | 文明萌发区:{polygonEcology.CivilizationEmergencePercent:0.0}% | 陆地地块:{polygonEcology.LandCellCount}";
+				}
+			}
+			else
+			{
+				EnsureEcologySimulation(_primaryWorld);
+				var ecology = _primaryWorld.EcologySimulation;
+				if (ecology != null)
+				{
+					baseInfoText += $" | 生态健康:{ecology.AvgEcologyHealth * 100f:0.0}% | 文明潜力:{ecology.AvgCivilizationPotential * 100f:0.0}% | 文明萌发区:{ecology.CivilizationEmergencePercent:0.0}%";
+				}
 			}
 		}
 
 		if (layer == MapLayer.Civilization)
 		{
-			EnsureCivilizationSimulation(_primaryWorld);
-			var civilization = _primaryWorld.CivilizationSimulation;
-			if (civilization != null)
+			// 与生态图层同样处理：两条渲染路径的口径不同（地块 vs 像素），
+			// 所以各自读自己的统计结果，避免"画的是地块、说的是像素"。
+			if (ShouldRenderAsPolygon(layer))
 			{
-				baseInfoText += $" | 政体数量:{civilization.PolityCount} | 领土覆盖:{civilization.ControlledLandPercent:0.0}% | 核心腹地:{civilization.CoreCellPercent:0.0}% | 最大政体占比:{civilization.DominantPolitySharePercent:0.0}% | 聚落分级(村/镇/城邦):{civilization.HamletCount}/{civilization.TownCount}/{civilization.CityStateCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}% | 边界波动:{civilization.BorderVolatilityPercent:0.0}%";
-				var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
-				if (focusedEvent != null)
+				EnsurePolygonCivilization(_primaryWorld);
+				var polyCivil = _primaryWorld.PolygonCivilization;
+				if (polyCivil != null)
 				{
-					baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+					baseInfoText += $" | 政体数量:{polyCivil.PolityCount} | 领土覆盖:{polyCivil.ControlledLandPercent:0.0}% | 核心腹地:{polyCivil.CoreCellPercent:0.0}% | 最大政体占比:{polyCivil.DominantPolitySharePercent:0.0}% | 聚落分级(村/镇/城邦):{polyCivil.HamletCount}/{polyCivil.TownCount}/{polyCivil.CityStateCount} | 战争热度:{polyCivil.ConflictHeatPercent:0.0}% | 联盟凝聚:{polyCivil.AllianceCohesionPercent:0.0}% | 边界波动:{polyCivil.BorderVolatilityPercent:0.0}% | 陆地地块:{polyCivil.LandCellCount}";
+					var polyEvent = GetFocusedTimelineEvent(polyCivil.RecentEvents);
+					if (polyEvent != null)
+					{
+						baseInfoText += $" | 回放焦点:第{polyEvent.Epoch}纪元-{polyEvent.Category}";
+					}
+				}
+			}
+			else
+			{
+				EnsureCivilizationSimulation(_primaryWorld);
+				var civilization = _primaryWorld.CivilizationSimulation;
+				if (civilization != null)
+				{
+					baseInfoText += $" | 政体数量:{civilization.PolityCount} | 领土覆盖:{civilization.ControlledLandPercent:0.0}% | 核心腹地:{civilization.CoreCellPercent:0.0}% | 最大政体占比:{civilization.DominantPolitySharePercent:0.0}% | 聚落分级(村/镇/城邦):{civilization.HamletCount}/{civilization.TownCount}/{civilization.CityStateCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}% | 边界波动:{civilization.BorderVolatilityPercent:0.0}%";
+					var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
+					if (focusedEvent != null)
+					{
+						baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+					}
 				}
 			}
 		}
 
 		if (layer == MapLayer.TradeRoutes)
 		{
-			EnsureCivilizationSimulation(_primaryWorld);
-			var civilization = _primaryWorld.CivilizationSimulation;
-			if (civilization != null)
+			if (ShouldRenderAsPolygon(layer))
 			{
-				baseInfoText += $" | 贸易走廊覆盖:{civilization.TradeRouteCells} 格 | 枢纽联通率:{civilization.ConnectedHubPercent:0.0}% | 政体数量:{civilization.PolityCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}%";
-				var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
-				if (focusedEvent != null)
+				EnsurePolygonCivilization(_primaryWorld);
+				var polyCivil = _primaryWorld.PolygonCivilization;
+				if (polyCivil != null)
 				{
-					baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+					baseInfoText += $" | 贸易走廊覆盖:{polyCivil.TradeRouteCells} 块 | 枢纽联通率:{polyCivil.ConnectedHubPercent:0.0}% | 政体数量:{polyCivil.PolityCount} | 战争热度:{polyCivil.ConflictHeatPercent:0.0}% | 联盟凝聚:{polyCivil.AllianceCohesionPercent:0.0}%";
 				}
 			}
+			else
+			{
+				EnsureCivilizationSimulation(_primaryWorld);
+				var civilization = _primaryWorld.CivilizationSimulation;
+				if (civilization != null)
+				{
+					baseInfoText += $" | 贸易走廊覆盖:{civilization.TradeRouteCells} 格 | 枢纽联通率:{civilization.ConnectedHubPercent:0.0}% | 政体数量:{civilization.PolityCount} | 战争热度:{civilization.ConflictHeatPercent:0.0}% | 联盟凝聚:{civilization.AllianceCohesionPercent:0.0}%";
+					var focusedEvent = GetFocusedTimelineEvent(civilization.RecentEvents);
+					if (focusedEvent != null)
+					{
+						baseInfoText += $" | 回放焦点:第{focusedEvent.Epoch}纪元-{focusedEvent.Category}";
+					}
+				}
+			}
+		}
+
+		if (layer == MapLayer.PolygonGrid)
+		{
+			baseInfoText += BuildPolygonLayerSummary(_primaryWorld);
+		}
+		else if (ShouldRenderAsPolygon(layer))
+		{
+			baseInfoText += " | 渲染:多边形单元格";
 		}
 
 		_infoLabel.Text = baseInfoText;
@@ -287,7 +342,7 @@ public partial class Main : Control
 
 	private int BuildLayerRenderSignature(MapLayer layer)
 	{
-		return layer switch
+		var signature = layer switch
 		{
 			MapLayer.Elevation => (int)_elevationStyle,
 			MapLayer.Wind => Mathf.RoundToInt(WindArrowDensity * 1000f),
@@ -297,6 +352,11 @@ public partial class Main : Control
 			MapLayer.TradeRoutes => BuildCivilizationSignature(),
 			_ => 0
 		};
+
+		// 会走多边形渲染的图层必须把模式并进签名，否则切换模式后缓存不会失效。
+		return ShouldRenderAsPolygon(layer) || layer == MapLayer.PolygonGrid
+			? HashCode.Combine(signature, (int)_polygonTileMode)
+			: signature;
 	}
 
 	private int BuildEcologySignature()
@@ -354,6 +414,31 @@ public partial class Main : Control
 
 	private Image RenderLayer(GeneratedWorldData world, MapLayer layer)
 	{
+		// "地块划分"是地块结构的调试视图：中性底色 + 边界线框。
+		if (layer == MapLayer.PolygonGrid)
+		{
+			var wireframe = RenderPolygonGridLayer(world);
+			if (wireframe != null)
+			{
+				return wireframe;
+			}
+
+			// 地块层不可用（模式为 Raster）时退回栅格渲染，避免图层整片空白。
+			layer = MapLayer.Biomes;
+		}
+
+		// 离散分类图层（Hybrid 模式）或全部可着色图层（Cells 模式）用多边形渲染。
+		// 模式为 Raster、或地块层尚未构建时 ShouldRenderAsPolygon 返回 false / 取色返回 null，
+		// 自动退回栅格路径——因此下面这套逐像素渲染始终是"兜底实现"，不需要为回退另写一份逻辑。
+		if (ShouldRenderAsPolygon(layer))
+		{
+			var polygonImage = RenderPolygonAttributeLayer(world, layer);
+			if (polygonImage != null)
+			{
+				return polygonImage;
+			}
+		}
+
 		if (layer == MapLayer.Landform)
 		{
 			var landformImage = BuildLandformImage(world.Elevation, world.Moisture, world.River, SeaLevel, MapWidth, MapHeight);
@@ -538,12 +623,12 @@ public partial class Main : Control
 		}
 
 		var builder = new StringBuilder();
-		builder.AppendLine(BuildCityListSection(_primaryWorld.Tuning.Name, _primaryWorld.Cities));
+		builder.AppendLine(BuildCityListSection(_primaryWorld));
 
 		if (_compareMode && _compareWorld != null)
 		{
 			builder.AppendLine();
-			builder.AppendLine(BuildCityListSection(_compareWorld.Tuning.Name, _compareWorld.Cities));
+			builder.AppendLine(BuildCityListSection(_compareWorld));
 		}
 
 		return builder.ToString();
@@ -559,10 +644,11 @@ public partial class Main : Control
 		};
 	}
 
-	private string BuildCityListSection(string title, List<CityInfo> cities)
+	private static string BuildCityListSection(GeneratedWorldData world)
 	{
+		var cities = world.Cities;
 		var builder = new StringBuilder();
-		builder.AppendLine($"Cities ({title}):");
+		builder.AppendLine($"Cities ({world.Tuning.Name}):");
 
 		if (cities.Count == 0)
 		{
@@ -570,11 +656,16 @@ public partial class Main : Control
 			return builder.ToString();
 		}
 
+		// 地块层已构建时把城市所属的地块编号一并列出——
+		// 这是"城市属于某个地块"这条关系第一次在界面上可见。
+		var hasCellLink = world.CityCell.Length == cities.Count;
+
 		var count = Mathf.Min(16, cities.Count);
 		for (var i = 0; i < count; i++)
 		{
 			var city = cities[i];
-			builder.AppendLine($"{i + 1}. {city.Name} ({city.Position.X}, {city.Position.Y}) [{CityPopulationText(city.Population)}]");
+			var cellTag = hasCellLink ? $" → 地块 #{world.CityCell[i]}" : string.Empty;
+			builder.AppendLine($"{i + 1}. {city.Name} ({city.Position.X}, {city.Position.Y}) [{CityPopulationText(city.Population)}]{cellTag}");
 		}
 
 		if (cities.Count > count)

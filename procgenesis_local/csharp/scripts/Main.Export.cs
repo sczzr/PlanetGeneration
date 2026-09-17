@@ -205,6 +205,7 @@ public partial class Main : Control
 			MapLayer.Ecology => "ecology",
 			MapLayer.Civilization => "civilization",
 			MapLayer.TradeRoutes => "trade_routes",
+			MapLayer.PolygonGrid => "polygon_grid",
 			_ => "satellite"
 		};
 	}

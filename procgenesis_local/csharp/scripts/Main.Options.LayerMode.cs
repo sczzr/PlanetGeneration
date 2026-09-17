@@ -33,6 +33,7 @@ public partial class Main : Control
 		_layerOption.AddItem("生态演化", (int)MapLayer.Ecology);
 		_layerOption.AddItem("文明疆域", (int)MapLayer.Civilization);
 		_layerOption.AddItem("贸易走廊", (int)MapLayer.TradeRoutes);
+		_layerOption.AddItem("地块划分", (int)MapLayer.PolygonGrid);
 		_layerOption.Select(0);
 		BuildLayerTree();
 	}

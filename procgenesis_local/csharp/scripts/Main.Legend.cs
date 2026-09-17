@@ -59,6 +59,11 @@ public partial class Main : Control
 			case MapLayer.Biomes:
 				SetBiomeLegend();
 				break;
+			case MapLayer.PolygonGrid:
+				// 地块划分图层用的就是生物群系配色，图例可以完全复用——
+				// 这样与"生物群系"栅格图层并排看时，差异只可能来自几何。
+				SetBiomeLegend();
+				break;
 			case MapLayer.Landform:
 				SetLandformLegend();
 				break;

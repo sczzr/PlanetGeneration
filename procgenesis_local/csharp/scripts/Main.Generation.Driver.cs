@@ -147,7 +147,7 @@ public partial class Main : Control
 
 	private async Task<GeneratedWorldData> BuildWorldAsync(WorldTuning tuning, string label, float startProgress, float endProgress)
 	{
-		const int totalSteps = 10;
+		const int totalSteps = 11;
 		var step = 0;
 		var worldTimer = Stopwatch.StartNew();
 		var stageTimer = Stopwatch.StartNew();
@@ -225,9 +225,8 @@ public partial class Main : Control
 		var stats = await Task.Run(() => _statsCalculator.Calculate(MapWidth, MapHeight, biome, moisture, temperature, river, cities.Count));
 		LogGenerationStage(label, "统计", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "统计", ++step, totalSteps, startProgress, endProgress);
-		LogGenerationTiming($"{label}总计", worldTimer.Elapsed);
 
-		return new GeneratedWorldData
+		var world = new GeneratedWorldData
 		{
 			PlateResult = plateResult,
 			Elevation = elevation,
@@ -242,6 +241,17 @@ public partial class Main : Control
 			Stats = stats,
 			Tuning = tuning
 		};
+
+		// 多边形地块层：在全部栅格生成器之后构建，因为它的属性是从栅格采样来的。
+		// 模式为 Raster 时 BuildPolygonLayer 内部直接返回，等于零开销。
+		stageTimer.Restart();
+		await Task.Run(() => BuildPolygonLayer(world));
+		LogGenerationStage(label, "多边形地块层", stageTimer, worldTimer);
+		await SetBuildProgressAsync(label, "地块层", ++step, totalSteps, startProgress, endProgress);
+
+		LogGenerationTiming($"{label}总计", worldTimer.Elapsed);
+
+		return world;
 	}
 
 	private void LogGenerationStage(string label, string stage, Stopwatch stageTimer, Stopwatch worldTimer)

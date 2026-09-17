@@ -276,6 +276,13 @@ public partial class Main : Control
 			_primaryWorld.EcologySignature = int.MinValue;
 			_primaryWorld.CivilizationSimulation = null;
 			_primaryWorld.CivilizationSignature = int.MinValue;
+			// 地块版生态也要一并失效，否则多边形渲染的生态图层会停在旧参数上。
+			_primaryWorld.PolygonEcology = null;
+			_primaryWorld.PolygonEcologySignature = int.MinValue;
+			// 地块版文明同理：它吃地块生态的产出，两者必须一起失效，
+			// 否则会出现"生态已按新参数重算、文明还是旧归属"的错配。
+			_primaryWorld.PolygonCivilization = null;
+			_primaryWorld.PolygonCivilizationSignature = int.MinValue;
 			_primaryWorld.LayerRenderCache.Remove(MapLayer.Ecology);
 			_primaryWorld.LayerRenderCache.Remove(MapLayer.Civilization);
 			_primaryWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
@@ -287,6 +294,10 @@ public partial class Main : Control
 			_compareWorld.EcologySignature = int.MinValue;
 			_compareWorld.CivilizationSimulation = null;
 			_compareWorld.CivilizationSignature = int.MinValue;
+			_compareWorld.PolygonEcology = null;
+			_compareWorld.PolygonEcologySignature = int.MinValue;
+			_compareWorld.PolygonCivilization = null;
+			_compareWorld.PolygonCivilizationSignature = int.MinValue;
 			_compareWorld.LayerRenderCache.Remove(MapLayer.Ecology);
 			_compareWorld.LayerRenderCache.Remove(MapLayer.Civilization);
 			_compareWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
