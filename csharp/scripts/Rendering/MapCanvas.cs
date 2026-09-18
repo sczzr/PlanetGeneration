@@ -31,6 +31,8 @@ public partial class MapCanvas : Control
     private ArrayMesh? _cellMesh;
     private CurvedMeshTopology? _topology;
     private Vector2[][]? _cachedCurvedEdges;
+    private RenderEdge[]? _cachedRenderEdges;
+    private PlateBoundarySegment[]? _cachedPlateBoundaries;
 
     private static readonly Texture2D WhiteTexture = ImageTexture.CreateFromImage(
         Image.CreateFromData(1, 1, false, Image.Format.Rgba8, new byte[] { 255, 255, 255, 255 }));
@@ -53,14 +55,16 @@ public partial class MapCanvas : Control
         _hoveredCellId = -1;
         _highlightRings.Clear();
 
-        if (isSameGeometry && _cachedCurvedEdges != null)
+        if (isSameGeometry && _cachedCurvedEdges != null && _cachedRenderEdges != null)
         {
+            _cachedPlateBoundaries = OverlayVectorRenderer.BuildPlateBoundaries(snapshot, _cachedRenderEdges);
             UpdateMeshColors();
         }
         else
         {
             _topology = CurvedCellGeometry.BuildMeshTopology(snapshot.Geometry, 3);
             BuildCachedCurvedEdges(snapshot.Geometry);
+            _cachedPlateBoundaries = OverlayVectorRenderer.BuildPlateBoundaries(snapshot, _cachedRenderEdges);
             RebuildCellMesh();
         }
 
@@ -69,20 +73,28 @@ public partial class MapCanvas : Control
 
     private void BuildCachedCurvedEdges(CellGeometry geom)
     {
-        var raw = CurvedCellGeometry.GetCanonicalCurvedEdges(geom, 3);
-        var list = new List<Vector2[]>(raw.Length);
+        var raw = CurvedCellGeometry.GetCanonicalCurvedEdgesWithTopology(geom, 3);
+        var edgeList = new List<RenderEdge>(raw.Length + 64);
+        var ptsList = new List<Vector2[]>(raw.Length + 64);
         var width = (float)geom.Width;
 
         for (var i = 0; i < raw.Length; i++)
         {
-            var pts = raw[i];
+            var edge = raw[i];
+            var pts = edge.Points;
             if (pts.Length < 2) continue;
 
             var vpts = new Vector2[pts.Length];
             var cross = false;
+            var minX = float.MaxValue;
+            var maxX = float.MinValue;
+
             for (var k = 0; k < pts.Length; k++)
             {
                 vpts[k] = new Vector2((float)pts[k].X, (float)pts[k].Y);
+                if (vpts[k].X < minX) minX = vpts[k].X;
+                if (vpts[k].X > maxX) maxX = vpts[k].X;
+
                 if (k > 0 && Math.Abs(vpts[k].X - vpts[k - 1].X) > width * 0.5f)
                 {
                     cross = true;
@@ -90,13 +102,51 @@ public partial class MapCanvas : Control
                 }
             }
 
-            if (!cross)
+            if (cross) continue;
+
+            ptsList.Add(vpts);
+            edgeList.Add(new RenderEdge
             {
-                list.Add(vpts);
+                Points = vpts,
+                CellA = edge.CellA,
+                CellB = edge.CellB
+            });
+
+            if (minX < 0f)
+            {
+                var shifted = new Vector2[pts.Length];
+                for (var k = 0; k < pts.Length; k++)
+                {
+                    shifted[k] = new Vector2(vpts[k].X + width, vpts[k].Y);
+                }
+                ptsList.Add(shifted);
+                edgeList.Add(new RenderEdge
+                {
+                    Points = shifted,
+                    CellA = edge.CellA,
+                    CellB = edge.CellB
+                });
+            }
+
+            if (maxX > width)
+            {
+                var shifted = new Vector2[pts.Length];
+                for (var k = 0; k < pts.Length; k++)
+                {
+                    shifted[k] = new Vector2(vpts[k].X - width, vpts[k].Y);
+                }
+                ptsList.Add(shifted);
+                edgeList.Add(new RenderEdge
+                {
+                    Points = shifted,
+                    CellA = edge.CellA,
+                    CellB = edge.CellB
+                });
             }
         }
 
-        _cachedCurvedEdges = list.ToArray();
+        _cachedCurvedEdges = ptsList.ToArray();
+        _cachedRenderEdges = edgeList.ToArray();
     }
 
     public void UpdateLayerStack(LayerStackState layerStack)
@@ -314,7 +364,7 @@ public partial class MapCanvas : Control
 
         // 2. 绘制矢量叠加图层
         var visibleRect = new Rect2(Vector2.Zero, new Vector2((float)geom.Width, (float)geom.Height));
-        OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, screenScale, _labelFont, _cachedCurvedEdges);
+        OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, screenScale, _labelFont, _cachedCurvedEdges, _cachedRenderEdges, _cachedPlateBoundaries);
 
         // 3. 绘制平滑高亮环
         if (_highlightRings.Count > 0)

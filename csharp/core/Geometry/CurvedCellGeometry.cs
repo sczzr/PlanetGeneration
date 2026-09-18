@@ -22,6 +22,16 @@ public sealed class CurvedMeshTopology
 }
 
 /// <summary>
+/// 规范化平滑曲线边及其所属地块拓扑。
+/// </summary>
+public sealed class CanonicalCurvedEdge
+{
+    public required PolyVec2[] Points { get; init; }
+    public int CellA { get; set; } = -1;
+    public int CellB { get; set; } = -1;
+}
+
+/// <summary>
 /// 平滑曲线地块几何构建器：
 /// 实现基于规范化共享边（Canonical Shared Edge）的三次曲线插值，
 /// 严格保证相邻地块水密闭合（0 缝隙、0 重叠），并提供全图矢量网格拓扑生成。
@@ -134,13 +144,13 @@ public static class CurvedCellGeometry
     }
 
     /// <summary>
-    /// 获取全图所有规范化平滑曲线边（每条边严格唯一，已去重共享边）。
+    /// 获取全图所有规范化平滑曲线边及其所属地块拓扑（去重共享边，并关联 CellA 与 CellB）。
     /// </summary>
-    public static PolyVec2[][] GetCanonicalCurvedEdges(CellGeometry geom, int subdivisions = 3)
+    public static CanonicalCurvedEdge[] GetCanonicalCurvedEdgesWithTopology(CellGeometry geom, int subdivisions = 3)
     {
         var count = geom.Count;
         var width = geom.Width;
-        var edgeCache = new Dictionary<EdgeKey, PolyVec2[]>(count * 3);
+        var edgeCache = new Dictionary<EdgeKey, CanonicalCurvedEdge>(count * 3);
 
         for (var cellId = 0; cellId < count; cellId++)
         {
@@ -160,20 +170,64 @@ public static class CurvedCellGeometry
 
             for (var i = 0; i < vCount; i++)
             {
-                var p0 = baseVerts[i];
-                var p1 = baseVerts[(i + 1) % vCount];
-                GetOrCreateCurvedEdge(p0, p1, width, subdivisions, edgeCache);
+                var a = baseVerts[i];
+                var b = baseVerts[(i + 1) % vCount];
+
+                var midX = (a.X + b.X) * 0.5d;
+                var shift = Math.Floor(midX / width) * width;
+
+                var aNorm = new PolyVec2(a.X - shift, a.Y);
+                var bNorm = new PolyVec2(b.X - shift, b.Y);
+
+                var isForward = (aNorm.X < bNorm.X) || (Math.Abs(aNorm.X - bNorm.X) < Tolerance && aNorm.Y < bNorm.Y);
+                var p0 = isForward ? aNorm : bNorm;
+                var p1 = isForward ? bNorm : aNorm;
+
+                var key = new EdgeKey(p0.X, p0.Y, p1.X, p1.Y);
+
+                if (edgeCache.TryGetValue(key, out var existing))
+                {
+                    if (existing.CellA != cellId && existing.CellB < 0)
+                    {
+                        existing.CellB = cellId;
+                    }
+                }
+                else
+                {
+                    var canonicalCurve = SubdivideCubicEdge(p0, p1, subdivisions);
+                    var newEdge = new CanonicalCurvedEdge
+                    {
+                        Points = canonicalCurve,
+                        CellA = cellId,
+                        CellB = -1
+                    };
+                    edgeCache[key] = newEdge;
+                }
             }
         }
 
-        var edges = new PolyVec2[edgeCache.Count][];
+        var edges = new CanonicalCurvedEdge[edgeCache.Count];
         var idx = 0;
-        foreach (var curve in edgeCache.Values)
+        foreach (var edge in edgeCache.Values)
         {
-            edges[idx++] = curve;
+            edges[idx++] = edge;
         }
 
         return edges;
+    }
+
+    /// <summary>
+    /// 获取全图所有规范化平滑曲线边（每条边严格唯一，已去重共享边）。
+    /// </summary>
+    public static PolyVec2[][] GetCanonicalCurvedEdges(CellGeometry geom, int subdivisions = 3)
+    {
+        var edgesWithTopology = GetCanonicalCurvedEdgesWithTopology(geom, subdivisions);
+        var result = new PolyVec2[edgesWithTopology.Length][];
+        for (var i = 0; i < edgesWithTopology.Length; i++)
+        {
+            result[i] = edgesWithTopology[i].Points;
+        }
+        return result;
     }
 
     /// <summary>

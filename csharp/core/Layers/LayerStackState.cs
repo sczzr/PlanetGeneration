@@ -55,6 +55,19 @@ public sealed class LayerStackState
         {
             ActiveOverlayIds.Remove(def.Id);
         }
+
+        // 聚落城镇与城市名称联动，防止关闭城市时 city_labels 孤立残留继续绘制
+        if (string.Equals(def.Id, LayerRegistry.LayerCities, StringComparison.OrdinalIgnoreCase))
+        {
+            if (active && !ActiveOverlayIds.Contains(LayerRegistry.LayerCityLabels))
+            {
+                ActiveOverlayIds.Add(LayerRegistry.LayerCityLabels);
+            }
+            else if (!active && ActiveOverlayIds.Contains(LayerRegistry.LayerCityLabels))
+            {
+                ActiveOverlayIds.Remove(LayerRegistry.LayerCityLabels);
+            }
+        }
     }
 
     public void ToggleOverlay(string id) => SetOverlayActive(id, !IsOverlayActive(id));

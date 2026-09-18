@@ -43,7 +43,7 @@ public static class LayerPresetCatalog
             Id = PresetPolitical,
             DisplayName = "政治文明",
             BaseThemeId = LayerRegistry.LayerCivilization,
-            ActiveOverlayIds = new[] { LayerRegistry.LayerRivers, LayerRegistry.LayerCities, LayerRegistry.LayerCityLabels, LayerRegistry.LayerPolityBorders },
+            ActiveOverlayIds = new[] { LayerRegistry.LayerCities, LayerRegistry.LayerCityLabels, LayerRegistry.LayerPolityBorders },
             IsBuiltIn = true
         });
 
@@ -52,7 +52,7 @@ public static class LayerPresetCatalog
             Id = PresetTrade,
             DisplayName = "贸易网络",
             BaseThemeId = LayerRegistry.LayerTradeFlow,
-            ActiveOverlayIds = new[] { LayerRegistry.LayerRivers, LayerRegistry.LayerCities, LayerRegistry.LayerTradeRoutes, LayerRegistry.LayerPolityBorders },
+            ActiveOverlayIds = new[] { LayerRegistry.LayerCities, LayerRegistry.LayerTradeRoutes, LayerRegistry.LayerPolityBorders },
             IsBuiltIn = true
         });
 
@@ -61,7 +61,7 @@ public static class LayerPresetCatalog
             Id = PresetClimate,
             DisplayName = "气候分析",
             BaseThemeId = LayerRegistry.LayerTemperature,
-            ActiveOverlayIds = new[] { LayerRegistry.LayerRivers, LayerRegistry.LayerWindArrows },
+            ActiveOverlayIds = new[] { LayerRegistry.LayerWindArrows },
             IsBuiltIn = true
         });
 
@@ -79,7 +79,7 @@ public static class LayerPresetCatalog
             Id = PresetCellDebug,
             DisplayName = "地块调试",
             BaseThemeId = LayerRegistry.LayerCellGrid,
-            ActiveOverlayIds = new[] { LayerRegistry.LayerCellBorders, LayerRegistry.LayerRivers, LayerRegistry.LayerCities },
+            ActiveOverlayIds = new[] { LayerRegistry.LayerCellBorders, LayerRegistry.LayerCities },
             IsBuiltIn = true
         });
     }

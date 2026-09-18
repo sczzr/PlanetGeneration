@@ -139,7 +139,13 @@ public partial class LayerPanelController : ScrollContainer
 			if (_updatingUi || _layerStack == null) return;
 			var themeId = BaseThemeCatalog[(int)index].Id;
 			_layerStack.SetBaseTheme(themeId);
+
+			// 河流默认只在地形总览中开启显示；切换至其他底图主题时默认关闭
+			var isTerrainOverview = string.Equals(themeId, LayerRegistry.LayerTerrainOverview, StringComparison.OrdinalIgnoreCase);
+			_layerStack.SetOverlayActive(LayerRegistry.LayerRivers, isTerrainOverview);
+
 			SetPresetToCustom();
+			RefreshUi();
 			NotifyLayerStackChanged();
 		};
 	}
@@ -183,12 +189,17 @@ public partial class LayerPanelController : ScrollContainer
 			var check = new CheckBox
 			{
 				Text = name,
-				SizeFlagsHorizontal = SizeFlags.ExpandFill
+				SizeFlagsHorizontal = SizeFlags.ExpandFill,
+				FocusMode = FocusModeEnum.None
 			};
 			check.Toggled += active =>
 			{
 				if (_updatingUi || _layerStack == null) return;
 				_layerStack.SetOverlayActive(id, active);
+				if (string.Equals(id, LayerRegistry.LayerCities, StringComparison.OrdinalIgnoreCase))
+				{
+					_layerStack.SetOverlayActive(LayerRegistry.LayerCityLabels, active);
+				}
 				SetPresetToCustom();
 				NotifyLayerStackChanged();
 			};

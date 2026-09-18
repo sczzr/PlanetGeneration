@@ -216,15 +216,32 @@ internal static class Program
         stack.MoveOverlayDown(oldTop);
         Assert(stack.ActiveOverlayIds[1] == oldTop, "叠加层下移顺序错误");
 
-        // 预设应用
+        // 预设应用：验证河流默认只在地形总览中开启显示
         var ok = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetPolitical, stack);
         Assert(ok, "政治文明预设应用失败");
         Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerCivilization, "政治文明预设底图应为文明疆域");
         Assert(stack.IsOverlayActive(LayerRegistry.LayerPolityBorders), "政治文明预设应包含政体边界");
+        Assert(!stack.IsOverlayActive(LayerRegistry.LayerRivers), "政治文明预设默认不应包含河流（河流仅在地形总览中默认开启）");
+
+        var okClimate = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetClimate, stack);
+        Assert(okClimate, "气候分析预设应用失败");
+        Assert(!stack.IsOverlayActive(LayerRegistry.LayerRivers), "气候分析预设默认不应包含河流");
+
+        var okPhysical = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetPhysical, stack);
+        Assert(okPhysical, "自然地理预设应用失败");
+        Assert(stack.IsOverlayActive(LayerRegistry.LayerRivers), "自然地理（地形总览）预设应默认开启河流");
+
+        // 验证城市图层与 city_labels 的关闭联动，防止城市点点无法关闭
+        stack.SetOverlayActive(LayerRegistry.LayerCities, false);
+        Assert(!stack.IsOverlayActive(LayerRegistry.LayerCities), "城市图层关闭失败");
+        Assert(!stack.IsOverlayActive(LayerRegistry.LayerCityLabels), "关闭城市时必须同步清理 city_labels，防止孤立残留");
+
+        stack.SetOverlayActive(LayerRegistry.LayerCities, true);
+        Assert(stack.IsOverlayActive(LayerRegistry.LayerCities), "城市图层开启失败");
 
         // 未知图层 ID 容错
         stack.SetBaseTheme("non_existent_theme_id");
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerCivilization, "未知底图 ID 应被安全忽略并保持原状");
+        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerTerrainOverview, "未知底图 ID 应被安全忽略并保持原状");
 
         stack.SetOverlayActive("non_existent_overlay_id", true);
         Assert(!stack.IsOverlayActive("non_existent_overlay_id"), "未知叠加层 ID 应被安全忽略");
@@ -331,5 +348,27 @@ internal static class Program
         {
             Assert(canonicalEdges[i].Length == 4, $"细分 3 时的曲线边点数应为 4，实际为 {canonicalEdges[i].Length}");
         }
+
+        // 5. 校验带拓扑平滑曲线共享边（CellA 与 CellB）
+        var topoEdges = CurvedCellGeometry.GetCanonicalCurvedEdgesWithTopology(geom, 3);
+        Assert(topoEdges.Length == canonicalEdges.Length, "拓扑边数量必须与规范边严格一致");
+        var internalCount = 0;
+        var boundaryCount = 0;
+        for (var i = 0; i < topoEdges.Length; i++)
+        {
+            var e = topoEdges[i];
+            Assert(e.CellA >= 0 && e.CellA < geom.Count, $"CellA 越界: {e.CellA}");
+            if (e.CellB >= 0)
+            {
+                Assert(e.CellB < geom.Count, $"CellB 越界: {e.CellB}");
+                Assert(e.CellA != e.CellB, "内部边两侧地块不能相同");
+                internalCount++;
+            }
+            else
+            {
+                boundaryCount++;
+            }
+        }
+        Assert(internalCount > topoEdges.Length * 0.95, $"绝大多数边应为双侧内部边: 内部 {internalCount}, 边界 {boundaryCount}");
     }
 }
