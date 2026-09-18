@@ -1,0 +1,1340 @@
+[gd_scene load_steps=17 format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/WorldSetupController.cs" id="1_controller"]
+
+[sub_resource type="StyleBoxFlat" id="ModalPanel"]
+bg_color = Color(0.08, 0.06, 0.05, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.58, 0.32, 0.9)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+shadow_color = Color(0, 0, 0, 0.75)
+shadow_size = 24
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="sb_card"]
+bg_color = Color(0.13, 0.09, 0.07, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.25, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(1, 2)
+
+[sub_resource type="StyleBoxFlat" id="sb_group"]
+bg_color = Color(0.09, 0.07, 0.05, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.32, 0.22, 0.55)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="sb_field"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.18, 0.13, 0.10, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.48, 0.35, 0.24, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_field_active"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.24, 0.18, 0.13, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.92, 0.65, 0.32, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_small_btn"]
+bg_color = Color(0.42, 0.26, 0.16, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.62, 0.35, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_small_btn_hover"]
+bg_color = Color(0.58, 0.36, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.82, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_value_badge"]
+bg_color = Color(0.10, 0.07, 0.05, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.24, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="HeroBtnNormal"]
+bg_color = Color(0.85, 0.54, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.90, 0.62, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 6
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="HeroBtnHover"]
+bg_color = Color(0.96, 0.62, 0.28, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 0.82, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+shadow_color = Color(0.96, 0.62, 0.28, 0.45)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="HeroBtnPressed"]
+bg_color = Color(0.68, 0.38, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.72, 0.42, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 16.0
+content_margin_top = 8.0
+content_margin_right = 16.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxFlat" id="CloseBtnNormal"]
+bg_color = Color(0.22, 0.14, 0.12, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.65, 0.35, 0.25, 0.75)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="CloseBtnHover"]
+bg_color = Color(0.65, 0.18, 0.18, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.95, 0.45, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="ToggleBtnNormal"]
+bg_color = Color(0.16, 0.11, 0.08, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.72, 0.52, 0.28, 0.8)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 7.0
+content_margin_right = 14.0
+content_margin_bottom = 7.0
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="ToggleBtnHover"]
+bg_color = Color(0.25, 0.17, 0.12, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.96, 0.72, 0.38, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 14.0
+content_margin_top = 7.0
+content_margin_right = 14.0
+content_margin_bottom = 7.0
+shadow_color = Color(0.96, 0.72, 0.38, 0.25)
+shadow_size = 6
+
+[node name="WorldSetupMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_controller")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.02, 0.02, 0.025, 0.88)
+
+[node name="CenterBox" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WorldSetupPanel" type="PanelContainer" parent="CenterBox"]
+custom_minimum_size = Vector2(980, 680)
+layout_mode = 2
+theme_override_styles/panel = SubResource("ModalPanel")
+
+[node name="VBox" type="VBoxContainer" parent="CenterBox/WorldSetupPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox"]
+layout_mode = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="CenterBox/WorldSetupPanel/VBox/HeaderRow/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.92, 0.80, 1)
+theme_override_font_sizes/font_size = 20
+text = "🪐 创世工坊 · 世界构建 (GENESIS FORGE)"
+
+[node name="Subtitle" type="Label" parent="CenterBox/WorldSetupPanel/VBox/HeaderRow/TitleBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.68, 0.45, 0.9)
+theme_override_font_sizes/font_size = 12
+text = "设定初始宏观物理常数、板块构造与水文气候，诞生独一无二的文明摇篮"
+
+[node name="CloseCornerButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/HeaderRow"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.82, 0.78, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("CloseBtnNormal")
+theme_override_styles/hover = SubResource("CloseBtnHover")
+text = "✕"
+tooltip_text = "返回主菜单"
+
+[node name="HeaderSeparator" type="HSeparator" parent="CenterBox/WorldSetupPanel/VBox"]
+layout_mode = 2
+
+[node name="BodyScroll" type="ScrollContainer" parent="CenterBox/WorldSetupPanel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ColumnsMargin" type="MarginContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_right = 8
+
+[node name="ContentVBox" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+
+[node name="BasicContainer" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="LeftColumn" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="WorldCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="WorldContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionWorld" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌐 世界框架与尺度 · WORLD FRAMEWORK"
+
+[node name="SeedRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SeedLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "世界种子"
+vertical_alignment = 1
+
+[node name="SeedSpin" type="SpinBox" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+min_value = -2147483600.0
+max_value = 2147483647.0
+rounded = true
+
+[node name="RandomButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(36, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.94, 0.85, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("sb_small_btn")
+theme_override_styles/hover = SubResource("sb_small_btn_hover")
+text = "🎲"
+tooltip_text = "随机新种子"
+
+[node name="ApplyButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/SeedRow"]
+visible = false
+layout_mode = 2
+
+[node name="CellScaleRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CellScaleLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "地块规模"
+vertical_alignment = 1
+
+[node name="CellScaleOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="CellScaleSpin" type="SpinBox" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(82, 32)
+layout_mode = 2
+min_value = 1000.0
+max_value = 65536.0
+step = 500.0
+value = 10000.0
+rounded = true
+
+[node name="CellCountDisplayRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+
+[node name="CellCountDisplayLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/CellCountDisplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.72, 0.62, 0.48, 1)
+theme_override_font_sizes/font_size = 11
+text = "目标地块: 10,000 · 实际地块: --"
+horizontal_alignment = 2
+
+[node name="MapSizeRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MapSizeLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/MapSizeRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "渲染分辨率"
+vertical_alignment = 1
+
+[node name="MapSizeOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/MapSizeRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="WorldTypeRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WorldTypeLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/WorldTypeRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "地形模板"
+vertical_alignment = 1
+
+[node name="TerrainPresetOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/WorldTypeRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="ContinentCountWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ContinentCountLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/ContinentCountWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "大陆群落"
+vertical_alignment = 1
+
+[node name="ContinentCountOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/WorldCard/WorldContent/ContinentCountWrap"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="OceanCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="OceanContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionOcean" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.50, 0.82, 0.96, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌊 宏观气候与水文 · HYDROS & CLIMATE"
+
+[node name="SeaWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SeaLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "海平面"
+vertical_alignment = 1
+
+[node name="SeaLevelSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.1
+max_value = 0.9
+step = 0.01
+value = 0.5
+
+[node name="SeaLevelValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "0.50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeatWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeatLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "全球气温"
+vertical_alignment = 1
+
+[node name="HeatSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.5
+
+[node name="HeatValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "0.50"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoistureWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MoistureLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "全局降水"
+vertical_alignment = 1
+
+[node name="MoistureSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.2
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+[node name="MoistureValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/LeftColumn/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "1.00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightColumn" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="RiverCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="RiverContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionRiver" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.85, 0.75, 1)
+theme_override_font_sizes/font_size = 13
+text = "🏞️ 水系与河网 · HYDROLOGY & RIVERS"
+
+[node name="RiversGroup" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RiversSwitchLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent/RiversGroup"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "河网模拟"
+vertical_alignment = 1
+
+[node name="RiversSwitch" type="CheckButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent/RiversGroup"]
+layout_mode = 2
+button_pressed = true
+
+[node name="RiverDensityRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RiverDensityLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "水系密集"
+vertical_alignment = 1
+
+[node name="RiverDensitySlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.4
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+[node name="RiverDensityValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "1.00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MountainCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="MountainContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionMountain" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.70, 0.42, 1)
+theme_override_font_sizes/font_size = 13
+text = "🏔️ 山系地貌与高程 · OROGENY & RELIEF"
+
+[node name="MountainPresetRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MountainPresetLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/MountainPresetRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "山系走向"
+vertical_alignment = 1
+
+[node name="MountainPresetOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/MountainPresetRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="ElevationStyleRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ElevationStyleLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/ElevationStyleRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "高程样式"
+vertical_alignment = 1
+
+[node name="ElevationStyleOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/ElevationStyleRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="ErosionWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ErosionLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "山脉密度"
+vertical_alignment = 1
+
+[node name="ErosionSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 20.0
+value = 5.0
+
+[node name="ErosionValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CivilCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="CivilContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionCivil" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.65, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+text = "⚖️ 初始文明与世界法则 · CIVIL & LAWS"
+
+[node name="MagicWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MagicLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/MagicWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "灵气丰度"
+vertical_alignment = 1
+
+[node name="SetupMagicSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/MagicWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 100.0
+value = 75.0
+
+[node name="SetupMagicValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/MagicWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "75"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AggressionWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AggressionLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/AggressionWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "文明好战"
+vertical_alignment = 1
+
+[node name="SetupAggressionSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/AggressionWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 100.0
+value = 42.0
+
+[node name="SetupAggressionValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/AggressionWrap"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "42"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EpochWrap" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EpochLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/EpochWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "初始纪元"
+vertical_alignment = 1
+
+[node name="SetupEpochSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/EpochWrap"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 1000.0
+step = 10.0
+value = 450.0
+
+[node name="SetupEpochValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/BasicContainer/RightColumn/CivilCard/CivilContent/EpochWrap"]
+custom_minimum_size = Vector2(96, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "450 (城邦繁盛)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ToggleRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="ToggleAdvancedButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/ToggleRow"]
+custom_minimum_size = Vector2(440, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.85, 0.65, 1)
+theme_override_colors/font_hover_color = Color(1, 0.95, 0.80, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("ToggleBtnNormal")
+theme_override_styles/hover = SubResource("ToggleBtnHover")
+text = "⚙️ 展开高级物理与构造配置 (EXPAND ADVANCED) ▼"
+
+[node name="AdvancedContainer" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="AdvancedColumnsHBox" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="AdvancedLeftColumn" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="DeepTectonicsCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="DeepTectonicsContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionTectonics" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.65, 0.38, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌍 深度构造与板块动力学 · DEEP TECTONICS"
+
+[node name="PlateCountRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PlateCountLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/PlateCountRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "板块总数"
+vertical_alignment = 1
+
+[node name="PlateCountSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/PlateCountRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 6.0
+max_value = 60.0
+step = 1.0
+value = 20.0
+
+[node name="PlateCountValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/PlateCountRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OceanicRatioRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OceanicRatioLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OceanicRatioRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "洋壳占比"
+vertical_alignment = 1
+
+[node name="OceanicRatioSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OceanicRatioRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.2
+max_value = 0.8
+step = 0.01
+value = 0.48
+
+[node name="OceanicRatioValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OceanicRatioRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "48%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ContinentBiasRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ContinentBiasLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentBiasRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "聚合偏置"
+vertical_alignment = 1
+
+[node name="ContinentBiasSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentBiasRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.0
+max_value = 1.0
+step = 0.01
+value = 0.18
+
+[node name="ContinentBiasValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentBiasRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "18%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InteriorReliefRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="InteriorReliefLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "内陆起伏"
+vertical_alignment = 1
+
+[node name="InteriorReliefSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.5
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="InteriorReliefValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "1.00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="OrogenyStrengthRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OrogenyStrengthLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "造山强度"
+vertical_alignment = 1
+
+[node name="OrogenyStrengthSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.5
+max_value = 2.5
+step = 0.01
+value = 1.0
+
+[node name="OrogenyStrengthValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "1.00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SubductionArcRatioRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SubductionArcRatioLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "俯冲弧率"
+vertical_alignment = 1
+
+[node name="SubductionArcRatioSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.2
+max_value = 1.0
+step = 0.01
+value = 0.72
+
+[node name="SubductionArcRatioValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "0.72"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ContinentalAgeRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ContinentalAgeLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "大陆地龄"
+vertical_alignment = 1
+
+[node name="ContinentalAgeSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+value = 58.0
+
+[node name="ContinentalAgeValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedLeftColumn/DeepTectonicsCard/DeepTectonicsContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "58"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AdvancedRightColumn" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="DeepAtmosphereCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="DeepAtmosphereContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionAtmosphere" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.85, 0.98, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌦️ 深度大气与水汽环流 · DEEP ATMOSPHERE"
+
+[node name="WindCellCountRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="WindCellCountLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/WindCellCountRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "盛行风带"
+vertical_alignment = 1
+
+[node name="WindCellCountSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/WindCellCountRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 4.0
+max_value = 30.0
+step = 1.0
+value = 10.0
+
+[node name="WindCellCountValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/WindCellCountRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "10"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoistureIterationsRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="MoistureIterationsLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/MoistureIterationsRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "水汽扩散"
+vertical_alignment = 1
+
+[node name="MoistureIterationsSlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/MoistureIterationsRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 1.0
+max_value = 12.0
+step = 1.0
+value = 8.0
+
+[node name="MoistureIterationsValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/MoistureIterationsRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BasinSensitivityRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BasinSensitivityLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/BasinSensitivityRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "盆地敏感"
+vertical_alignment = 1
+
+[node name="SetupBasinSensitivitySlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/BasinSensitivityRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+min_value = 0.5
+max_value = 2.0
+step = 0.01
+value = 1.0
+
+[node name="SetupBasinSensitivityValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepAtmosphereCard/DeepAtmosphereContent/BasinSensitivityRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "1.00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeepEcologyCard" type="PanelContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="DeepEcologyContent" type="VBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionEcology" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.60, 0.92, 0.65, 1)
+theme_override_font_sizes/font_size = 13
+text = "🌿 生态演化与地块呈现 · ECOLOGY & TILES"
+
+[node name="DiversityRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DiversityLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent/DiversityRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "物种多样"
+vertical_alignment = 1
+
+[node name="SetupDiversitySlider" type="HSlider" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent/DiversityRow"]
+custom_minimum_size = Vector2(0, 26)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+max_value = 100.0
+value = 68.0
+
+[node name="SetupDiversityValue" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent/DiversityRow"]
+custom_minimum_size = Vector2(48, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
+text = "68"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PolygonTileModeRow" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PolygonTileModeLabel" type="Label" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent/PolygonTileModeRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "地块模式"
+vertical_alignment = 1
+
+[node name="PolygonTileModeOption" type="OptionButton" parent="CenterBox/WorldSetupPanel/VBox/BodyScroll/ColumnsMargin/ContentVBox/AdvancedContainer/AdvancedColumnsHBox/AdvancedRightColumn/DeepEcologyCard/DeepEcologyContent/PolygonTileModeRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+
+[node name="FooterSeparator" type="HSeparator" parent="CenterBox/WorldSetupPanel/VBox"]
+layout_mode = 2
+
+[node name="ActionBar" type="HBoxContainer" parent="CenterBox/WorldSetupPanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="BackToMenuButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/ActionBar"]
+custom_minimum_size = Vector2(140, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.88, 0.82, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+text = "◀ 返回主菜单"
+
+[node name="ActionSpacer" type="Control" parent="CenterBox/WorldSetupPanel/VBox/ActionBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RandomAllButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/ActionBar"]
+custom_minimum_size = Vector2(150, 42)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.94, 0.85, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("sb_small_btn")
+theme_override_styles/hover = SubResource("sb_small_btn_hover")
+text = "🎲 随机世界种子"
+
+[node name="ConfirmGenerateButton" type="Button" parent="CenterBox/WorldSetupPanel/VBox/ActionBar"]
+custom_minimum_size = Vector2(230, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.12, 0.08, 0.03, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("HeroBtnNormal")
+theme_override_styles/hover = SubResource("HeroBtnHover")
+theme_override_styles/pressed = SubResource("HeroBtnPressed")
+text = "⚡ 开始创世 (GENERATE)"

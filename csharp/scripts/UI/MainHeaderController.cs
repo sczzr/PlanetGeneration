@@ -23,11 +23,25 @@ public partial class MainHeaderController : PanelContainer
 
 	public override void _Ready()
 	{
-		AdvancedSettingsButton = GetNode<Button>("HeaderHBox/HeaderButtons/AdvancedSettingsButton");
-		GenerateButton = GetNode<Button>("HeaderHBox/HeaderButtons/GenerateButton");
-		ExportPngButton = GetNode<Button>("HeaderHBox/HeaderButtons/ExportPngButton");
-		ExportJsonButton = GetNode<Button>("HeaderHBox/HeaderButtons/ExportJsonButton");
-		ThemeToggleButton = GetNode<Button>("HeaderHBox/HeaderButtons/ThemeToggleButton");
+		AdvancedSettingsButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/AdvancedSettingsButton")
+			?? FindChild("AdvancedSettingsButton", true, false) as Button
+			?? throw new InvalidOperationException("AdvancedSettingsButton not found.");
+
+		GenerateButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/GenerateButton")
+			?? FindChild("GenerateButton", true, false) as Button
+			?? throw new InvalidOperationException("GenerateButton not found.");
+
+		ExportPngButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/ExportPngButton")
+			?? FindChild("ExportPngButton", true, false) as Button
+			?? throw new InvalidOperationException("ExportPngButton not found.");
+
+		ExportJsonButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/ExportJsonButton")
+			?? FindChild("ExportJsonButton", true, false) as Button
+			?? throw new InvalidOperationException("ExportJsonButton not found.");
+
+		ThemeToggleButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/ThemeToggleButton")
+			?? FindChild("ThemeToggleButton", true, false) as Button
+			?? throw new InvalidOperationException("ThemeToggleButton not found.");
 
 		AdvancedSettingsButton.Pressed += () => AdvancedSettingsRequested?.Invoke();
 		GenerateButton.Pressed += () => GenerateRequested?.Invoke();

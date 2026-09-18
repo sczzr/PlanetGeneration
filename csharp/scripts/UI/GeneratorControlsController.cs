@@ -50,50 +50,93 @@ public partial class GeneratorControlsController : TabContainer
 	private const string ParamsRoot = "ParamsPage/ParamsMargin/Content/ParamsBox";
 	private const string MountainRoot = $"{ParamsRoot}/MountainBody/MountainBodyContent";
 
-	private static readonly string[] TabTitles = { "地形配置", "图层", "高级设置", "世界与AI", "历史统计" };
+	private static readonly string[] TabTitles = { "🗺️ 地貌参数", "📑 观测图层", "⚙️ 深度法则", "📜 叙事推演", "⏳ 演化编年" };
+
+	public bool HasParamControls { get; private set; }
 
 	public override void _Ready()
 	{
-		for (var index = 0; index < TabTitles.Length && index < GetTabCount(); index++)
+		UpdateTabTitles();
+
+		var seedSpinNode = GetNodeOrNull<SpinBox>($"{ParamsRoot}/SeedRow/SeedSpin")
+			?? FindChild("SeedSpin", true, false) as SpinBox;
+
+		if (seedSpinNode != null)
 		{
-			SetTabTitle(index, TabTitles[index]);
+			HasParamControls = true;
+			SeedSpin = seedSpinNode;
+			RandomButton = FindParamNode<Button>($"{ParamsRoot}/SeedRow/RandomButton", "RandomButton");
+			ApplyButton = FindParamNode<Button>($"{ParamsRoot}/SeedRow/ApplyButton", "ApplyButton");
+			SeaLevelSlider = FindParamNode<HSlider>($"{ParamsRoot}/SeaWrap/SeaLevelSlider", "SeaLevelSlider");
+			HeatSlider = FindParamNode<HSlider>($"{ParamsRoot}/HeatWrap/HeatSlider", "HeatSlider");
+			MoistureSlider = FindParamNode<HSlider>($"{ParamsRoot}/MoistureWrap/MoistureSlider", "MoistureSlider");
+			ErosionSlider = FindParamNode<HSlider>($"{ParamsRoot}/ErosionWrap/ErosionSlider", "ErosionSlider");
+			InteriorReliefSlider = FindParamNode<HSlider>($"{MountainRoot}/InteriorReliefRow/InteriorReliefSlider", "InteriorReliefSlider");
+			OrogenyStrengthSlider = FindParamNode<HSlider>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthSlider", "OrogenyStrengthSlider");
+			SubductionArcRatioSlider = FindParamNode<HSlider>($"{MountainRoot}/SubductionArcRatioRow/SubductionArcRatioSlider", "SubductionArcRatioSlider");
+			ContinentalAgeSlider = FindParamNode<HSlider>($"{MountainRoot}/ContinentalAgeRow/ContinentalAgeSlider", "ContinentalAgeSlider");
+			RiversSwitch = FindParamNode<BaseButton>($"{ParamsRoot}/RiversGroup/RiversSwitch", "RiversSwitch");
+			RiverDensitySlider = FindParamNode<HSlider>($"{ParamsRoot}/RiverDensityRow/RiverDensitySlider", "RiverDensitySlider");
+			SeaLevelValue = FindParamNode<Label>($"{ParamsRoot}/SeaWrap/SeaLevelValue", "SeaLevelValue");
+			HeatValue = FindParamNode<Label>($"{ParamsRoot}/HeatWrap/HeatValue", "HeatValue");
+			MoistureValue = FindParamNode<Label>($"{ParamsRoot}/MoistureWrap/MoistureValue", "MoistureValue");
+			ErosionValue = FindParamNode<Label>($"{ParamsRoot}/ErosionWrap/ErosionValue", "ErosionValue");
+			InteriorReliefValue = FindParamNode<Label>($"{MountainRoot}/InteriorReliefRow/InteriorReliefValue", "InteriorReliefValue");
+			OrogenyStrengthValue = FindParamNode<Label>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthValue", "OrogenyStrengthValue");
+			SubductionArcRatioValue = FindParamNode<Label>($"{MountainRoot}/SubductionArcRatioRow/SubductionArcRatioValue", "SubductionArcRatioValue");
+			ContinentalAgeValue = FindParamNode<Label>($"{MountainRoot}/ContinentalAgeRow/ContinentalAgeValue", "ContinentalAgeValue");
+			RiverDensityValue = FindParamNode<Label>($"{ParamsRoot}/RiverDensityRow/RiverDensityValue", "RiverDensityValue");
+
+			if (RandomButton != null) RandomButton.Pressed += () => RandomRequested?.Invoke();
+			if (ApplyButton != null) ApplyButton.Pressed += () => ApplyRequested?.Invoke();
+			if (SeaLevelSlider != null) SeaLevelSlider.ValueChanged += value => SeaLevelChanged?.Invoke(value);
+			if (HeatSlider != null) HeatSlider.ValueChanged += value => HeatChanged?.Invoke(value);
+			if (MoistureSlider != null) MoistureSlider.ValueChanged += value => MoistureChanged?.Invoke(value);
+			if (ErosionSlider != null) ErosionSlider.ValueChanged += value => ErosionChanged?.Invoke(value);
+			if (InteriorReliefSlider != null) InteriorReliefSlider.ValueChanged += value => InteriorReliefChanged?.Invoke(value);
+			if (OrogenyStrengthSlider != null) OrogenyStrengthSlider.ValueChanged += value => OrogenyStrengthChanged?.Invoke(value);
+			if (SubductionArcRatioSlider != null) SubductionArcRatioSlider.ValueChanged += value => SubductionArcRatioChanged?.Invoke(value);
+			if (ContinentalAgeSlider != null) ContinentalAgeSlider.ValueChanged += value => ContinentalAgeChanged?.Invoke(value);
+			if (RiversSwitch != null) RiversSwitch.Toggled += value => RiversToggled?.Invoke(value);
+			if (RiverDensitySlider != null) RiverDensitySlider.ValueChanged += value => RiverDensityChanged?.Invoke(value);
 		}
 
-		RandomButton = GetNode<Button>($"{ParamsRoot}/SeedRow/RandomButton");
-		ApplyButton = GetNode<Button>($"{ParamsRoot}/SeedRow/ApplyButton");
-		SeedSpin = GetNode<SpinBox>($"{ParamsRoot}/SeedRow/SeedSpin");
-		SeaLevelSlider = GetNode<HSlider>($"{ParamsRoot}/SeaWrap/SeaLevelSlider");
-		HeatSlider = GetNode<HSlider>($"{ParamsRoot}/HeatWrap/HeatSlider");
-		MoistureSlider = GetNode<HSlider>($"{ParamsRoot}/MoistureWrap/MoistureSlider");
-		ErosionSlider = GetNode<HSlider>($"{ParamsRoot}/ErosionWrap/ErosionSlider");
-		InteriorReliefSlider = GetNode<HSlider>($"{MountainRoot}/InteriorReliefRow/InteriorReliefSlider");
-		OrogenyStrengthSlider = GetNode<HSlider>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthSlider");
-		SubductionArcRatioSlider = GetNode<HSlider>($"{MountainRoot}/SubductionArcRatioRow/SubductionArcRatioSlider");
-		ContinentalAgeSlider = GetNode<HSlider>($"{MountainRoot}/ContinentalAgeRow/ContinentalAgeSlider");
-		RiversSwitch = GetNode<BaseButton>($"{ParamsRoot}/RiversGroup/RiversSwitch");
-		RiverDensitySlider = GetNode<HSlider>($"{ParamsRoot}/RiverDensityRow/RiverDensitySlider");
-		SeaLevelValue = GetNode<Label>($"{ParamsRoot}/SeaWrap/SeaLevelValue");
-		HeatValue = GetNode<Label>($"{ParamsRoot}/HeatWrap/HeatValue");
-		MoistureValue = GetNode<Label>($"{ParamsRoot}/MoistureWrap/MoistureValue");
-		ErosionValue = GetNode<Label>($"{ParamsRoot}/ErosionWrap/ErosionValue");
-		InteriorReliefValue = GetNode<Label>($"{MountainRoot}/InteriorReliefRow/InteriorReliefValue");
-		OrogenyStrengthValue = GetNode<Label>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthValue");
-		SubductionArcRatioValue = GetNode<Label>($"{MountainRoot}/SubductionArcRatioRow/SubductionArcRatioValue");
-		ContinentalAgeValue = GetNode<Label>($"{MountainRoot}/ContinentalAgeRow/ContinentalAgeValue");
-		RiverDensityValue = GetNode<Label>($"{ParamsRoot}/RiverDensityRow/RiverDensityValue");
+		TabChanged += OnTabChanged;
+	}
 
-		RandomButton.Pressed += () => RandomRequested?.Invoke();
-		ApplyButton.Pressed += () => ApplyRequested?.Invoke();
-		SeaLevelSlider.ValueChanged += value => SeaLevelChanged?.Invoke(value);
-		HeatSlider.ValueChanged += value => HeatChanged?.Invoke(value);
-		MoistureSlider.ValueChanged += value => MoistureChanged?.Invoke(value);
-		ErosionSlider.ValueChanged += value => ErosionChanged?.Invoke(value);
-		InteriorReliefSlider.ValueChanged += value => InteriorReliefChanged?.Invoke(value);
-		OrogenyStrengthSlider.ValueChanged += value => OrogenyStrengthChanged?.Invoke(value);
-		SubductionArcRatioSlider.ValueChanged += value => SubductionArcRatioChanged?.Invoke(value);
-		ContinentalAgeSlider.ValueChanged += value => ContinentalAgeChanged?.Invoke(value);
-		RiversSwitch.Toggled += value => RiversToggled?.Invoke(value);
-		RiverDensitySlider.ValueChanged += value => RiverDensityChanged?.Invoke(value);
+	private void UpdateTabTitles()
+	{
+		for (var index = 0; index < GetTabCount(); index++)
+		{
+			var child = GetTabControl(index);
+			if (child == null) continue;
+			var iconPrefix = child.Name.ToString() switch
+			{
+				"LayersPage" => "📑 观测图层",
+				"AdvancedPage" => "⚙️ 观察法则",
+				"LorePanel" => "📜 叙事推演",
+				"HistoryPage" => "⏳ 演化编年",
+				"ParamsPage" => "🗺️ 地貌参数",
+				_ => child.HasMeta("_tab_title") ? child.GetMeta("_tab_title").AsString() : child.Name.ToString()
+			};
+			SetTabTitle(index, iconPrefix);
+		}
+	}
+
+	private T? FindParamNode<T>(string relativePath, string fallbackName) where T : class
+	{
+		return (GetNodeOrNull<Node>(relativePath) ?? FindChild(fallbackName, true, false)) as T;
+	}
+
+	private void OnTabChanged(long tabIndex)
+	{
+		var currentChild = GetCurrentTabControl();
+		if (currentChild != null)
+		{
+			currentChild.Modulate = new Color(1, 1, 1, 0.4f);
+			var tween = CreateTween().SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
+			tween.TweenProperty(currentChild, "modulate:a", 1.0f, 0.16f);
+		}
 	}
 
 	/// <summary>Selects a console tab by index; the tab strip owns the visual transition.</summary>

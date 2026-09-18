@@ -177,7 +177,7 @@ public partial class Main : Control
 
 		if (headerController != null)
 		{
-			headerController.GenerateRequested += OnGeneratePressed;
+			headerController.GenerateRequested += OnNewWorldRequested;
 			headerController.AdvancedSettingsRequested += ShowAdvancedSettingsPage;
 			headerController.ExportPngRequested += OnExportPngPressed;
 			headerController.ExportJsonRequested += OnExportJsonPressed;
@@ -185,7 +185,7 @@ public partial class Main : Control
 		}
 		else
 		{
-			_generateButton.Pressed += OnGeneratePressed;
+			_generateButton.Pressed += OnNewWorldRequested;
 			_advancedSettingsButton.Pressed += ShowAdvancedSettingsPage;
 		}
 		_resetAdvancedSettingsButton.Pressed += OnResetAdvancedSettingsPressed;
@@ -293,7 +293,6 @@ public partial class Main : Control
 		UpdateLorePanel();
 		RefreshCacheStatsLabel();
 		InitializeOracleUI();
-		GenerateWorld();
 	}
 
 	private void SetupLeftPanelSwitches()

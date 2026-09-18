@@ -1,147 +1,100 @@
 [gd_scene format=3]
 
+[sub_resource type="StyleBoxFlat" id="sb_right_panel"]
+bg_color = Color(0.12, 0.09, 0.07, 0.95)
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
 
-[sub_resource type="StyleBoxFlat" id="1"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
-border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="4"]
-bg_color = Color(0.196078, 0.45098, 0.862745, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="5"]
-bg_color = Color(0.152941, 0.380392, 0.760784, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="6"]
-bg_color = Color(0.117647, 0.152941, 0.219608, 0.95)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="7"]
-bg_color = Color(0.176471, 0.215686, 0.286275, 0.98)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="2"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
-border_width_right = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-content_margin_left = 14.0
-content_margin_top = 14.0
-content_margin_right = 14.0
-content_margin_bottom = 14.0
-
-[sub_resource type="StyleBoxFlat" id="3"]
-bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+[sub_resource type="StyleBoxFlat" id="sb_card"]
+bg_color = Color(0.14, 0.10, 0.08, 0.82)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
+border_color = Color(0.52, 0.38, 0.25, 0.6)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(1, 2)
 
-[sub_resource type="StyleBoxFlat" id="8"]
-bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
-border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="9"]
-bg_color = Color(0.0431373, 0.054902, 0.0784314, 1)
-
-[sub_resource type="StyleBoxFlat" id="10"]
-bg_color = Color(0.0156863, 0.0196078, 0.0313726, 1)
+[sub_resource type="StyleBoxFlat" id="sb_scroll_desc"]
+bg_color = Color(0.10, 0.07, 0.05, 0.92)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.08)
+border_color = Color(0.65, 0.48, 0.28, 0.7)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="13"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.96)
+[sub_resource type="StyleBoxFlat" id="sb_value_badge"]
+bg_color = Color(0.10, 0.07, 0.05, 0.85)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0.52, 0.38, 0.24, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
 
-[sub_resource type="StyleBoxFlat" id="12"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
-border_width_top = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="14"]
-bg_color = Color(0.054902, 0.0705882, 0.0980392, 0.98)
+[sub_resource type="StyleBoxFlat" id="sb_action_btn"]
+bg_color = Color(0.38, 0.24, 0.15, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.192157, 0.243137, 0.313726, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0.85, 0.62, 0.35, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxFlat" id="OraclePanel"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
+[sub_resource type="StyleBoxFlat" id="sb_action_btn_hover"]
+bg_color = Color(0.52, 0.34, 0.20, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="OracleButtonNormal"]
-bg_color = Color(0.196078, 0.45098, 0.862745, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="OracleButtonHover"]
-bg_color = Color(0.247059, 0.501961, 0.901961, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="OracleButtonDisabled"]
-bg_color = Color(0.2, 0.2, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+border_color = Color(1, 0.82, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
 
 [node name="RightPanel" type="PanelContainer"]
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("2")
+theme_override_styles/panel = SubResource("sb_right_panel")
 
 [node name="LoreTabs" type="TabContainer" parent="."]
 layout_mode = 2
@@ -154,29 +107,41 @@ size_flags_vertical = 3
 metadata/_tab_title = "区域详情"
 
 [node name="LoreVBox" type="VBoxContainer" parent="LoreTabs/LoreTab"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 14
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
 
-[node name="WorldLawLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="WorldLawCard" type="PanelContainer" parent="LoreTabs/LoreTab/LoreVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
-theme_override_font_sizes/font_size = 14
-text = "世界法则 / WORLD LAWS"
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="MagicWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="WorldLawContent" type="VBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="WorldLawLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "⚖️ 世界法则 · WORLD LAWS"
+
+[node name="MagicWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="MagicLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/MagicWrap"]
+[node name="MagicLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/MagicWrap"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
 theme_override_font_sizes/font_size = 12
 text = "资源丰度"
 vertical_alignment = 1
 
-[node name="MagicSlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/MagicWrap"]
+[node name="MagicSlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/MagicWrap"]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -184,28 +149,29 @@ size_flags_vertical = 1
 max_value = 100.0
 value = 75.0
 
-[node name="MagicValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/MagicWrap"]
-custom_minimum_size = Vector2(36, 0)
+[node name="MagicValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/MagicWrap"]
+custom_minimum_size = Vector2(40, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "75"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AggressionWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="AggressionWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AggressionLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/AggressionWrap"]
+[node name="AggressionLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/AggressionWrap"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
 theme_override_font_sizes/font_size = 12
 text = "文明侵略"
 vertical_alignment = 1
 
-[node name="AggressionSlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/AggressionWrap"]
+[node name="AggressionSlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/AggressionWrap"]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -213,28 +179,29 @@ size_flags_vertical = 1
 max_value = 100.0
 value = 42.0
 
-[node name="AggressionValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/AggressionWrap"]
-custom_minimum_size = Vector2(36, 0)
+[node name="AggressionValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/AggressionWrap"]
+custom_minimum_size = Vector2(40, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "42"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="DiversityWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="DiversityWrap" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="DiversityLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/DiversityWrap"]
+[node name="DiversityLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/DiversityWrap"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
 theme_override_font_sizes/font_size = 12
 text = "物种多样"
 vertical_alignment = 1
 
-[node name="DiversitySlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/DiversityWrap"]
+[node name="DiversitySlider" type="HSlider" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/DiversityWrap"]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -242,123 +209,176 @@ size_flags_vertical = 1
 max_value = 100.0
 value = 68.0
 
-[node name="DiversityValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/DiversityWrap"]
-custom_minimum_size = Vector2(36, 0)
+[node name="DiversityValue" type="Label" parent="LoreTabs/LoreTab/LoreVBox/WorldLawCard/WorldLawContent/DiversityWrap"]
+custom_minimum_size = Vector2(40, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.84, 0.9, 0.98, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "68"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="RegionTitle" type="Label" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="RegionCard" type="PanelContainer" parent="LoreTabs/LoreTab/LoreVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "区域详情 / REGION"
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="LoreStateLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="RegionContent" type="VBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/RegionCard"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="RegionTitleRow" type="HBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent"]
+layout_mode = 2
+
+[node name="RegionTitle" type="Label" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/RegionTitleRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 13
+text = "📍 选区分析 · REGION"
+
+[node name="RegionSpacer" type="Control" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/RegionTitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LoreStateLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/RegionTitleRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.65, 0.55, 1)
 theme_override_font_sizes/font_size = 11
 text = "模式：地理"
 
-[node name="LoreScroll" type="ScrollContainer" parent="LoreTabs/LoreTab/LoreVBox"]
+[node name="LoreScroll" type="ScrollContainer" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="LoreContent" type="VBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll"]
+[node name="LoreContent" type="VBoxContainer" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/LoreScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+size_flags_vertical = 3
+theme_override_constants/separation = 6
 
-[node name="DescBox" type="PanelContainer" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
+[node name="DescBox" type="PanelContainer" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/LoreScroll/LoreContent"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("13")
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("sb_scroll_desc")
 
-[node name="LoreText" type="RichTextLabel" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent/DescBox"]
-custom_minimum_size = Vector2(0, 160)
+[node name="LoreText" type="RichTextLabel" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/LoreScroll/LoreContent/DescBox"]
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 bbcode_enabled = true
 text = "[b]选定区域地质：[/b] 等待选区分析..."
 autowrap_mode = 2
 
-[node name="ThreatLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
+[node name="ThreatLabel" type="Label" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/LoreScroll/LoreContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.4, 0.4, 1)
+theme_override_colors/font_color = Color(1, 0.55, 0.45, 1)
+theme_override_font_sizes/font_size = 11
 text = "生存威胁指数: 💀💀"
 
-[node name="LoreHint" type="Label" parent="LoreTabs/LoreTab/LoreVBox/LoreScroll/LoreContent"]
+[node name="LoreHint" type="Label" parent="LoreTabs/LoreTab/LoreVBox/RegionCard/RegionContent/LoreScroll/LoreContent"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.65098, 0.741176, 0.85098, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.68, 0.62, 0.54, 1)
+theme_override_font_sizes/font_size = 10
 text = "提示：点击地图任意位置生成该区域叙事。"
 autowrap_mode = 2
 
 [node name="OracleTab" type="Control" parent="LoreTabs"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
 metadata/_tab_title = "AI 推演"
 
 [node name="OracleVBox" type="VBoxContainer" parent="LoreTabs/OracleTab"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 12
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
 
 [node name="OracleHeader" type="HBoxContainer" parent="LoreTabs/OracleTab/OracleVBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="OracleTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleHeader"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.301961, 0.65098, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "AI 文明推演"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 13
+text = "🔮 文明推演 · ORACLE"
 
 [node name="OracleLoadButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/OracleHeader"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.90, 0.84, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_action_btn")
+theme_override_styles/hover = SubResource("sb_action_btn_hover")
+theme_override_styles/pressed = SubResource("sb_action_btn_hover")
 text = "加载模型"
 
 [node name="ActionButtons" type="HBoxContainer" parent="LoreTabs/OracleTab/OracleVBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="AnalyzeWorldButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.90, 0.84, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_action_btn")
+theme_override_styles/hover = SubResource("sb_action_btn_hover")
+theme_override_styles/pressed = SubResource("sb_action_btn_hover")
 text = "推演世界"
 
 [node name="AnalyzeRegionButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.95, 0.90, 0.84, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_action_btn")
+theme_override_styles/hover = SubResource("sb_action_btn_hover")
+theme_override_styles/pressed = SubResource("sb_action_btn_hover")
 text = "推演区域"
 
 [node name="CancelButton" type="Button" parent="LoreTabs/OracleTab/OracleVBox/ActionButtons"]
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 disabled = true
+theme_override_colors/font_color = Color(0.95, 0.90, 0.84, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_action_btn")
+theme_override_styles/hover = SubResource("sb_action_btn_hover")
+theme_override_styles/pressed = SubResource("sb_action_btn_hover")
 text = "取消"
 
 [node name="OracleStatus" type="Label" parent="LoreTabs/OracleTab/OracleVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.541176, 0.580392, 0.65098, 1)
+theme_override_colors/font_color = Color(0.72, 0.65, 0.55, 1)
 theme_override_font_sizes/font_size = 11
-text = "未加载模型"
+text = "状态：未加载模型"
 
 [node name="OracleOutputScroll" type="ScrollContainer" parent="LoreTabs/OracleTab/OracleVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="OracleOutputVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 6
 
 [node name="OracleSystemPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("14")
+theme_override_styles/panel = SubResource("sb_card")
 
 [node name="OracleSystemVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel"]
 layout_mode = 2
@@ -366,20 +386,20 @@ theme_override_constants/separation = 4
 
 [node name="OracleSystemTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel/OracleSystemVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.741176, 0.901961, 1)
-theme_override_font_sizes/font_size = 12
-text = "系统消息"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 11
+text = "系统遥测"
 
 [node name="OracleSystemOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleSystemPanel/OracleSystemVBox"]
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=#9ab0c9]等待操作...[/color]"
+text = "[color=#c5b8a5]等待推演指令...[/color]"
 autowrap_mode = 2
 
 [node name="OracleWorldPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("14")
+theme_override_styles/panel = SubResource("sb_card")
 
 [node name="OracleWorldVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel"]
 layout_mode = 2
@@ -387,20 +407,20 @@ theme_override_constants/separation = 4
 
 [node name="OracleWorldTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel/OracleWorldVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94902, 0.780392, 0.4, 1)
-theme_override_font_sizes/font_size = 12
-text = "世界推演"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 11
+text = "世界编年"
 
 [node name="OracleWorldOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleWorldPanel/OracleWorldVBox"]
-custom_minimum_size = Vector2(0, 180)
+custom_minimum_size = Vector2(0, 140)
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=#9ab0c9]尚未进行世界推演。[/color]"
+text = "[color=#c5b8a5]尚未进行世界推演。[/color]"
 autowrap_mode = 2
 
 [node name="OracleRegionPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("14")
+theme_override_styles/panel = SubResource("sb_card")
 
 [node name="OracleRegionVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel"]
 layout_mode = 2
@@ -408,20 +428,20 @@ theme_override_constants/separation = 4
 
 [node name="OracleRegionTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel/OracleRegionVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.635294, 0.870588, 1, 1)
-theme_override_font_sizes/font_size = 12
-text = "区域推演"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 11
+text = "区域编年"
 
 [node name="OracleRegionOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleRegionPanel/OracleRegionVBox"]
-custom_minimum_size = Vector2(0, 150)
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=#9ab0c9]尚未进行区域推演。[/color]"
+text = "[color=#c5b8a5]尚未进行区域推演。[/color]"
 autowrap_mode = 2
 
 [node name="OracleQuestPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("14")
+theme_override_styles/panel = SubResource("sb_card")
 
 [node name="OracleQuestVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel"]
 layout_mode = 2
@@ -429,20 +449,20 @@ theme_override_constants/separation = 4
 
 [node name="OracleQuestTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel/OracleQuestVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.533333, 0.929412, 0.552941, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.55, 0.90, 0.65, 1)
+theme_override_font_sizes/font_size = 11
 text = "任务草案"
 
 [node name="OracleQuestOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleQuestPanel/OracleQuestVBox"]
-custom_minimum_size = Vector2(0, 130)
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=#9ab0c9]尚未生成任务草案。[/color]"
+text = "[color=#c5b8a5]尚未生成任务草案。[/color]"
 autowrap_mode = 2
 
 [node name="OracleErrorPanel" type="PanelContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("14")
+theme_override_styles/panel = SubResource("sb_card")
 
 [node name="OracleErrorVBox" type="VBoxContainer" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel"]
 layout_mode = 2
@@ -450,13 +470,13 @@ theme_override_constants/separation = 4
 
 [node name="OracleErrorTitle" type="Label" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel/OracleErrorVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.494118, 0.494118, 1)
-theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(1, 0.55, 0.55, 1)
+theme_override_font_sizes/font_size = 11
 text = "错误与告警"
 
 [node name="OracleErrorOutput" type="RichTextLabel" parent="LoreTabs/OracleTab/OracleVBox/OracleOutputScroll/OracleOutputVBox/OracleErrorPanel/OracleErrorVBox"]
-custom_minimum_size = Vector2(0, 86)
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=#9ab0c9]当前无错误。[/color]"
+text = "[color=#c5b8a5]当前无错误。[/color]"
 autowrap_mode = 2

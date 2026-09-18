@@ -73,15 +73,19 @@ public partial class LayerPanelController : ScrollContainer
 	public override void _Ready()
 	{
 		_statusLabel = GetNodeOrNull<Label>("LayersMargin/Content/StatusCard/StatusLabel")
+			?? (FindChild("StatusLabel", true, false) as Label)
 			?? CreateFallbackStatusLabel();
 
 		_presetOption = GetNodeOrNull<OptionButton>("LayersMargin/Content/PresetSection/PresetOption")
+			?? (FindChild("PresetOption", true, false) as OptionButton)
 			?? CreateFallbackPresetOption();
 
 		_baseThemeOption = GetNodeOrNull<OptionButton>("LayersMargin/Content/BaseThemeSection/BaseThemeOption")
+			?? (FindChild("BaseThemeOption", true, false) as OptionButton)
 			?? CreateFallbackBaseThemeOption();
 
 		_overlaysContainer = GetNodeOrNull<VBoxContainer>("LayersMargin/Content/OverlaysSection/OverlaysContainer")
+			?? (FindChild("OverlaysContainer", true, false) as VBoxContainer)
 			?? CreateFallbackOverlaysContainer();
 
 		SetupPresetOptions();

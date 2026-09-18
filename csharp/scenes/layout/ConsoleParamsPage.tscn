@@ -1,82 +1,144 @@
 [gd_scene format=3]
 
 [sub_resource type="StyleBoxFlat" id="sb_section"]
-bg_color = Color(0.36, 0.27, 0.2, 0.98)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.18, 0.13, 0.09, 0.95)
+border_width_bottom = 2
+border_color = Color(0.72, 0.52, 0.28, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 content_margin_left = 10.0
-content_margin_top = 5.0
+content_margin_top = 6.0
 content_margin_right = 10.0
-content_margin_bottom = 5.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_card"]
+bg_color = Color(0.14, 0.10, 0.08, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.25, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(1, 2)
 
 [sub_resource type="StyleBoxFlat" id="sb_field"]
-content_margin_left = 12.0
+content_margin_left = 10.0
 content_margin_top = 4.0
-content_margin_right = 12.0
+content_margin_right = 10.0
 content_margin_bottom = 4.0
-bg_color = Color(0.79, 0.7, 0.58, 1)
+bg_color = Color(0.18, 0.13, 0.10, 0.95)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.5, 0.39, 0.29, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+border_color = Color(0.48, 0.35, 0.24, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_field_active"]
-content_margin_left = 12.0
+content_margin_left = 10.0
 content_margin_top = 4.0
-content_margin_right = 12.0
+content_margin_right = 10.0
 content_margin_bottom = 4.0
-bg_color = Color(0.84, 0.76, 0.64, 1)
+bg_color = Color(0.24, 0.18, 0.13, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.3, 0.66, 0.94, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+border_color = Color(0.92, 0.65, 0.32, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_small_btn"]
-bg_color = Color(0.47, 0.3, 0.22, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.42, 0.26, 0.16, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.62, 0.35, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_small_btn_hover"]
-bg_color = Color(0.6, 0.4, 0.26, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.58, 0.36, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.82, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_apply"]
-bg_color = Color(0.31, 0.57, 0.82, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.25, 0.42, 0.58, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.55, 0.78, 0.96, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_apply_hover"]
-bg_color = Color(0.38, 0.66, 0.9, 1)
+bg_color = Color(0.32, 0.52, 0.72, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.72, 0.88, 1, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_value_badge"]
+bg_color = Color(0.10, 0.07, 0.05, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.24, 0.5)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxFlat" id="sb_group"]
-bg_color = Color(0.78, 0.68, 0.55, 0.6)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.11, 0.08, 0.06, 0.75)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.30, 0.20, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 content_margin_left = 8.0
 content_margin_top = 6.0
 content_margin_right = 8.0
@@ -91,15 +153,15 @@ horizontal_scroll_mode = 0
 [node name="ParamsMargin" type="MarginContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 10
 
 [node name="Content" type="VBoxContainer" parent="ParamsMargin"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="GenParamsBar" type="PanelContainer" parent="ParamsMargin/Content"]
 layout_mode = 2
@@ -110,9 +172,9 @@ layout_mode = 2
 
 [node name="GenParamsTitle" type="Label" parent="ParamsMargin/Content/GenParamsBar/GenParamsRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
-theme_override_font_sizes/font_size = 15
-text = "TERRAIN · 地形配置"
+theme_override_colors/font_color = Color(0.98, 0.90, 0.76, 1)
+theme_override_font_sizes/font_size = 13
+text = "TERRAIN CONFIG · 地貌参数"
 
 [node name="GenParamsSpacer" type="Control" parent="ParamsMargin/Content/GenParamsBar/GenParamsRow"]
 layout_mode = 2
@@ -120,86 +182,94 @@ size_flags_horizontal = 3
 
 [node name="GenParamsInfo" type="Label" parent="ParamsMargin/Content/GenParamsBar/GenParamsRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.8, 0.68, 1)
+theme_override_colors/font_color = Color(0.85, 0.72, 0.54, 0.85)
 theme_override_font_sizes/font_size = 11
-text = "全部地形参数"
+text = "造物主工坊"
 
 [node name="ParamsBox" type="VBoxContainer" parent="ParamsMargin/Content"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SectionWorld" type="Label" parent="ParamsMargin/Content/ParamsBox"]
+[node name="WorldCard" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
-theme_override_font_sizes/font_size = 12
-text = "── 世界框架 ──"
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="SeedRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="WorldContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionWorld" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "🌐 世界框架 · WORLD FRAMEWORK"
+
+[node name="SeedRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SeedLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/SeedRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="SeedLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "种子"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "世界种子"
 vertical_alignment = 1
 
-[node name="SeedSpin" type="SpinBox" parent="ParamsMargin/Content/ParamsBox/SeedRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="SeedSpin" type="SpinBox" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
 theme_override_styles/normal = SubResource("sb_field")
 min_value = -2147483600.0
 max_value = 2147483647.0
 rounded = true
 
-[node name="RandomButton" type="Button" parent="ParamsMargin/Content/ParamsBox/SeedRow"]
-custom_minimum_size = Vector2(40, 34)
+[node name="RandomButton" type="Button" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(34, 32)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.89, 0.76, 1)
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.98, 0.94, 0.85, 1)
+theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("sb_small_btn")
 theme_override_styles/hover = SubResource("sb_small_btn_hover")
 theme_override_styles/pressed = SubResource("sb_small_btn_hover")
-text = "⟳"
-tooltip_text = "随机种子"
+text = "🎲"
+tooltip_text = "随机新种子"
 
-[node name="ApplyButton" type="Button" parent="ParamsMargin/Content/ParamsBox/SeedRow"]
-custom_minimum_size = Vector2(84, 34)
+[node name="ApplyButton" type="Button" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/SeedRow"]
+custom_minimum_size = Vector2(62, 32)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.97, 0.99, 1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.95, 0.98, 1, 1)
+theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("sb_apply")
 theme_override_styles/hover = SubResource("sb_apply_hover")
 theme_override_styles/pressed = SubResource("sb_apply_hover")
-text = "APPLY"
+text = "应用"
 
-[node name="CellScaleRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="CellScaleRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CellScaleLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="CellScaleLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "地块规模"
 vertical_alignment = 1
 
-[node name="CellScaleOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="CellScaleOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
 theme_override_styles/normal = SubResource("sb_field")
 theme_override_styles/hover = SubResource("sb_field_active")
 theme_override_styles/pressed = SubResource("sb_field_active")
 
-[node name="CellScaleSpin" type="SpinBox" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
-custom_minimum_size = Vector2(80, 34)
+[node name="CellScaleSpin" type="SpinBox" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/CellScaleRow"]
+custom_minimum_size = Vector2(82, 32)
 layout_mode = 2
 min_value = 1000.0
 max_value = 65536.0
@@ -207,101 +277,109 @@ step = 500.0
 value = 10000.0
 rounded = true
 
-[node name="CellCountDisplayRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="CellCountDisplayRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CellCountDisplayLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/CellCountDisplayRow"]
+[node name="CellCountDisplayLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/CellCountDisplayRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.42, 0.28, 0.18, 1)
+theme_override_colors/font_color = Color(0.72, 0.62, 0.48, 1)
 theme_override_font_sizes/font_size = 11
 text = "目标地块: 10,000 · 实际地块: --"
 horizontal_alignment = 2
 
-[node name="MapSizeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MapSizeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="MapSizeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MapSizeRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="MapSizeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/MapSizeRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "输出分辨率"
-vertical_alignment = 1
-
-[node name="MapSizeOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/MapSizeRow"]
-custom_minimum_size = Vector2(0, 34)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
-theme_override_styles/normal = SubResource("sb_field")
-theme_override_styles/hover = SubResource("sb_field_active")
-theme_override_styles/pressed = SubResource("sb_field_active")
-
-[node name="WorldTypeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="WorldTypeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldTypeRow"]
-custom_minimum_size = Vector2(76, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "世界类型"
-vertical_alignment = 1
-
-[node name="TerrainPresetOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/WorldTypeRow"]
-custom_minimum_size = Vector2(0, 34)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
-theme_override_styles/normal = SubResource("sb_field")
-theme_override_styles/hover = SubResource("sb_field_active")
-theme_override_styles/pressed = SubResource("sb_field_active")
-
-[node name="ContinentCountWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="ContinentCountLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/ContinentCountWrap"]
-custom_minimum_size = Vector2(76, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "大陆数量"
-vertical_alignment = 1
-
-[node name="ContinentCountOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/ContinentCountWrap"]
-custom_minimum_size = Vector2(0, 34)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
-theme_override_styles/normal = SubResource("sb_field")
-theme_override_styles/hover = SubResource("sb_field_active")
-theme_override_styles/pressed = SubResource("sb_field_active")
-
-[node name="SectionOcean" type="Label" parent="ParamsMargin/Content/ParamsBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
 theme_override_font_sizes/font_size = 12
-text = "── 海洋与气候 ──"
+text = "渲染分辨率"
+vertical_alignment = 1
 
-[node name="SeaWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MapSizeOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/MapSizeRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="WorldTypeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SeaLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/SeaWrap"]
-custom_minimum_size = Vector2(76, 0)
+[node name="WorldTypeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/WorldTypeRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "地形模板"
+vertical_alignment = 1
+
+[node name="TerrainPresetOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/WorldTypeRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="ContinentCountWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ContinentCountLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/ContinentCountWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "大陆群落"
+vertical_alignment = 1
+
+[node name="ContinentCountOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/WorldCard/WorldContent/ContinentCountWrap"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="OceanCard" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
+
+[node name="OceanContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/OceanCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionOcean" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.50, 0.82, 0.96, 1)
+theme_override_font_sizes/font_size = 12
+text = "🌊 海洋与气候 · HYDROS & CLIMATE"
+
+[node name="SeaWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SeaLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "海平面"
 vertical_alignment = 1
 
-[node name="SeaLevelSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/SeaWrap"]
-custom_minimum_size = Vector2(0, 28)
+[node name="SeaLevelSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -310,29 +388,30 @@ max_value = 0.9
 step = 0.01
 value = 0.5
 
-[node name="SeaLevelValue" type="Label" parent="ParamsMargin/Content/ParamsBox/SeaWrap"]
-custom_minimum_size = Vector2(48, 0)
+[node name="SeaLevelValue" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/SeaWrap"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "0.50"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HeatWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="HeatWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="HeatLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/HeatWrap"]
-custom_minimum_size = Vector2(76, 0)
+[node name="HeatLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "全球气温"
 vertical_alignment = 1
 
-[node name="HeatSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/HeatWrap"]
-custom_minimum_size = Vector2(0, 28)
+[node name="HeatSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -341,29 +420,30 @@ max_value = 1.0
 step = 0.01
 value = 0.5
 
-[node name="HeatValue" type="Label" parent="ParamsMargin/Content/ParamsBox/HeatWrap"]
-custom_minimum_size = Vector2(48, 0)
+[node name="HeatValue" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/HeatWrap"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "0.50"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MoistureWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MoistureWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="MoistureLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MoistureWrap"]
-custom_minimum_size = Vector2(76, 0)
+[node name="MoistureLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "全局降水"
 vertical_alignment = 1
 
-[node name="MoistureSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MoistureWrap"]
-custom_minimum_size = Vector2(0, 28)
+[node name="MoistureSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -372,93 +452,103 @@ max_value = 2.5
 step = 0.01
 value = 1.0
 
-[node name="MoistureValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MoistureWrap"]
-custom_minimum_size = Vector2(48, 0)
+[node name="MoistureValue" type="Label" parent="ParamsMargin/Content/ParamsBox/OceanCard/OceanContent/MoistureWrap"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SectionMountain" type="Label" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MountainCard" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
-theme_override_font_sizes/font_size = 12
-text = "── 山脉与造山 ──"
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="ErosionWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MountainContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionMountain" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.70, 0.42, 1)
+theme_override_font_sizes/font_size = 12
+text = "🏔️ 山脉与造山 · OROGENY & RELIEF"
+
+[node name="MountainPresetRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ErosionLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/ErosionWrap"]
-custom_minimum_size = Vector2(76, 0)
+[node name="MountainPresetLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainPresetRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "山系走向"
+vertical_alignment = 1
+
+[node name="MountainPresetOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainPresetRow"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="ErosionWrap" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ErosionLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "山脉密度"
 vertical_alignment = 1
 
-[node name="ErosionSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/ErosionWrap"]
-custom_minimum_size = Vector2(0, 28)
+[node name="ErosionSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 max_value = 20.0
 value = 5.0
 
-[node name="ErosionValue" type="Label" parent="ParamsMargin/Content/ParamsBox/ErosionWrap"]
-custom_minimum_size = Vector2(48, 0)
+[node name="ErosionValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/ErosionWrap"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "5"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MountainPresetRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="MountainPresetLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainPresetRow"]
-custom_minimum_size = Vector2(76, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "山脉模板"
-vertical_alignment = 1
-
-[node name="MountainPresetOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/MountainPresetRow"]
-custom_minimum_size = Vector2(0, 34)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
-theme_override_styles/normal = SubResource("sb_field")
-theme_override_styles/hover = SubResource("sb_field_active")
-theme_override_styles/pressed = SubResource("sb_field_active")
-
-[node name="MountainBody" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="MountainBody" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("sb_group")
 
-[node name="MountainBodyContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainBody"]
+[node name="MountainBodyContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="InteriorReliefRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="InteriorReliefRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent"]
+[node name="InteriorReliefLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="InteriorReliefLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/InteriorReliefRow"]
-custom_minimum_size = Vector2(76, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.82, 0.76, 0.70, 1)
+theme_override_font_sizes/font_size = 11
 text = "内陆起伏"
 vertical_alignment = 1
 
-[node name="InteriorReliefSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/InteriorReliefRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="InteriorReliefSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -467,29 +557,30 @@ max_value = 2.0
 step = 0.01
 value = 1.0
 
-[node name="InteriorReliefValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/InteriorReliefRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="InteriorReliefValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/InteriorReliefRow"]
+custom_minimum_size = Vector2(42, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="OrogenyStrengthRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent"]
+[node name="OrogenyStrengthRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="OrogenyStrengthLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="OrogenyStrengthLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.82, 0.76, 0.70, 1)
+theme_override_font_sizes/font_size = 11
 text = "造山强度"
 vertical_alignment = 1
 
-[node name="OrogenyStrengthSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="OrogenyStrengthSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -498,29 +589,30 @@ max_value = 2.5
 step = 0.01
 value = 1.0
 
-[node name="OrogenyStrengthValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="OrogenyStrengthValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/OrogenyStrengthRow"]
+custom_minimum_size = Vector2(42, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SubductionArcRatioRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent"]
+[node name="SubductionArcRatioRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SubductionArcRatioLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="SubductionArcRatioLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.82, 0.76, 0.70, 1)
+theme_override_font_sizes/font_size = 11
 text = "俯冲弧率"
 vertical_alignment = 1
 
-[node name="SubductionArcRatioSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="SubductionArcRatioSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -529,79 +621,89 @@ max_value = 1.0
 step = 0.01
 value = 0.72
 
-[node name="SubductionArcRatioValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="SubductionArcRatioValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/SubductionArcRatioRow"]
+custom_minimum_size = Vector2(42, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "0.72"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ContinentalAgeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent"]
+[node name="ContinentalAgeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ContinentalAgeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/ContinentalAgeRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="ContinentalAgeLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "大陆年龄"
+theme_override_colors/font_color = Color(0.82, 0.76, 0.70, 1)
+theme_override_font_sizes/font_size = 11
+text = "大陆地龄"
 vertical_alignment = 1
 
-[node name="ContinentalAgeSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/ContinentalAgeRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="ContinentalAgeSlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 value = 58.0
 
-[node name="ContinentalAgeValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainBody/MountainBodyContent/ContinentalAgeRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="ContinentalAgeValue" type="Label" parent="ParamsMargin/Content/ParamsBox/MountainCard/MountainContent/MountainBody/MountainBodyContent/ContinentalAgeRow"]
+custom_minimum_size = Vector2(42, 20)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "58"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SectionRiver" type="Label" parent="ParamsMargin/Content/ParamsBox"]
+[node name="RiverCard" type="PanelContainer" parent="ParamsMargin/Content/ParamsBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
-theme_override_font_sizes/font_size = 12
-text = "── 河流 ──"
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="RiversGroup" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="RiverContent" type="VBoxContainer" parent="ParamsMargin/Content/ParamsBox/RiverCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionRiver" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.85, 0.75, 1)
+theme_override_font_sizes/font_size = 12
+text = "🏞️ 水系河流 · HYDROLOGY & RIVERS"
+
+[node name="RiversGroup" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="RiversSwitchLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/RiversGroup"]
-custom_minimum_size = Vector2(76, 0)
+[node name="RiversSwitchLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent/RiversGroup"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "生成河流"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "河网模拟"
 vertical_alignment = 1
 
-[node name="RiversSwitch" type="CheckButton" parent="ParamsMargin/Content/ParamsBox/RiversGroup"]
+[node name="RiversSwitch" type="CheckButton" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent/RiversGroup"]
 layout_mode = 2
 button_pressed = true
 
-[node name="RiverDensityRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+[node name="RiverDensityRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="RiverDensityLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverDensityRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="RiverDensityLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "河流密集度"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "水系密集"
 vertical_alignment = 1
 
-[node name="RiverDensitySlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/RiverDensityRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="RiverDensitySlider" type="HSlider" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -610,11 +712,12 @@ max_value = 2.5
 step = 0.01
 value = 1.0
 
-[node name="RiverDensityValue" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverDensityRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="RiverDensityValue" type="Label" parent="ParamsMargin/Content/ParamsBox/RiverCard/RiverContent/RiverDensityRow"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1

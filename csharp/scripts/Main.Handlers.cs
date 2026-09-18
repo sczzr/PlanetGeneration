@@ -27,7 +27,10 @@ public partial class Main : Control
 	{
 		SetRandomSeed();
 		_seedSpin.Value = Seed;
-		GenerateWorld();
+		if (_worldSetupMenu == null || !_worldSetupMenu.Visible)
+		{
+			GenerateWorld();
+		}
 	}
 
 	private void SetRandomSeed()

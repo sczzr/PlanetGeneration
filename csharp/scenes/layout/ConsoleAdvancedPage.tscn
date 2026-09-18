@@ -1,61 +1,108 @@
 [gd_scene format=3]
 
 [sub_resource type="StyleBoxFlat" id="sb_section"]
-bg_color = Color(0.36, 0.27, 0.2, 0.98)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.18, 0.13, 0.09, 0.95)
+border_width_bottom = 2
+border_color = Color(0.72, 0.52, 0.28, 0.85)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 content_margin_left = 10.0
-content_margin_top = 5.0
+content_margin_top = 6.0
 content_margin_right = 10.0
-content_margin_bottom = 5.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="sb_card"]
+bg_color = Color(0.14, 0.10, 0.08, 0.82)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.25, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+content_margin_left = 10.0
+content_margin_top = 8.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 4
+shadow_offset = Vector2(1, 2)
 
 [sub_resource type="StyleBoxFlat" id="sb_field"]
-content_margin_left = 12.0
+content_margin_left = 10.0
 content_margin_top = 4.0
-content_margin_right = 12.0
+content_margin_right = 10.0
 content_margin_bottom = 4.0
-bg_color = Color(0.79, 0.7, 0.58, 1)
+bg_color = Color(0.18, 0.13, 0.10, 0.95)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.5, 0.39, 0.29, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+border_color = Color(0.48, 0.35, 0.24, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_field_active"]
-content_margin_left = 12.0
+content_margin_left = 10.0
 content_margin_top = 4.0
-content_margin_right = 12.0
+content_margin_right = 10.0
 content_margin_bottom = 4.0
-bg_color = Color(0.84, 0.76, 0.64, 1)
+bg_color = Color(0.24, 0.18, 0.13, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.3, 0.66, 0.94, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+border_color = Color(0.92, 0.65, 0.32, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_small_btn"]
-bg_color = Color(0.47, 0.3, 0.22, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0.42, 0.26, 0.16, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.62, 0.35, 0.9)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [sub_resource type="StyleBoxFlat" id="sb_small_btn_hover"]
-bg_color = Color(0.6, 0.4, 0.26, 1)
+bg_color = Color(0.58, 0.36, 0.22, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.82, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="sb_value_badge"]
+bg_color = Color(0.10, 0.07, 0.05, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.38, 0.24, 0.5)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
 
 [node name="AdvancedPage" type="ScrollContainer"]
 custom_minimum_size = Vector2(320, 0)
@@ -66,15 +113,15 @@ horizontal_scroll_mode = 0
 [node name="AdvancedMargin" type="MarginContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 10
 
 [node name="Content" type="VBoxContainer" parent="AdvancedMargin"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="AdvancedBar" type="PanelContainer" parent="AdvancedMargin/Content"]
 layout_mode = 2
@@ -85,9 +132,9 @@ layout_mode = 2
 
 [node name="AdvancedTitle" type="Label" parent="AdvancedMargin/Content/AdvancedBar/AdvancedRow2"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
-theme_override_font_sizes/font_size = 15
-text = "ADVANCED SETTINGS"
+theme_override_colors/font_color = Color(0.98, 0.90, 0.76, 1)
+theme_override_font_sizes/font_size = 13
+text = "DEEP RULES · 深度法则"
 
 [node name="AdvancedSpacer" type="Control" parent="AdvancedMargin/Content/AdvancedBar/AdvancedRow2"]
 layout_mode = 2
@@ -95,68 +142,83 @@ size_flags_horizontal = 3
 
 [node name="AdvancedInfo" type="Label" parent="AdvancedMargin/Content/AdvancedBar/AdvancedRow2"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.88, 0.8, 0.68, 1)
+theme_override_colors/font_color = Color(0.85, 0.72, 0.54, 0.85)
 theme_override_font_sizes/font_size = 11
-text = "显示与实验选项"
+text = "显示与工坊"
 
-[node name="AdvancedRow" type="VBoxContainer" parent="AdvancedMargin/Content"]
+[node name="ModeCard" type="PanelContainer" parent="AdvancedMargin/Content"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="CompareGroup" type="HBoxContainer" parent="AdvancedMargin/Content/AdvancedRow"]
+[node name="AdvancedRow" type="VBoxContainer" parent="AdvancedMargin/Content/ModeCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="SectionMode" type="Label" parent="AdvancedMargin/Content/ModeCard/AdvancedRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "🔮 演化模式 · EVOLUTION MODES"
+
+[node name="CompareGroup" type="HBoxContainer" parent="AdvancedMargin/Content/ModeCard/AdvancedRow"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CompareLabel" type="Label" parent="AdvancedMargin/Content/AdvancedRow/CompareGroup"]
-custom_minimum_size = Vector2(76, 0)
+[node name="CompareLabel" type="Label" parent="AdvancedMargin/Content/ModeCard/AdvancedRow/CompareGroup"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "对比模式"
 vertical_alignment = 1
 
-[node name="CompareToggle" type="CheckButton" parent="AdvancedMargin/Content/AdvancedRow/CompareGroup"]
+[node name="CompareToggle" type="CheckButton" parent="AdvancedMargin/Content/ModeCard/AdvancedRow/CompareGroup"]
 layout_mode = 2
 
-[node name="ReplayGroup" type="HBoxContainer" parent="AdvancedMargin/Content/AdvancedRow"]
+[node name="ReplayGroup" type="HBoxContainer" parent="AdvancedMargin/Content/ModeCard/AdvancedRow"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ReplayLabel" type="Label" parent="AdvancedMargin/Content/AdvancedRow/ReplayGroup"]
-custom_minimum_size = Vector2(76, 0)
+[node name="ReplayLabel" type="Label" parent="AdvancedMargin/Content/ModeCard/AdvancedRow/ReplayGroup"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "纪元回放"
 vertical_alignment = 1
 
-[node name="EpochReplaySwitch" type="CheckButton" parent="AdvancedMargin/Content/AdvancedRow/ReplayGroup"]
+[node name="EpochReplaySwitch" type="CheckButton" parent="AdvancedMargin/Content/ModeCard/AdvancedRow/ReplayGroup"]
 layout_mode = 2
 button_pressed = true
 
-[node name="AdvancedDivider" type="HSeparator" parent="AdvancedMargin/Content"]
+[node name="DisplayCard" type="PanelContainer" parent="AdvancedMargin/Content"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="SectionDisplay" type="Label" parent="AdvancedMargin/Content"]
+[node name="DisplayVBox" type="VBoxContainer" parent="AdvancedMargin/Content/DisplayCard"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
+theme_override_constants/separation = 7
+
+[node name="SectionDisplay" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
 theme_override_font_sizes/font_size = 12
-text = "── 显示选项 ──"
+text = "🖥️ 视界与感度 · DISPLAY & SENSITIVITY"
 
-[node name="UiFontScaleRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="UiFontScaleRow" type="HBoxContainer" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="UiFontScaleLabel" type="Label" parent="AdvancedMargin/Content/UiFontScaleRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="UiFontScaleLabel" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/UiFontScaleRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
 text = "界面缩放"
 vertical_alignment = 1
 
-[node name="UiFontScaleSlider" type="HSlider" parent="AdvancedMargin/Content/UiFontScaleRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="UiFontScaleSlider" type="HSlider" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/UiFontScaleRow"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -164,29 +226,30 @@ min_value = 60.0
 max_value = 140.0
 value = 92.0
 
-[node name="UiFontScaleValue" type="Label" parent="AdvancedMargin/Content/UiFontScaleRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="UiFontScaleValue" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/UiFontScaleRow"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "92%"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BasinSensitivityRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="BasinSensitivityRow" type="HBoxContainer" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="BasinSensitivityLabel" type="Label" parent="AdvancedMargin/Content/BasinSensitivityRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="BasinSensitivityLabel" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/BasinSensitivityRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "盆地灵敏度"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "盆地灵敏"
 vertical_alignment = 1
 
-[node name="BasinSensitivitySlider" type="HSlider" parent="AdvancedMargin/Content/BasinSensitivityRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="BasinSensitivitySlider" type="HSlider" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/BasinSensitivityRow"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -195,29 +258,30 @@ max_value = 2.0
 step = 0.01
 value = 1.0
 
-[node name="BasinSensitivityValue" type="Label" parent="AdvancedMargin/Content/BasinSensitivityRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="BasinSensitivityValue" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/BasinSensitivityRow"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="WindArrowDensityRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="WindArrowDensityRow" type="HBoxContainer" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="WindArrowDensityLabel" type="Label" parent="AdvancedMargin/Content/WindArrowDensityRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="WindArrowDensityLabel" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/WindArrowDensityRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "风场密度"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "风场密集"
 vertical_alignment = 1
 
-[node name="WindArrowDensitySlider" type="HSlider" parent="AdvancedMargin/Content/WindArrowDensityRow"]
-custom_minimum_size = Vector2(0, 28)
+[node name="WindArrowDensitySlider" type="HSlider" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/WindArrowDensityRow"]
+custom_minimum_size = Vector2(0, 26)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -226,118 +290,118 @@ max_value = 2.5
 step = 0.01
 value = 1.0
 
-[node name="WindArrowDensityValue" type="Label" parent="AdvancedMargin/Content/WindArrowDensityRow"]
-custom_minimum_size = Vector2(48, 0)
+[node name="WindArrowDensityValue" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/WindArrowDensityRow"]
+custom_minimum_size = Vector2(48, 22)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.36, 0.1, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.96, 0.80, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("sb_value_badge")
 text = "1.00"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ElevationStyleRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="ElevationStyleRow" type="HBoxContainer" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ElevationStyleLabel" type="Label" parent="AdvancedMargin/Content/ElevationStyleRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="ElevationStyleLabel" type="Label" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/ElevationStyleRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "高程风格"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "高程调色"
 vertical_alignment = 1
 
-[node name="ElevationStyleOption" type="OptionButton" parent="AdvancedMargin/Content/ElevationStyleRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="ElevationStyleOption" type="OptionButton" parent="AdvancedMargin/Content/DisplayCard/DisplayVBox/ElevationStyleRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
 theme_override_styles/normal = SubResource("sb_field")
 theme_override_styles/hover = SubResource("sb_field_active")
 theme_override_styles/pressed = SubResource("sb_field_active")
 
-[node name="CacheBar" type="PanelContainer" parent="AdvancedMargin/Content"]
+[node name="CacheCard" type="PanelContainer" parent="AdvancedMargin/Content"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("sb_section")
+theme_override_styles/panel = SubResource("sb_card")
 
-[node name="CacheBarRow" type="HBoxContainer" parent="AdvancedMargin/Content/CacheBar"]
+[node name="CacheVBox" type="VBoxContainer" parent="AdvancedMargin/Content/CacheCard"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="CacheBar" type="HBoxContainer" parent="AdvancedMargin/Content/CacheCard/CacheVBox"]
 layout_mode = 2
 
-[node name="CacheBarTitle" type="Label" parent="AdvancedMargin/Content/CacheBar/CacheBarRow"]
+[node name="CacheBarTitle" type="Label" parent="AdvancedMargin/Content/CacheCard/CacheVBox/CacheBar"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
-theme_override_font_sizes/font_size = 15
-text = "CACHE · 缓存管理"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.48, 1)
+theme_override_font_sizes/font_size = 12
+text = "💾 存档与缓存 · ARCHIVE & CACHE"
 
-[node name="CacheBarSpacer" type="Control" parent="AdvancedMargin/Content/CacheBar/CacheBarRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="CacheGroupRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="CacheGroupRow" type="HBoxContainer" parent="AdvancedMargin/Content/CacheCard/CacheVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="CacheGroupText" type="Label" parent="AdvancedMargin/Content/CacheGroupRow"]
-custom_minimum_size = Vector2(76, 0)
+[node name="CacheGroupText" type="Label" parent="AdvancedMargin/Content/CacheCard/CacheVBox/CacheGroupRow"]
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
-theme_override_font_sizes/font_size = 13
-text = "存档"
+theme_override_colors/font_color = Color(0.88, 0.82, 0.74, 1)
+theme_override_font_sizes/font_size = 12
+text = "选择存档"
 vertical_alignment = 1
 
-[node name="ArchiveOption" type="OptionButton" parent="AdvancedMargin/Content/CacheGroupRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="ArchiveOption" type="OptionButton" parent="AdvancedMargin/Content/CacheCard/CacheVBox/CacheGroupRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_colors/font_color = Color(0.96, 0.92, 0.86, 1)
 theme_override_styles/normal = SubResource("sb_field")
 theme_override_styles/hover = SubResource("sb_field_active")
 theme_override_styles/pressed = SubResource("sb_field_active")
 
-[node name="CacheButtonsRow" type="HBoxContainer" parent="AdvancedMargin/Content"]
+[node name="CacheButtonsRow" type="HBoxContainer" parent="AdvancedMargin/Content/CacheCard/CacheVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="PersistCacheGroupButton" type="Button" parent="AdvancedMargin/Content/CacheButtonsRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="PersistCacheGroupButton" type="Button" parent="AdvancedMargin/Content/CacheCard/CacheVBox/CacheButtonsRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
-theme_override_colors/font_color = Color(0.96, 0.89, 0.76, 1)
+theme_override_colors/font_color = Color(0.98, 0.94, 0.85, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("sb_small_btn")
 theme_override_styles/hover = SubResource("sb_small_btn_hover")
 theme_override_styles/pressed = SubResource("sb_small_btn_hover")
-text = "保存当前存档"
+text = "💾 保存存档"
 
-[node name="ClearCacheButton" type="Button" parent="AdvancedMargin/Content/CacheButtonsRow"]
-custom_minimum_size = Vector2(0, 34)
+[node name="ClearCacheButton" type="Button" parent="AdvancedMargin/Content/CacheCard/CacheVBox/CacheButtonsRow"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
-theme_override_colors/font_color = Color(0.96, 0.89, 0.76, 1)
+theme_override_colors/font_color = Color(0.98, 0.94, 0.85, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("sb_small_btn")
 theme_override_styles/hover = SubResource("sb_small_btn_hover")
 theme_override_styles/pressed = SubResource("sb_small_btn_hover")
-text = "清理自动缓存"
+text = "🧹 清理缓存"
 
-[node name="CacheStatsLabel" type="Label" parent="AdvancedMargin/Content"]
-custom_minimum_size = Vector2(0, 40)
+[node name="CacheStatsLabel" type="Label" parent="AdvancedMargin/Content/CacheCard/CacheVBox"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.47, 0.37, 0.28, 1)
+theme_override_colors/font_color = Color(0.72, 0.62, 0.52, 1)
 theme_override_font_sizes/font_size = 11
-text = "自动缓存: 0 条 | 0 B
-存档: 0 份"
+text = "自动缓存: 0 条 | 0 B · 存档: 0 份"
 autowrap_mode = 2
 
-[node name="ResetAdvancedSettingsButton" type="Button" parent="AdvancedMargin/Content"]
-custom_minimum_size = Vector2(0, 34)
+[node name="ResetAdvancedSettingsButton" type="Button" parent="AdvancedMargin/Content/CacheCard/CacheVBox"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 focus_mode = 0
-theme_override_colors/font_color = Color(0.96, 0.89, 0.76, 1)
+theme_override_colors/font_color = Color(0.98, 0.75, 0.75, 1)
 theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = SubResource("sb_small_btn")
 theme_override_styles/hover = SubResource("sb_small_btn_hover")
 theme_override_styles/pressed = SubResource("sb_small_btn_hover")
-text = "恢复默认设置"
+text = "↺ 恢复默认设置"

@@ -9,22 +9,63 @@
 [ext_resource type="PackedScene" path="res://scenes/layout/MainCenterWorkspace.tscn" id="7_center"]
 [ext_resource type="PackedScene" path="res://scenes/MainMenu.tscn" id="8_menu"]
 [ext_resource type="Script" path="res://scripts/UI/GeneratorControlsController.cs" id="9_console_controller"]
+[ext_resource type="PackedScene" path="res://scenes/WorldSetupMenu.tscn" id="10_world_setup"]
 
 [sub_resource type="StyleBoxFlat" id="ConsolePanelStyle"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.97)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+bg_color = Color(0.11, 0.08, 0.06, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.68, 0.50, 0.28, 0.85)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+shadow_color = Color(0, 0, 0, 0.65)
+shadow_size = 16
+shadow_offset = Vector2(4, 4)
+
+[sub_resource type="StyleBoxFlat" id="SummonTabNormal"]
+bg_color = Color(0.14, 0.10, 0.07, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.78, 0.58, 0.32, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 content_margin_left = 10.0
-content_margin_top = 10.0
+content_margin_top = 6.0
 content_margin_right = 10.0
-content_margin_bottom = 10.0
+content_margin_bottom = 6.0
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 6
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="SummonTabHover"]
+bg_color = Color(0.24, 0.17, 0.11, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.48, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 10.0
+content_margin_top = 6.0
+content_margin_right = 10.0
+content_margin_bottom = 6.0
+shadow_color = Color(0.9, 0.65, 0.35, 0.35)
+shadow_size = 8
 
 [node name="MainLayout" type="Control"]
 layout_mode = 3
@@ -63,19 +104,20 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ConsolePanel" type="PanelContainer" parent="."]
+visible = false
 layout_mode = 1
 anchor_top = 0.0
 anchor_bottom = 1.0
 offset_left = 12.0
 offset_top = 12.0
-offset_right = 372.0
+offset_right = 384.0
 offset_bottom = -12.0
 grow_vertical = 2
 theme_override_styles/panel = SubResource("ConsolePanelStyle")
 
 [node name="ConsoleVBox" type="VBoxContainer" parent="ConsolePanel"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="HeaderPanel" parent="ConsolePanel/ConsoleVBox" instance=ExtResource("1_header")]
 layout_mode = 2
@@ -86,49 +128,42 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("9_console_controller")
 
-[node name="ParamsPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("2_params")]
-layout_mode = 2
-metadata/_tab_title = "生成参数"
-
 [node name="LayersPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("3_layers")]
 layout_mode = 2
-metadata/_tab_title = "图层"
+metadata/_tab_title = "观测图层"
 
 [node name="AdvancedPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("4_advanced")]
 layout_mode = 2
-metadata/_tab_title = "高级设置"
+metadata/_tab_title = "深度法则"
 
 [node name="LorePanel" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("5_lore")]
 custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
-metadata/_tab_title = "世界与AI"
+metadata/_tab_title = "叙事推演"
 
 [node name="HistoryPage" parent="ConsolePanel/ConsoleVBox/ConsoleTabs" instance=ExtResource("6_history")]
 layout_mode = 2
-metadata/_tab_title = "历史统计"
+metadata/_tab_title = "演化编年"
 
-[node name="ConsoleCollapseTab" type="Button" parent="."]
-layout_mode = 1
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 372.0
-offset_top = -14.0
-offset_right = 394.0
-offset_bottom = 14.0
-grow_vertical = 2
-theme_override_font_sizes/font_size = 14
-text = "⟨"
-tooltip_text = "收起控制台"
 
 [node name="ConsoleSummonTab" type="Button" parent="."]
 visible = false
 layout_mode = 1
 offset_left = 12.0
 offset_top = 12.0
-offset_right = 116.0
-offset_bottom = 44.0
-text = "☰ 控制台"
-tooltip_text = "展开控制台"
+offset_right = 142.0
+offset_bottom = 46.0
+theme_override_colors/font_color = Color(0.98, 0.90, 0.76, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("SummonTabNormal")
+theme_override_styles/hover = SubResource("SummonTabHover")
+theme_override_styles/pressed = SubResource("SummonTabHover")
+text = "🪐 创世控制台 ❯"
+tooltip_text = "展开创世控制台"
+
+[node name="WorldSetupMenu" parent="." instance=ExtResource("10_world_setup")]
+visible = false
+layout_mode = 1
 
 [node name="MainMenu" parent="." instance=ExtResource("8_menu")]
 layout_mode = 1

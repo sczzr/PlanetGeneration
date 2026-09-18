@@ -508,6 +508,19 @@ public partial class Main : Control
 
 		UpdateLabels();
 
+		_worldSetupMenu?.SyncFromMain(
+			PlateCount,
+			_terrainOceanicRatio,
+			_terrainContinentBias,
+			WindCellCount,
+			MoistureIterations,
+			BasinSensitivity,
+			_magicDensity,
+			_civilAggression,
+			_speciesDiversity,
+			_currentEpoch,
+			_polygonTileMode);
+
 		if (regenerate)
 		{
 			GenerateWorld();

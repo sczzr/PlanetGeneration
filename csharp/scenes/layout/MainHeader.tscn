@@ -2,200 +2,270 @@
 
 [ext_resource type="Script" path="res://scripts/UI/MainHeaderController.cs" id="1_header_controller"]
 
+[sub_resource type="StyleBoxFlat" id="HeaderBackground"]
+bg_color = Color(0.12, 0.09, 0.07, 0.95)
+border_width_bottom = 2
+border_color = Color(0.68, 0.48, 0.26, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+content_margin_left = 12.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
 
-[sub_resource type="StyleBoxFlat" id="1"]
-bg_color = Color(0.075, 0.055, 0.10, 0.92)
+[sub_resource type="StyleBoxFlat" id="HeroBtnNormal"]
+bg_color = Color(0.85, 0.54, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.90, 0.62, 0.95)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="HeroBtnHover"]
+bg_color = Color(0.95, 0.62, 0.28, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 0.82, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+shadow_color = Color(0.95, 0.62, 0.28, 0.45)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="HeroBtnPressed"]
+bg_color = Color(0.68, 0.38, 0.14, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.96, 0.72, 0.42, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 12.0
+content_margin_top = 6.0
+content_margin_right = 12.0
+content_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="PillBtnNormal"]
+bg_color = Color(0.22, 0.16, 0.12, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.34, 0.25, 0.38, 1)
-content_margin_left = 10.0
+border_color = Color(0.55, 0.40, 0.28, 0.8)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 8.0
 content_margin_top = 4.0
-content_margin_right = 10.0
+content_margin_right = 8.0
 content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="4"]
-bg_color = Color(0.196078, 0.45098, 0.862745, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="5"]
-bg_color = Color(0.152941, 0.380392, 0.760784, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="6"]
-bg_color = Color(0.117647, 0.152941, 0.219608, 0.95)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="7"]
-bg_color = Color(0.176471, 0.215686, 0.286275, 0.98)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="2"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
-border_width_right = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="3"]
-bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
+[sub_resource type="StyleBoxFlat" id="PillBtnHover"]
+bg_color = Color(0.32, 0.22, 0.16, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0.85, 0.62, 0.36, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="8"]
-bg_color = Color(0.0313726, 0.0392157, 0.054902, 1)
-border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="9"]
-bg_color = Color(0.0431373, 0.054902, 0.0784314, 1)
-
-[sub_resource type="StyleBoxFlat" id="10"]
-bg_color = Color(0.0156863, 0.0196078, 0.0313726, 1)
+[sub_resource type="StyleBoxFlat" id="PillBtnPressed"]
+bg_color = Color(0.16, 0.11, 0.08, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(1, 1, 1, 0.08)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
+border_color = Color(0.45, 0.32, 0.22, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="13"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 0.96)
+[sub_resource type="StyleBoxFlat" id="CloseBtnNormal"]
+bg_color = Color(0.22, 0.14, 0.12, 0.85)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0.65, 0.35, 0.25, 0.75)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="12"]
-bg_color = Color(0.0666667, 0.0823529, 0.109804, 1)
-border_width_top = 1
-border_color = Color(0.117647, 0.14902, 0.192157, 1)
-
-[sub_resource type="StyleBoxFlat" id="14"]
-bg_color = Color(0.054902, 0.0705882, 0.0980392, 0.98)
+[sub_resource type="StyleBoxFlat" id="CloseBtnHover"]
+bg_color = Color(0.65, 0.18, 0.18, 0.95)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.192157, 0.243137, 0.313726, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+border_color = Color(0.95, 0.45, 0.45, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="CloseBtnPressed"]
+bg_color = Color(0.42, 0.10, 0.10, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.35, 0.35, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+content_margin_left = 6.0
+content_margin_top = 4.0
+content_margin_right = 6.0
+content_margin_bottom = 4.0
 
 [node name="HeaderPanel" type="PanelContainer" unique_id=1086275998]
-custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("1")
+theme_override_styles/panel = SubResource("HeaderBackground")
 script = ExtResource("1_header_controller")
 
-[node name="HeaderHBox" type="HBoxContainer" parent="." unique_id=1872963194]
+[node name="HeaderVBox" type="VBoxContainer" parent="." unique_id=1872963194]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
-
-[node name="TitleHBox" type="HBoxContainer" parent="HeaderHBox" unique_id=19161005]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 10
-
-[node name="Title" type="Label" parent="HeaderHBox/TitleHBox" unique_id=1992850706]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.95, 0.91, 0.87, 1)
-theme_override_font_sizes/font_size = 18
-text = "PLANET / 控制台"
-vertical_alignment = 1
-
-[node name="Subtitle" type="Label" parent="HeaderHBox/TitleHBox" unique_id=257500347]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.94, 0.65, 0.34, 1)
-theme_override_font_sizes/font_size = 14
-text = "PLANET GENERATION  /  VERSION 4"
-vertical_alignment = 1
-
-[node name="HeaderButtons" type="HBoxContainer" parent="HeaderHBox" unique_id=1374639486]
-layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AdvancedSettingsButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=2100000401]
-custom_minimum_size = Vector2(118, 36)
+[node name="HeaderHBox" type="HBoxContainer" parent="HeaderVBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TitleHBox" type="VBoxContainer" parent="HeaderVBox/HeaderHBox" unique_id=19161005]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+
+[node name="Title" type="Label" parent="HeaderVBox/HeaderHBox/TitleHBox" unique_id=1992850706]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.92, 0.82, 1)
+theme_override_font_sizes/font_size = 15
+text = "🪐 观测控制台"
+vertical_alignment = 1
+
+[node name="Subtitle" type="Label" parent="HeaderVBox/HeaderHBox/TitleHBox" unique_id=257500347]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.65, 0.38, 0.9)
+theme_override_font_sizes/font_size = 10
+text = "OBSERVATION DECK · V4"
+vertical_alignment = 1
+
+[node name="HeaderButtons" type="HBoxContainer" parent="HeaderVBox/HeaderHBox" unique_id=1374639486]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="AdvancedSettingsButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=2100000401]
+custom_minimum_size = Vector2(34, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.88, 0.82, 1)
 theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("6")
-theme_override_styles/pressed = SubResource("7")
-theme_override_styles/hover = SubResource("7")
-text = "高级设置"
+theme_override_styles/normal = SubResource("PillBtnNormal")
+theme_override_styles/hover = SubResource("PillBtnHover")
+theme_override_styles/pressed = SubResource("PillBtnPressed")
+text = "⚙"
+tooltip_text = "高级与实验设置"
 
-
-[node name="GenerateButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1151155859]
-visible = true
-custom_minimum_size = Vector2(118, 36)
+[node name="ExportPngButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=1387368488]
+custom_minimum_size = Vector2(38, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("4")
-theme_override_styles/pressed = SubResource("5")
-theme_override_styles/hover = SubResource("5")
-text = "重新生成"
-
-
-[node name="ExportPngButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1387368488]
-custom_minimum_size = Vector2(52, 36)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("6")
-theme_override_styles/pressed = SubResource("7")
-theme_override_styles/hover = SubResource("7")
+theme_override_colors/font_color = Color(0.92, 0.88, 0.82, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("PillBtnNormal")
+theme_override_styles/hover = SubResource("PillBtnHover")
+theme_override_styles/pressed = SubResource("PillBtnPressed")
 text = "PNG"
-tooltip_text = "导出 PNG 地图"
+tooltip_text = "导出高清地图图片"
 
-
-[node name="ExportJsonButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=517701688]
-custom_minimum_size = Vector2(58, 36)
+[node name="ExportJsonButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=517701688]
+custom_minimum_size = Vector2(42, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
-theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("6")
-theme_override_styles/pressed = SubResource("7")
-theme_override_styles/hover = SubResource("7")
+theme_override_colors/font_color = Color(0.92, 0.88, 0.82, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("PillBtnNormal")
+theme_override_styles/hover = SubResource("PillBtnHover")
+theme_override_styles/pressed = SubResource("PillBtnPressed")
 text = "JSON"
-tooltip_text = "导出 JSON 报告"
+tooltip_text = "导出世界数据报告"
 
-[node name="ThemeToggleButton" type="Button" parent="HeaderHBox/HeaderButtons" unique_id=1001]
-custom_minimum_size = Vector2(52, 36)
+[node name="ThemeToggleButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=1001]
+custom_minimum_size = Vector2(34, 30)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.772549, 0.815686, 0.878431, 1)
+theme_override_colors/font_color = Color(0.92, 0.88, 0.82, 1)
 theme_override_font_sizes/font_size = 13
-theme_override_styles/normal = SubResource("6")
-theme_override_styles/pressed = SubResource("7")
-theme_override_styles/hover = SubResource("7")
-text = "主题"
-tooltip_text = "切换界面主题"
+theme_override_styles/normal = SubResource("PillBtnNormal")
+theme_override_styles/hover = SubResource("PillBtnHover")
+theme_override_styles/pressed = SubResource("PillBtnPressed")
+text = "🎨"
+tooltip_text = "切换界面风格 (国风仙侠 / 蒸汽工坊)"
 
+[node name="ConsoleCollapseTab" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=999901]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.82, 0.78, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("CloseBtnNormal")
+theme_override_styles/hover = SubResource("CloseBtnHover")
+theme_override_styles/pressed = SubResource("CloseBtnPressed")
+text = "✕"
+tooltip_text = "收起控制台"
+
+[node name="GenerateButton" type="Button" parent="HeaderVBox" unique_id=1151155859]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.12, 0.08, 0.03, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("HeroBtnNormal")
+theme_override_styles/hover = SubResource("HeroBtnHover")
+theme_override_styles/pressed = SubResource("HeroBtnPressed")
+text = "🪐 创世工坊 · 重构世界 (WORLD SETUP)"

@@ -9,12 +9,17 @@ namespace PlanetGeneration.UI;
 /// </summary>
 public partial class MainMenu : Control
 {
+	public event Action? ContinueRequested;
 	public event Action? NewWorldRequested;
 	public event Action? SettingsRequested;
 
 	public override void _Ready()
 	{
-		GetNode<Button>("%ContinueButton").Pressed += Close;
+		GetNode<Button>("%ContinueButton").Pressed += () =>
+		{
+			Close();
+			ContinueRequested?.Invoke();
+		};
 		GetNode<Button>("%NewWorldButton").Pressed += () =>
 		{
 			Close();

@@ -17,6 +17,11 @@ public partial class Main : Control
 {
 	private void GenerateWorld()
 	{
+		if (_worldSetupMenu != null && _worldSetupMenu.Visible)
+		{
+			return;
+		}
+
 		if (_isGenerating)
 		{
 			_pendingRegenerate = true;
@@ -126,6 +131,10 @@ public partial class Main : Control
 			else
 			{
 				_progressOverlay.Visible = false;
+				if (generationSucceeded)
+				{
+					SetConsolePanelVisible(true);
+				}
 			}
 		}
 	}
