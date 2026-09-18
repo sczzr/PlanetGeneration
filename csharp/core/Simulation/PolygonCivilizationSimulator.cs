@@ -394,13 +394,15 @@ public static class PolygonCivilizationSimulator
             out var cityStateCount);
 
         // ── 贸易走廊：沿真实邻接的最短路 ──
+        var routePaths = new List<TradeRoutePath>();
         var connectedHubPercent = BuildTradeRoutes(
             grid,
             landMask,
             safeSea,
             epochFactor,
             aggressionNorm,
-            hubs);
+            hubs,
+            routePaths);
 
         var tradeRouteCells = CountTrue(fields.TradeRouteMask);
 
@@ -431,6 +433,7 @@ public static class PolygonCivilizationSimulator
             BorderVolatilityPercent = borderVolatilityPercent,
             LandCellCount = landCells,
             RecentEvents = recentEvents,
+            Routes = routePaths,
         };
     }
 
@@ -1128,7 +1131,8 @@ public static class PolygonCivilizationSimulator
         float seaLevel,
         float epochFactor,
         float aggressionNorm,
-        List<TradeHub> hubs)
+        List<TradeHub> hubs,
+        List<TradeRoutePath>? routePaths = null)
     {
         var fields = grid.Fields;
         var tradeRouteMask = fields.TradeRouteMask;
@@ -1209,7 +1213,8 @@ public static class PolygonCivilizationSimulator
                     landMask,
                     seaLevel,
                     hubs[i],
-                    hubs[bestIndex]);
+                    hubs[bestIndex],
+                    routePaths);
 
                 if (drewAny)
                 {
@@ -1246,7 +1251,8 @@ public static class PolygonCivilizationSimulator
         bool[] landMask,
         float seaLevel,
         TradeHub fromHub,
-        TradeHub toHub)
+        TradeHub toHub,
+        List<TradeRoutePath>? routePaths = null)
     {
         var start = fromHub.Cell;
         var goal = toHub.Cell;
@@ -1339,9 +1345,14 @@ public static class PolygonCivilizationSimulator
         var step = 0;
         var tradeRouteMask = grid.Fields.TradeRouteMask;
         var tradeFlow = grid.Fields.TradeFlow;
+        var pathCells = new int[corridorLength];
+        var pathIdx = corridorLength - 1;
+        var maxFlow = 0f;
 
         for (var cursor = goal; cursor >= 0; cursor = previous[cursor])
         {
+            pathCells[pathIdx--] = cursor;
+
             // 沿路径的归一化位置：用于让走廊中段比两端更强（枢纽之间人流最密）。
             var t = corridorLength > 1 ? step / (float)(corridorLength - 1) : 0.5f;
             var corridorStrength = Math.Clamp(
@@ -1351,12 +1362,24 @@ public static class PolygonCivilizationSimulator
 
             tradeRouteMask[cursor] = true;
             tradeFlow[cursor] = MathF.Max(tradeFlow[cursor], corridorStrength);
+            maxFlow = MathF.Max(maxFlow, corridorStrength);
 
             step++;
             if (previous[cursor] < 0)
             {
                 break;
             }
+        }
+
+        if (routePaths != null && pathCells.Length > 0)
+        {
+            routePaths.Add(new TradeRoutePath
+            {
+                FromHubCell = start,
+                ToHubCell = goal,
+                Cells = pathCells,
+                Flow = maxFlow
+            });
         }
 
         return true;

@@ -30,6 +30,7 @@ public partial class MapCanvas : Control
 
     private ArrayMesh? _cellMesh;
     private CurvedMeshTopology? _topology;
+    private Vector2[][]? _cachedCurvedEdges;
 
     private static readonly Texture2D WhiteTexture = ImageTexture.CreateFromImage(
         Image.CreateFromData(1, 1, false, Image.Format.Rgba8, new byte[] { 255, 255, 255, 255 }));
@@ -52,17 +53,50 @@ public partial class MapCanvas : Control
         _hoveredCellId = -1;
         _highlightRings.Clear();
 
-        if (isSameGeometry)
+        if (isSameGeometry && _cachedCurvedEdges != null)
         {
             UpdateMeshColors();
         }
         else
         {
             _topology = CurvedCellGeometry.BuildMeshTopology(snapshot.Geometry, 3);
+            BuildCachedCurvedEdges(snapshot.Geometry);
             RebuildCellMesh();
         }
 
         QueueRedraw();
+    }
+
+    private void BuildCachedCurvedEdges(CellGeometry geom)
+    {
+        var raw = CurvedCellGeometry.GetCanonicalCurvedEdges(geom, 3);
+        var list = new List<Vector2[]>(raw.Length);
+        var width = (float)geom.Width;
+
+        for (var i = 0; i < raw.Length; i++)
+        {
+            var pts = raw[i];
+            if (pts.Length < 2) continue;
+
+            var vpts = new Vector2[pts.Length];
+            var cross = false;
+            for (var k = 0; k < pts.Length; k++)
+            {
+                vpts[k] = new Vector2((float)pts[k].X, (float)pts[k].Y);
+                if (k > 0 && Math.Abs(vpts[k].X - vpts[k - 1].X) > width * 0.5f)
+                {
+                    cross = true;
+                    break;
+                }
+            }
+
+            if (!cross)
+            {
+                list.Add(vpts);
+            }
+        }
+
+        _cachedCurvedEdges = list.ToArray();
     }
 
     public void UpdateLayerStack(LayerStackState layerStack)
@@ -268,6 +302,10 @@ public partial class MapCanvas : Control
         var scaleY = Size.Y / (float)geom.Height;
         DrawSetTransform(Vector2.Zero, 0f, new Vector2(scaleX, scaleY));
 
+        // 精确计算世界坐标到最终屏幕物理像素的缩放比例
+        var globalTransform = GetGlobalTransform();
+        var screenScale = Mathf.Max((globalTransform.BasisXform(new Vector2(scaleX, 0f))).Length(), 0.0001f);
+
         // 1. 绘制 GPU 2D 矢量网格底图（平滑曲线地块，放大无像素锯齿）
         if (_cellMesh != null)
         {
@@ -276,12 +314,12 @@ public partial class MapCanvas : Control
 
         // 2. 绘制矢量叠加图层
         var visibleRect = new Rect2(Vector2.Zero, new Vector2((float)geom.Width, (float)geom.Height));
-        OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, _labelFont);
+        OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, screenScale, _labelFont, _cachedCurvedEdges);
 
         // 3. 绘制平滑高亮环
         if (_highlightRings.Count > 0)
         {
-            var strokeWidth = 2.5f / Mathf.Max(scaleX, 0.001f);
+            var strokeWidth = 2.5f / screenScale;
             foreach (var ring in _highlightRings)
             {
                 if (ring.Length < 3) continue;
@@ -294,7 +332,7 @@ public partial class MapCanvas : Control
                     closed[i] = ring[i];
                 }
                 closed[ring.Length] = ring[0];
-                DrawPolyline(closed, _highlightStroke, strokeWidth);
+                DrawPolyline(closed, _highlightStroke, strokeWidth, true);
             }
         }
     }

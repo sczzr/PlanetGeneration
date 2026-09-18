@@ -260,6 +260,7 @@ internal static class Program
 
         Assert(civ1.PolityCount == civ2.PolityCount, "政体数量确定性校验失败");
         Assert(civ1.TradeRouteCells == civ2.TradeRouteCells, "贸易网络确定性校验失败");
+        Assert(civ1.Routes != null && civ2.Routes != null && civ1.Routes.Count == civ2.Routes.Count, "贸易路线数量确定性校验失败");
     }
 
     private static void TestCacheKeyStability()
@@ -320,6 +321,15 @@ internal static class Program
         {
             var cellId = topology.VertexToCell[v];
             Assert(cellId >= 0 && cellId < geom.Count, $"顶点所属地块 ID 越界: {cellId}, 地块总数: {geom.Count}");
+        }
+
+        // 4. 校验全图规范平滑边去重正确性
+        var canonicalEdges = CurvedCellGeometry.GetCanonicalCurvedEdges(geom, 3);
+        Assert(canonicalEdges.Length > 0, "规范平滑曲线边数量必须大于 0");
+        Assert(canonicalEdges.Length < geom.Count * 4, "去重后的规范边总数应约为地块数的 3 倍");
+        for (var i = 0; i < Math.Min(canonicalEdges.Length, 50); i++)
+        {
+            Assert(canonicalEdges[i].Length == 4, $"细分 3 时的曲线边点数应为 4，实际为 {canonicalEdges[i].Length}");
         }
     }
 }

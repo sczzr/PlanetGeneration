@@ -134,6 +134,49 @@ public static class CurvedCellGeometry
     }
 
     /// <summary>
+    /// 获取全图所有规范化平滑曲线边（每条边严格唯一，已去重共享边）。
+    /// </summary>
+    public static PolyVec2[][] GetCanonicalCurvedEdges(CellGeometry geom, int subdivisions = 3)
+    {
+        var count = geom.Count;
+        var width = geom.Width;
+        var edgeCache = new Dictionary<EdgeKey, PolyVec2[]>(count * 3);
+
+        for (var cellId = 0; cellId < count; cellId++)
+        {
+            var vCount = geom.GetVertexCount(cellId);
+            if (vCount < 3) continue;
+
+            var start = geom.CellVertexStart[cellId];
+            var refX = geom.CentroidX[cellId];
+
+            var baseVerts = new PolyVec2[vCount];
+            for (var i = 0; i < vCount; i++)
+            {
+                var vx = geom.VertexX[start + i];
+                vx -= Math.Round((vx - refX) / width) * width;
+                baseVerts[i] = new PolyVec2(vx, geom.VertexY[start + i]);
+            }
+
+            for (var i = 0; i < vCount; i++)
+            {
+                var p0 = baseVerts[i];
+                var p1 = baseVerts[(i + 1) % vCount];
+                GetOrCreateCurvedEdge(p0, p1, width, subdivisions, edgeCache);
+            }
+        }
+
+        var edges = new PolyVec2[edgeCache.Count][];
+        var idx = 0;
+        foreach (var curve in edgeCache.Values)
+        {
+            edges[idx++] = curve;
+        }
+
+        return edges;
+    }
+
+    /// <summary>
     /// 为整个地块几何生成 GPU 2D 矢量网格拓扑（水密无缝、带经度镜像无缝拼接）。
     /// </summary>
     public static CurvedMeshTopology BuildMeshTopology(CellGeometry geom, int subdivisions = 3)

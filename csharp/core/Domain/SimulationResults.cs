@@ -18,6 +18,15 @@ public sealed record CivilizationEvent
     public required int ImpactLevel { get; init; }
 }
 
+/// <summary>贸易走廊路径信息。</summary>
+public sealed record TradeRoutePath
+{
+    public required int FromHubCell { get; init; }
+    public required int ToHubCell { get; init; }
+    public required int[] Cells { get; init; }
+    public required float Flow { get; init; }
+}
+
 /// <summary>文明演化模拟结果。</summary>
 public sealed record CivilizationResult
 {
@@ -35,4 +44,5 @@ public sealed record CivilizationResult
     public required float BorderVolatilityPercent { get; init; }
     public required int LandCellCount { get; init; }
     public required CivilizationEvent[] RecentEvents { get; init; }
+    public IReadOnlyList<TradeRoutePath> Routes { get; init; } = System.Array.Empty<TradeRoutePath>();
 }
