@@ -15,6 +15,8 @@ public sealed class CellFields
     public float[] Height { get; private init; } = Array.Empty<float>();
     public float[] Temperature { get; private init; } = Array.Empty<float>();
     public float[] Moisture { get; private init; } = Array.Empty<float>();
+    public float[] WindX { get; private init; } = Array.Empty<float>();
+    public float[] WindY { get; private init; } = Array.Empty<float>();
     public float[] River { get; private init; } = Array.Empty<float>();
     public byte[] Biome { get; private init; } = Array.Empty<byte>();
     public byte[] Rock { get; private init; } = Array.Empty<byte>();
@@ -58,6 +60,8 @@ public sealed class CellFields
             Height = new float[count],
             Temperature = new float[count],
             Moisture = new float[count],
+            WindX = new float[count],
+            WindY = new float[count],
             River = new float[count],
             Biome = new byte[count],
             Rock = new byte[count],
@@ -85,6 +89,8 @@ public sealed class CellFields
         Array.Copy(Height, copy.Height, Count);
         Array.Copy(Temperature, copy.Temperature, Count);
         Array.Copy(Moisture, copy.Moisture, Count);
+        Array.Copy(WindX, copy.WindX, Count);
+        Array.Copy(WindY, copy.WindY, Count);
         Array.Copy(River, copy.River, Count);
         Array.Copy(Biome, copy.Biome, Count);
         Array.Copy(Rock, copy.Rock, Count);

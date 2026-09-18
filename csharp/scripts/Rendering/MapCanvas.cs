@@ -42,8 +42,9 @@ public partial class MapCanvas : Control
 
     public override void _Ready()
     {
-        MouseFilter = MouseFilterEnum.Pass;
+        MouseFilter = MouseFilterEnum.Ignore;
         ClipContents = true;
+        SetNotifyTransform(true);
     }
 
     public void AttachSnapshot(WorldSnapshot snapshot, LayerStackState layerStack, Font? font = null)
@@ -332,6 +333,10 @@ public partial class MapCanvas : Control
         if (what == NotificationMouseExit)
         {
             SetHoveredCell(-1);
+        }
+        else if (what == NotificationTransformChanged)
+        {
+            QueueRedraw();
         }
     }
 

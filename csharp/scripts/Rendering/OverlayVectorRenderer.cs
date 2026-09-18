@@ -36,7 +36,7 @@ public sealed class PlateBoundarySegment
 public static class OverlayVectorRenderer
 {
     private static readonly Color RiverColor = Color.FromHtml("#1a75d2");
-    private static readonly Color CoastlineColor = Color.FromHtml("#0b2247");
+    private static readonly Color CoastlineColor = Color.FromHtml("#111111");
     private static readonly Color BorderColor = Color.FromHtml("#ffe066");
     private static readonly Color TradeRouteGlowColor = new(1.0f, 0.72f, 0.15f);
     private static readonly Color TradeRouteCoreColor = new(1.0f, 0.90f, 0.35f);
@@ -74,7 +74,7 @@ public static class OverlayVectorRenderer
                 case "rivers":
                     DrawRivers(item, snapshot, alpha, widthScale, visibleRect, safeScale);
                     break;
-                case "coastlines":
+                case LayerRegistry.LayerCoastlines or "coastlines":
                     DrawCoastlines(item, snapshot, alpha, widthScale, visibleRect, safeScale, cachedRenderEdges);
                     break;
                 case "polity_borders" or "borders":
@@ -96,7 +96,7 @@ public static class OverlayVectorRenderer
                     DrawCellOutlines(item, snapshot, alpha, widthScale, visibleRect, safeScale, cachedCurvedEdges);
                     break;
                 case "wind_arrows":
-                    DrawWindArrows(item, snapshot, alpha, widthScale, visibleRect, safeScale);
+                    DrawWindArrows(item, snapshot, alpha, widthScale, visibleRect, safeScale, font);
                     break;
                 case "plate_borders" or "plate_boundaries":
                     DrawPlateBoundaries(item, snapshot, alpha, widthScale, visibleRect, safeScale, cachedPlateBoundaries, cachedRenderEdges);
@@ -790,41 +790,250 @@ public static class OverlayVectorRenderer
         }
     }
 
-    private static void DrawWindArrows(CanvasItem item, WorldSnapshot snapshot, float alpha, float widthScale, Rect2 visibleRect, float screenScale)
+    private static void DrawWindArrows(
+        CanvasItem item,
+        WorldSnapshot snapshot,
+        float alpha,
+        float widthScale,
+        Rect2 visibleRect,
+        float screenScale,
+        Font? font = null)
     {
         var geom = snapshot.Geometry;
-        var color = new Color(1f, 1f, 1f, alpha * 0.65f);
-        var step = Math.Max(1, geom.Count / 300);
-        var lineWidth = Mathf.Clamp(1.1f * widthScale, 0.6f, 3.5f) / screenScale;
+        var width = (float)geom.Width;
+        var height = (float)geom.Height;
+        if (width <= 0f || height <= 0f) return;
 
-        for (var i = 0; i < geom.Count; i += step)
+        // 经典气象绿 (Meteorological Green: #007a24)
+        var arrowColor = new Color(0.0f, 0.48f, 0.14f, alpha * 0.95f);
+        var shadowColor = new Color(0.95f, 0.98f, 0.95f, alpha * 0.85f);
+        var textColor = new Color(0.05f, 0.20f, 0.08f, alpha * 0.95f);
+
+        var userScale = Mathf.Clamp(widthScale, 0.4f, 2.5f);
+        var targetScreenLineWidth = Mathf.Clamp(1.05f * userScale, 0.6f, 2.0f);
+        var lineWidth = targetScreenLineWidth / screenScale;
+
+        // 1. 经纬度规则网格稀疏度计算（大幅提升开阔度，避免重叠粘连）
+        // 默认全球约 28~32 列 x 14~16 行，晶格单元留白约 50%
+        var baseSpacing = 70f / userScale;
+        var cols = Mathf.Clamp(Mathf.RoundToInt(width / baseSpacing), 16, 44);
+        var rows = Mathf.Clamp(Mathf.RoundToInt(height / baseSpacing), 8, 22);
+        var stepX = width / cols;
+        var stepY = height / rows;
+        var refLength = Mathf.Min(stepX, stepY) * 0.50f;
+
+        const float RefSpeed = 10.0f; // 10 m/s 气象标尺基准速度
+        const float BarbAngle = 0.50f; // ~28.6° 气象经典倒钩张角
+
+        var continuous = snapshot.ContinuousWind;
+        var contW = continuous?.GetLength(0) ?? 0;
+        var contH = continuous?.GetLength(1) ?? 0;
+
+        // 2. 遍历网格点绘制风场矢量
+        for (var r = 0; r < rows; r++)
         {
-            var cx = (float)geom.CentroidX[i];
-            var cy = (float)geom.CentroidY[i];
-            var center = new Vector2(cx, cy);
-            if (!visibleRect.HasPoint(center)) continue;
-
-            var mapH = (float)geom.Height;
-            var latNorm = (cy - (mapH * 0.5f)) / (mapH * 0.5f);
-            var dir = (latNorm switch
+            var cy = (r + 0.5f) * stepY;
+            if (cy < visibleRect.Position.Y - refLength || cy > visibleRect.End.Y + refLength)
             {
-                > 0.6f => new Vector2(-1f, 0.2f),
-                > 0.3f => new Vector2(1f, -0.3f),
-                > 0.0f => new Vector2(-1f, 0.1f),
-                > -0.3f => new Vector2(-1f, -0.1f),
-                > -0.6f => new Vector2(1f, 0.3f),
-                _ => new Vector2(-1f, -0.2f)
-            }).Normalized();
+                continue;
+            }
 
-            var len = (float)Math.Min(geom.SpacingX, geom.SpacingY) * 0.8f * widthScale;
-            var tip = center + (dir * len * 0.5f);
-            var tail = center - (dir * len * 0.5f);
+            var vNorm = cy / height;
 
-            item.DrawLine(tail, tip, color, lineWidth, true);
-            var arrowLeft = tip - (dir.Rotated(0.5f) * len * 0.35f);
-            var arrowRight = tip - (dir.Rotated(-0.5f) * len * 0.35f);
-            item.DrawLine(tip, arrowLeft, color, lineWidth, true);
-            item.DrawLine(tip, arrowRight, color, lineWidth, true);
+            for (var c = 0; c < cols; c++)
+            {
+                var cx = (c + 0.5f) * stepX;
+                if (cx < visibleRect.Position.X - refLength || cx > visibleRect.End.X + refLength)
+                {
+                    continue;
+                }
+
+                float vx, vy;
+
+                if (continuous != null && contW > 0 && contH > 0)
+                {
+                    // 连续场双线性平滑插值 (经度横向无缝循环)
+                    var uNorm = cx / width;
+                    var fx = uNorm * contW;
+                    var fy = vNorm * contH;
+                    var x0 = (int)Mathf.Floor(fx);
+                    var y0 = (int)Mathf.Floor(fy);
+                    var tx = fx - x0;
+                    var ty = fy - y0;
+
+                    var x0w = ((x0 % contW) + contW) % contW;
+                    var x1w = (((x0 + 1) % contW) + contW) % contW;
+                    var y0c = Math.Clamp(y0, 0, contH - 1);
+                    var y1c = Math.Clamp(y0 + 1, 0, contH - 1);
+
+                    var v00 = continuous[x0w, y0c];
+                    var v10 = continuous[x1w, y0c];
+                    var v01 = continuous[x0w, y1c];
+                    var v11 = continuous[x1w, y1c];
+
+                    var topX = (v00.X * (1f - tx)) + (v10.X * tx);
+                    var bottomX = (v01.X * (1f - tx)) + (v11.X * tx);
+                    var topY = (v00.Y * (1f - tx)) + (v10.Y * tx);
+                    var bottomY = (v01.Y * (1f - tx)) + (v11.Y * tx);
+
+                    vx = (topX * (1f - ty)) + (bottomX * ty);
+                    vy = (topY * (1f - ty)) + (bottomY * ty);
+                }
+                else
+                {
+                    // 回退：查询最近地块属性
+                    var cellId = geom.FindCell(cx, cy);
+                    if (cellId >= 0 && cellId < snapshot.Fields.Count && snapshot.Fields.WindX.Length > cellId)
+                    {
+                        vx = snapshot.Fields.WindX[cellId];
+                        vy = snapshot.Fields.WindY[cellId];
+                    }
+                    else
+                    {
+                        var latNorm = (cy - (height * 0.5f)) / (height * 0.5f);
+                        vx = latNorm > 0.3f || latNorm < -0.3f ? 12f : -12f;
+                        vy = 0f;
+                    }
+                }
+
+                var speed = Mathf.Sqrt((vx * vx) + (vy * vy));
+                var pt = new Vector2(cx, cy);
+
+                if (speed < 0.35f)
+                {
+                    // 静风/微风区：点绘纤细标记
+                    item.DrawCircle(pt, 0.85f / screenScale, arrowColor);
+                    continue;
+                }
+
+                var dir = new Vector2(vx, vy) / speed;
+                var ratio = Mathf.Clamp(speed / RefSpeed, 0.10f, 1.45f);
+                var arrowLength = refLength * ratio;
+                var tip = pt + (dir * arrowLength);
+
+                // 细线条箭杆（屏幕恒定 1.05px 纤细线条）
+                item.DrawLine(pt, tip, arrowColor, lineWidth, true);
+
+                // 经典气象 V 型回钩箭头（屏幕自适应 3.2~7.0px 锐利倒钩）
+                var headLen = Mathf.Clamp(arrowLength * 0.28f, 3.2f / screenScale, 7.0f / screenScale);
+                var barbLeft = tip - (dir.Rotated(BarbAngle) * headLen);
+                var barbRight = tip - (dir.Rotated(-BarbAngle) * headLen);
+
+                item.DrawLine(tip, barbLeft, arrowColor, lineWidth, true);
+                item.DrawLine(tip, barbRight, arrowColor, lineWidth, true);
+            }
+        }
+
+        // 3. 右上角气象风标标尺 (→ 10 m/s)
+        DrawWindScaleLegend(item, geom, arrowColor, textColor, shadowColor, refLength, lineWidth, screenScale, font);
+
+        // 4. 经纬度刻度边框 (Graticule Neatline Frame)
+        DrawGraticuleFrame(item, geom, screenScale, font);
+    }
+
+    private static void DrawWindScaleLegend(
+        CanvasItem item,
+        CellGeometry geom,
+        Color arrowColor,
+        Color textColor,
+        Color shadowColor,
+        float refLength,
+        float lineWidth,
+        float screenScale,
+        Font? font)
+    {
+        var padX = 24f / screenScale;
+        var padY = 18f / screenScale;
+        var scaleShaftLen = Mathf.Max(refLength, 28f / screenScale);
+
+        var refStartX = (float)geom.Width - padX - scaleShaftLen - (65f / screenScale);
+        var refY = padY + (8f / screenScale);
+        var refEndX = refStartX + scaleShaftLen;
+
+        var startPt = new Vector2(refStartX, refY);
+        var endPt = new Vector2(refEndX, refY);
+        var dir = Vector2.Right;
+
+        // 标尺微发光半透明底色，确保任何底图下均清晰可见
+        var bgRect = new Rect2(refStartX - (8f / screenScale), padY - (4f / screenScale), scaleShaftLen + (76f / screenScale), 24f / screenScale);
+        item.DrawRect(bgRect, new Color(1f, 1f, 1f, 0.78f), true);
+        item.DrawRect(bgRect, new Color(0.1f, 0.1f, 0.1f, 0.35f), false, 1.0f / screenScale);
+
+        // 标尺风矢
+        item.DrawLine(startPt, endPt, arrowColor, lineWidth * 1.15f, true);
+        var headLen = Mathf.Clamp(scaleShaftLen * 0.32f, 5.0f / screenScale, 10.0f / screenScale);
+        var barbLeft = endPt - (dir.Rotated(0.50f) * headLen);
+        var barbRight = endPt - (dir.Rotated(-0.50f) * headLen);
+        item.DrawLine(endPt, barbLeft, arrowColor, lineWidth * 1.15f, true);
+        item.DrawLine(endPt, barbRight, arrowColor, lineWidth * 1.15f, true);
+
+        // 标尺文本 "10 m/s"
+        if (font != null)
+        {
+            var textPos = new Vector2(refEndX + (8f / screenScale), refY + (4f / screenScale));
+            var fontSize = Mathf.Clamp((int)(12f / screenScale), 9, 18);
+            item.DrawString(font, textPos + (Vector2.One / screenScale), "10 m/s", HorizontalAlignment.Left, -1, fontSize, shadowColor);
+            item.DrawString(font, textPos, "10 m/s", HorizontalAlignment.Left, -1, fontSize, textColor);
+        }
+    }
+
+    private static void DrawGraticuleFrame(
+        CanvasItem item,
+        CellGeometry geom,
+        float screenScale,
+        Font? font)
+    {
+        var width = (float)geom.Width;
+        var height = (float)geom.Height;
+        var frameColor = Color.FromHtml("#111111");
+        var tickColor = Color.FromHtml("#222222");
+        var textColor = Color.FromHtml("#222222");
+        var shadowColor = new Color(1f, 1f, 1f, 0.85f);
+        var frameWidth = 1.6f / screenScale;
+        var tickLen = 6.0f / screenScale;
+        var fontSize = Mathf.Clamp((int)(10f / screenScale), 8, 14);
+
+        // 外围整饰框
+        item.DrawRect(new Rect2(0, 0, width, height), frameColor, false, frameWidth);
+
+        // 经度刻度（底边与顶边：每 30° 一个主刻度，全图 360° 共 12 格）
+        var lonLabels = new[] { "180°", "150°W", "120°W", "90°W", "60°W", "30°W", "0°", "30°E", "60°E", "90°E", "120°E", "150°E", "180°" };
+        var lonSteps = lonLabels.Length - 1;
+        for (var i = 0; i <= lonSteps; i++)
+        {
+            var x = (width / lonSteps) * i;
+            // 顶边内向刻度
+            item.DrawLine(new Vector2(x, 0), new Vector2(x, tickLen), tickColor, 1.2f / screenScale);
+            // 底边内向刻度
+            item.DrawLine(new Vector2(x, height), new Vector2(x, height - tickLen), tickColor, 1.2f / screenScale);
+
+            if (font != null && i > 0 && i < lonSteps && (i % 2 == 0))
+            {
+                var label = lonLabels[i];
+                var textPos = new Vector2(x - (14f / screenScale), height - tickLen - (3f / screenScale));
+                item.DrawString(font, textPos + (Vector2.One / screenScale), label, HorizontalAlignment.Center, -1, fontSize, shadowColor);
+                item.DrawString(font, textPos, label, HorizontalAlignment.Center, -1, fontSize, textColor);
+            }
+        }
+
+        // 纬度刻度（左侧与右侧：每 30° 一个主刻度，全图 180° 共 6 格：90°N ~ 90°S）
+        var latLabels = new[] { "90°N", "60°N", "30°N", "0°", "30°S", "60°S", "90°S" };
+        var latSteps = latLabels.Length - 1;
+        for (var j = 0; j <= latSteps; j++)
+        {
+            var y = (height / latSteps) * j;
+            // 左边内向刻度
+            item.DrawLine(new Vector2(0, y), new Vector2(tickLen, y), tickColor, 1.2f / screenScale);
+            // 右边内向刻度
+            item.DrawLine(new Vector2(width, y), new Vector2(width - tickLen, y), tickColor, 1.2f / screenScale);
+
+            if (font != null && j > 0 && j < latSteps)
+            {
+                var label = latLabels[j];
+                var textPos = new Vector2(tickLen + (4f / screenScale), y + (4f / screenScale));
+                item.DrawString(font, textPos + (Vector2.One / screenScale), label, HorizontalAlignment.Left, -1, fontSize, shadowColor);
+                item.DrawString(font, textPos, label, HorizontalAlignment.Left, -1, fontSize, textColor);
+            }
         }
     }
 

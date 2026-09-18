@@ -26,10 +26,20 @@ public partial class Main : Control
 					new Color(1.0f, 0.165f, 0.0f));
 				break;
 			case MapLayer.Moisture:
-				SetGradientLegend("降水图例", "少", "多",
-					new Color(0.851f, 0.925f, 1.0f),
-					new Color(0.353f, 0.663f, 1.0f),
-					new Color(0.051f, 0.247f, 0.584f));
+				SetGradientLegend("降水量图例 (mm)", "0 mm", "25+ mm",
+					new Color(0.957f, 0.973f, 0.988f),
+					new Color(0.659f, 0.816f, 0.941f),
+					new Color(0.263f, 0.557f, 0.812f),
+					new Color(0.063f, 0.294f, 0.561f),
+					new Color(0.016f, 0.110f, 0.259f));
+				break;
+			case MapLayer.Wind:
+				SetGradientLegend("风场降水 (10 m/s 标尺)", "0 mm", "25+ mm",
+					new Color(0.957f, 0.973f, 0.988f),
+					new Color(0.659f, 0.816f, 0.941f),
+					new Color(0.263f, 0.557f, 0.812f),
+					new Color(0.063f, 0.294f, 0.561f),
+					new Color(0.016f, 0.110f, 0.259f));
 				break;
 			case MapLayer.Rivers:
 				SetGradientLegend("河流图例", "弱", "强",

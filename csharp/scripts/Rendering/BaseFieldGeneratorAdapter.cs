@@ -64,7 +64,7 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
 
         // 5. 温度、风场与湿度扩散
         var temperature = _temperatureGenerator.Generate(width, height, seed, elevation, options.HeatFactor);
-        var windVectors = _moistureGenerator.GenerateBaseWind(width, height, seed, 8);
+        var windVectors = _moistureGenerator.GenerateBaseWind(width, height, seed, options.WindCellCount > 0 ? options.WindCellCount : 64);
         var baseMoisture = _moistureGenerator.GenerateBaseMoisture(width, height, seaLevel, elevation, temperature);
         var moisture = _moistureGenerator.DistributeMoisture(
             width,

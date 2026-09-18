@@ -17,45 +17,172 @@ public partial class Main : Control
 {
 	private void OnMapTextureGuiInput(InputEvent @event)
 	{
-		if (@event is InputEventMouseButton zoomButton && zoomButton.Pressed)
+		// 1. 滚轮缩放：以鼠标当前全局位置为中心，几何平滑连续，严格保持光标对应地图坐标不变
+		if (@event is InputEventMouseButton wheelButton && wheelButton.Pressed)
 		{
-			if (zoomButton.ButtonIndex == MouseButton.WheelUp)
+			if (wheelButton.ButtonIndex == MouseButton.WheelUp)
 			{
-				SetMapZoom(_mapZoom + GetMapZoomStep());
+				var factor = Mathf.Pow(MapZoomFactor, wheelButton.Factor > 0f ? wheelButton.Factor : 1f);
+				ZoomAt(wheelButton.GlobalPosition, _mapZoom * factor);
 				_mapTexture.AcceptEvent();
+				UpdateHoverAtPosition(wheelButton.Position, wheelButton.GlobalPosition);
 				return;
 			}
-			if (zoomButton.ButtonIndex == MouseButton.WheelDown)
+			if (wheelButton.ButtonIndex == MouseButton.WheelDown)
 			{
-				SetMapZoom(_mapZoom - GetMapZoomStep());
+				var factor = Mathf.Pow(MapZoomFactor, wheelButton.Factor > 0f ? wheelButton.Factor : 1f);
+				ZoomAt(wheelButton.GlobalPosition, _mapZoom / factor);
 				_mapTexture.AcceptEvent();
+				UpdateHoverAtPosition(wheelButton.Position, wheelButton.GlobalPosition);
 				return;
 			}
 		}
 
-		if (@event is InputEventMouseButton loreMouseButton &&
-			loreMouseButton.ButtonIndex == MouseButton.Left &&
-			loreMouseButton.Pressed)
+		// 2. 鼠标按键按下/松开：处理拖拽平移与点击防误触
+		if (@event is InputEventMouseButton mouseBtn)
 		{
-			UpdateLoreFromMapSelection(loreMouseButton.Position);
+			if (mouseBtn.Pressed)
+			{
+				if (mouseBtn.ButtonIndex == MouseButton.Left)
+				{
+					_isMapMouseDown = true;
+					_activeDragButton = MouseButton.Left;
+					_dragStartGlobalPos = mouseBtn.GlobalPosition;
+					_lastDragGlobalPos = mouseBtn.GlobalPosition;
+					_isMapDragging = false;
+					_mapTexture.AcceptEvent();
+					return;
+				}
+				if (mouseBtn.ButtonIndex == MouseButton.Right || mouseBtn.ButtonIndex == MouseButton.Middle)
+				{
+					_isMapMouseDown = true;
+					_activeDragButton = mouseBtn.ButtonIndex;
+					_dragStartGlobalPos = mouseBtn.GlobalPosition;
+					_lastDragGlobalPos = mouseBtn.GlobalPosition;
+					_isMapDragging = true;
+					_mapTexture.MouseDefaultCursorShape = CursorShape.Drag;
+					_biomeHoverPanel.Visible = false;
+					_mapTexture.AcceptEvent();
+					return;
+				}
+			}
+			else
+			{
+				// 鼠标按键松开
+				if (mouseBtn.ButtonIndex == _activeDragButton)
+				{
+					var wasDragging = _isMapDragging;
+					var isLeft = _activeDragButton == MouseButton.Left;
+
+					_isMapMouseDown = false;
+					_isMapDragging = false;
+					_activeDragButton = MouseButton.None;
+					_mapTexture.MouseDefaultCursorShape = CursorShape.Arrow;
+
+					if (wasDragging)
+					{
+						// 拖拽结束：避免误触发点击，重新同步当前位置的悬停状态
+						_mapTexture.AcceptEvent();
+						UpdateHoverAtPosition(mouseBtn.Position, mouseBtn.GlobalPosition);
+						return;
+					}
+
+					// 纯点击判定（未发生有效拖拽位移）
+					if (isLeft)
+					{
+						_mapTexture.AcceptEvent();
+						HandleMapClick(mouseBtn.Position, mouseBtn.GlobalPosition);
+						return;
+					}
+				}
+			}
 		}
 
+		// 3. 鼠标移动：处理拖拽平移或实时悬停采样
+		if (@event is InputEventMouseMotion motion)
+		{
+			if (_isMapMouseDown)
+			{
+				if (_activeDragButton == MouseButton.Left)
+				{
+					if (!_isMapDragging)
+					{
+						// 死区阈值检测：超过 DragThreshold 像素才判定为拖拽，避免轻微抖动误判
+						if ((motion.GlobalPosition - _dragStartGlobalPos).LengthSquared() > DragThreshold * DragThreshold)
+						{
+							_isMapDragging = true;
+							_mapTexture.MouseDefaultCursorShape = CursorShape.Drag;
+							_biomeHoverPanel.Visible = false;
+						}
+					}
+
+					if (_isMapDragging)
+					{
+						var delta = motion.GlobalPosition - _lastDragGlobalPos;
+						_lastDragGlobalPos = motion.GlobalPosition;
+						PanMap(delta);
+						_biomeHoverPanel.Visible = false;
+						_mapTexture.AcceptEvent();
+						return;
+					}
+				}
+				else if (_activeDragButton == MouseButton.Right || _activeDragButton == MouseButton.Middle)
+				{
+					var delta = motion.GlobalPosition - _lastDragGlobalPos;
+					_lastDragGlobalPos = motion.GlobalPosition;
+					PanMap(delta);
+					_biomeHoverPanel.Visible = false;
+					_mapTexture.AcceptEvent();
+					return;
+				}
+			}
+
+			// 未处于拖拽状态时：实时更新悬停信息与高亮
+			if (!_isMapDragging)
+			{
+				UpdateHoverAtPosition(motion.Position, motion.GlobalPosition);
+			}
+		}
+	}
+
+	private void UpdateHoverAtPosition(Vector2 localPos, Vector2 globalPos, bool isClick = false)
+	{
+		// 1. Snapshot 模式（多边形矢量网格）
+		if (_primarySnapshot != null)
+		{
+			var cellId = _mapCanvas != null && IsInstanceValid(_mapCanvas)
+				? _mapCanvas.PickCell(localPos)
+				: -1;
+
+			if (cellId >= 0 && cellId < _primarySnapshot.CellCount)
+			{
+				UpdateCellHighlight(cellId);
+
+				var sample = PlanetGeneration.Core.Application.WorldQueryService.GetCellSample(_primarySnapshot, cellId);
+				var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
+				if (sample.Settlement != null)
+				{
+					detailText += $"\n聚落:{sample.Settlement.Name} ({sample.Settlement.Rank})";
+				}
+				_biomeHoverText.Text = detailText;
+				PositionBiomeHoverPanel(globalPos);
+				_biomeHoverPanel.Visible = true;
+				return;
+			}
+
+			ResetBiomeHoverState();
+			return;
+		}
+
+		// 2. 栅格/传统模式
 		var currentLayer = GetCurrentLayer();
-		if (_primaryWorld == null || (currentLayer != MapLayer.Biomes && currentLayer != MapLayer.Landform))
+		if (_primaryWorld == null || (!isClick && currentLayer != MapLayer.Biomes && currentLayer != MapLayer.Landform))
 		{
 			ResetBiomeHoverState();
 			return;
 		}
 
-		if (@event is not InputEventMouseButton mouseButton ||
-			mouseButton.ButtonIndex != MouseButton.Left ||
-			!mouseButton.Pressed)
-		{
-			return;
-		}
-
-		var local = mouseButton.Position;
-		if (!TrySampleAtLocalPosition(local, out var hoverSample))
+		if (!TrySampleAtLocalPosition(localPos, out var hoverSample))
 		{
 			ResetBiomeHoverState();
 			return;
@@ -63,22 +190,21 @@ public partial class Main : Control
 
 		UpdateOracleHoverFromSample(hoverSample);
 
-		var detailText = BuildCellHoverText(hoverSample);
-		if (_biomeHoverText.Text != detailText)
+		var text = BuildCellHoverText(hoverSample);
+		if (_biomeHoverText.Text != text)
 		{
-			_biomeHoverText.Text = detailText;
+			_biomeHoverText.Text = text;
 		}
 
 		UpdateCellHighlight(hoverSample.IsCell ? hoverSample.CellId : -1);
-
-		PositionBiomeHoverPanel(local);
+		PositionBiomeHoverPanel(globalPos);
 		_biomeHoverPanel.Visible = true;
 	}
 
-	private float GetMapZoomStep()
+	private void HandleMapClick(Vector2 localPos, Vector2 globalPos)
 	{
-		// Increase the step at high magnification so users do not need many wheel ticks.
-		return MapZoomStep * Mathf.Max(1f, _mapZoom * 0.18f);
+		UpdateLoreFromMapSelection(localPos);
+		UpdateHoverAtPosition(localPos, globalPos, isClick: true);
 	}
 
 	private void OnMapTextureMouseExited()
@@ -324,13 +450,19 @@ public partial class Main : Control
 		return Mathf.Clamp(y, 0, height - 1);
 	}
 
-	private void PositionBiomeHoverPanel(Vector2 localMousePosition)
+	private void PositionBiomeHoverPanel(Vector2 globalMousePosition)
 	{
 		var panel = _biomeHoverPanel;
+		if (panel == null || !IsInstanceValid(panel) || _mapRoot == null || !IsInstanceValid(_mapRoot))
+		{
+			return;
+		}
+
+		var mouseInRoot = _mapRoot.GetGlobalTransform().AffineInverse() * globalMousePosition;
 		var mapSize = _mapRoot.Size;
 
-		var targetX = localMousePosition.X + BiomeHoverPanelOffsetX;
-		var targetY = localMousePosition.Y + BiomeHoverPanelOffsetY;
+		var targetX = mouseInRoot.X + BiomeHoverPanelOffsetX;
+		var targetY = mouseInRoot.Y + BiomeHoverPanelOffsetY;
 
 		var panelSize = panel.Size;
 		if (panelSize.X <= 1f || panelSize.Y <= 1f)

@@ -185,6 +185,8 @@ public partial class Main : Control
 	private const float MapZoomMin = 1.0f;
 	private const float MapZoomMax = 40.0f;
 	private const float MapZoomStep = 0.25f;
+	private const float MapZoomFactor = 1.15f;
+	private const float DragThreshold = 4.0f;
 	private const bool DefaultEnableRivers = true;
 	private const float DefaultRiverDensity = 1.0f;
 	private const float DefaultWindArrowDensity = 1.0f;
@@ -283,6 +285,11 @@ public partial class Main : Control
 	private int _speciesDiversity = DefaultSpeciesDiversity;
 	private float _uiFontScale = DefaultUiFontScale;
 	private float _mapZoom = 1.0f;
+	private bool _isMapDragging;
+	private bool _isMapMouseDown;
+	private MouseButton _activeDragButton = MouseButton.None;
+	private Vector2 _dragStartGlobalPos = Vector2.Zero;
+	private Vector2 _lastDragGlobalPos = Vector2.Zero;
 	private int _currentEpoch = DefaultEpoch;
 	private int _oracleAutoUnloadIdleSeconds = DefaultOracleAutoUnloadIdleSeconds;
 	private int _selectedTimelineEventEpoch = -1;

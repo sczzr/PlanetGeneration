@@ -151,7 +151,10 @@ public sealed class WorldGenerationService
             plateSummary,
             stats,
             ecologyResult,
-            civilizationResult);
+            civilizationResult)
+        {
+            ContinuousWind = baseFields.Wind
+        };
     }
 
     private static WorldStatsSummary ComputeWorldStats(

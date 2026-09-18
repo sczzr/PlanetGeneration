@@ -226,6 +226,23 @@ internal static class Program
         var okClimate = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetClimate, stack);
         Assert(okClimate, "气候分析预设应用失败");
         Assert(!stack.IsOverlayActive(LayerRegistry.LayerRivers), "气候分析预设默认不应包含河流");
+        Assert(stack.IsOverlayActive(LayerRegistry.LayerWindArrows), "气候分析预设应包含风向箭头");
+
+        var okWind = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetWindPrecipitation, stack);
+        Assert(okWind, "风场降水预设应用失败");
+        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerMoisture, "风场降水预设底图应为降水湿度");
+        Assert(stack.IsOverlayActive(LayerRegistry.LayerWindArrows), "风场降水预设应包含风向洋流");
+        Assert(stack.IsOverlayActive(LayerRegistry.LayerCoastlines), "风场降水预设应包含海岸轮廓");
+
+        // 验证 CellFields Wind 属性
+        var testFields = CellFields.Create(16);
+        Assert(testFields.WindX.Length == 16, "CellFields.WindX 长度不匹配");
+        Assert(testFields.WindY.Length == 16, "CellFields.WindY 长度不匹配");
+        testFields.WindX[0] = 5.5f;
+        testFields.WindY[0] = -3.2f;
+        var cloneFields = testFields.Clone();
+        Assert(cloneFields.WindX[0] == 5.5f, "CellFields.WindX 克隆不正确");
+        Assert(cloneFields.WindY[0] == -3.2f, "CellFields.WindY 克隆不正确");
 
         var okPhysical = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetPhysical, stack);
         Assert(okPhysical, "自然地理预设应用失败");

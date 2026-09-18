@@ -32,9 +32,11 @@ public static class BaseThemeColorPalette
     private static readonly Color TemperatureMild = Color.FromHtml("#ffe45c");
     private static readonly Color TemperatureHot = Color.FromHtml("#ff2a00");
 
-    private static readonly Color MoistureLight = Color.FromHtml("#d9ecff");
-    private static readonly Color MoistureMedium = Color.FromHtml("#5aa9ff");
-    private static readonly Color MoistureHeavy = Color.FromHtml("#0d3f95");
+    private static readonly Color MoistureDry = Color.FromHtml("#f4f8fc");
+    private static readonly Color MoistureLight = Color.FromHtml("#a8d0f0");
+    private static readonly Color MoistureMedium = Color.FromHtml("#438ecf");
+    private static readonly Color MoistureHeavy = Color.FromHtml("#104b8f");
+    private static readonly Color MoistureTorrential = Color.FromHtml("#041c42");
 
     private static readonly Color EcologyBarren = Color.FromHtml("#8a4f2b");
     private static readonly Color EcologyDry = Color.FromHtml("#d69a45");
@@ -177,8 +179,10 @@ public static class BaseThemeColorPalette
     public static Color GetMoistureColor(float moisture)
     {
         var m = Mathf.Clamp(moisture, 0f, 1f);
-        if (m < 0.5f) return MoistureLight.Lerp(MoistureMedium, m * 2f);
-        return MoistureMedium.Lerp(MoistureHeavy, (m - 0.5f) * 2f);
+        if (m < 0.25f) return MoistureDry.Lerp(MoistureLight, m * 4f);
+        if (m < 0.50f) return MoistureLight.Lerp(MoistureMedium, (m - 0.25f) * 4f);
+        if (m < 0.75f) return MoistureMedium.Lerp(MoistureHeavy, (m - 0.50f) * 4f);
+        return MoistureHeavy.Lerp(MoistureTorrential, (m - 0.75f) * 4f);
     }
 
     public static Color GetLandformColor(LandformType landform)

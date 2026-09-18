@@ -25,6 +25,7 @@ public static class LayerRegistry
     public const string LayerCellGrid = "cell_grid";
 
     public const string LayerRivers = "rivers";
+    public const string LayerCoastlines = "coastlines";
     public const string LayerCities = "cities";
     public const string LayerCityLabels = "city_labels";
     public const string LayerPolityBorders = "polity_borders";
@@ -186,6 +187,18 @@ public static class LayerRegistry
 
         Register(new LayerDefinition
         {
+            Id = LayerCoastlines,
+            DisplayName = "海岸轮廓",
+            GroupName = "水文",
+            Category = LayerCategory.Overlay,
+            DrawBand = LayerDrawBand.Lines,
+            IsDefaultActive = false,
+            DefaultWidthOrSize = 1.0f,
+            DataDependencies = new[] { "Height" }
+        });
+
+        Register(new LayerDefinition
+        {
             Id = LayerCities,
             DisplayName = "城市聚落",
             GroupName = "人文",
@@ -240,7 +253,7 @@ public static class LayerRegistry
             Category = LayerCategory.Overlay,
             DrawBand = LayerDrawBand.Symbols,
             IsDefaultActive = false,
-            DefaultWidthOrSize = 8.0f,
+            DefaultWidthOrSize = 1.0f,
             DataDependencies = Array.Empty<string>()
         });
 

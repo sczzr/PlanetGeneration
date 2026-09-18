@@ -22,6 +22,7 @@ public static class LayerPresetCatalog
     public const string PresetPolitical = "political_civilization";
     public const string PresetTrade = "trade_network";
     public const string PresetClimate = "climate_analysis";
+    public const string PresetWindPrecipitation = "wind_precipitation";
     public const string PresetGeology = "geology_resources";
     public const string PresetCellDebug = "cell_debug";
 
@@ -58,10 +59,19 @@ public static class LayerPresetCatalog
 
         Register(new LayerPreset
         {
+            Id = PresetWindPrecipitation,
+            DisplayName = "风场降水",
+            BaseThemeId = LayerRegistry.LayerMoisture,
+            ActiveOverlayIds = new[] { LayerRegistry.LayerCoastlines, LayerRegistry.LayerWindArrows },
+            IsBuiltIn = true
+        });
+
+        Register(new LayerPreset
+        {
             Id = PresetClimate,
             DisplayName = "气候分析",
             BaseThemeId = LayerRegistry.LayerTemperature,
-            ActiveOverlayIds = new[] { LayerRegistry.LayerWindArrows },
+            ActiveOverlayIds = new[] { LayerRegistry.LayerCoastlines, LayerRegistry.LayerWindArrows },
             IsBuiltIn = true
         });
 

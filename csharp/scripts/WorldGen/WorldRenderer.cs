@@ -59,9 +59,11 @@ public sealed class WorldRenderer
     private static readonly Color TemperatureCold = Hex("#004cff");
     private static readonly Color TemperatureMild = Hex("#ffe45c");
     private static readonly Color TemperatureHot = Hex("#ff2a00");
-    private static readonly Color MoistureLight = Hex("#d9ecff");
-    private static readonly Color MoistureMedium = Hex("#5aa9ff");
-    private static readonly Color MoistureHeavy = Hex("#0d3f95");
+    private static readonly Color MoistureDry = Hex("#f4f8fc");
+    private static readonly Color MoistureLight = Hex("#a8d0f0");
+    private static readonly Color MoistureMedium = Hex("#438ecf");
+    private static readonly Color MoistureHeavy = Hex("#104b8f");
+    private static readonly Color MoistureTorrential = Hex("#041c42");
     private static readonly Color RiverWater = Hex("#0e3f95");
     private static readonly Color EcologyBarren = Hex("#8a4f2b");
     private static readonly Color EcologyDry = Hex("#d69a45");
@@ -174,9 +176,22 @@ public sealed class WorldRenderer
             {
                 for (var x = 0; x < width; x++)
                 {
-                    var terrain = DrawSatellite(y, height, elevation[x, y], temperature[x, y], avgMoisture![x, y], biome[x, y], river[x, y], seaLevel);
-                    terrain = Blend(terrain, Colors.Black, 0.30f);
-                    WritePixel(buffer, width, x, y, terrain);
+                    var color = DrawMoisture(moisture[x, y]);
+                    var isLand = elevation[x, y] >= seaLevel;
+                    if (isLand)
+                    {
+                        var left = x > 0 ? x - 1 : width - 1;
+                        var right = x < width - 1 ? x + 1 : 0;
+                        var top = y > 0 ? y - 1 : 0;
+                        var bottom = y < height - 1 ? y + 1 : height - 1;
+                        if (elevation[left, y] < seaLevel || elevation[right, y] < seaLevel ||
+                            elevation[x, top] < seaLevel || elevation[x, bottom] < seaLevel)
+                        {
+                            color = Hex("#111111");
+                        }
+                    }
+
+                    WritePixel(buffer, width, x, y, color);
                 }
             });
 
@@ -447,13 +462,10 @@ public sealed class WorldRenderer
     private Color DrawMoisture(float value)
     {
         var t = Mathf.Clamp(value, 0f, 1f);
-
-        if (t < 0.5f)
-        {
-            return Blend(MoistureLight, MoistureMedium, t * 2f);
-        }
-
-        return Blend(MoistureMedium, MoistureHeavy, (t - 0.5f) * 2f);
+        if (t < 0.25f) return Blend(MoistureDry, MoistureLight, t * 4f);
+        if (t < 0.50f) return Blend(MoistureLight, MoistureMedium, (t - 0.25f) * 4f);
+        if (t < 0.75f) return Blend(MoistureMedium, MoistureHeavy, (t - 0.50f) * 4f);
+        return Blend(MoistureHeavy, MoistureTorrential, (t - 0.75f) * 4f);
     }
 
     public void OverlayWindArrows(Image image, Vector2[,] wind, int sourceWidth, int sourceHeight, float density)
@@ -466,49 +478,69 @@ public sealed class WorldRenderer
         var targetWidth = image.GetWidth();
         var targetHeight = image.GetHeight();
 
-        var densityFactor = Mathf.Clamp(density, 0.5f, 2.5f);
-        var desiredColumns = Mathf.Clamp(Mathf.RoundToInt(targetWidth / 92f * densityFactor), 20, 140);
-        var desiredRows = Mathf.Clamp(Mathf.RoundToInt(targetHeight / 92f * densityFactor), 10, 72);
-        var spacingX = Mathf.Max(36, targetWidth / Mathf.Max(desiredColumns, 1));
-        var spacingY = Mathf.Max(36, targetHeight / Mathf.Max(desiredRows, 1));
+        var densityFactor = Mathf.Clamp(density, 0.4f, 2.5f);
+        var baseSpacing = 70f / densityFactor;
+        var desiredColumns = Mathf.Clamp(Mathf.RoundToInt(targetWidth / baseSpacing), 16, 48);
+        var desiredRows = Mathf.Clamp(Mathf.RoundToInt(targetHeight / baseSpacing), 8, 24);
+        var spacingX = targetWidth / (float)desiredColumns;
+        var spacingY = targetHeight / (float)desiredRows;
+        var refLength = Mathf.Min(spacingX, spacingY) * 0.50f;
 
-        var windColor = new Color(0.92f, 0.97f, 1f, 1f);
-        for (var y = spacingY / 2; y < targetHeight; y += spacingY)
+        var windColor = Hex("#007a24");
+        for (var r = 0; r < desiredRows; r++)
         {
-            for (var x = spacingX / 2; x < targetWidth; x += spacingX)
+            var y = (int)((r + 0.5f) * spacingY);
+            for (var c = 0; c < desiredColumns; c++)
             {
+                var x = (int)((c + 0.5f) * spacingX);
                 var sampleX = Mathf.Clamp((int)((long)x * sourceWidth / targetWidth), 0, sourceWidth - 1);
                 var sampleY = Mathf.Clamp((int)((long)y * sourceHeight / targetHeight), 0, sourceHeight - 1);
                 var vector = wind[sampleX, sampleY];
-                DrawWindArrow(image, x, y, vector, windColor);
+                DrawWindArrow(image, x, y, vector, windColor, refLength);
             }
+        }
+
+        // 右上角标尺箭头
+        var scaleLen = Mathf.Max(refLength, 32f);
+        var padX = 36;
+        var padY = 24;
+        var refStartX = targetWidth - padX - (int)scaleLen - 60;
+        var refEndX = refStartX + (int)scaleLen;
+        if (refStartX > 0 && refEndX < targetWidth)
+        {
+            DrawWindLineThick(image, refStartX, padY, refEndX, padY, windColor, 1);
+            var barbLeft = new Vector2(refEndX, padY) - (Vector2.Right.Rotated(0.50f) * scaleLen * 0.28f);
+            var barbRight = new Vector2(refEndX, padY) - (Vector2.Right.Rotated(-0.50f) * scaleLen * 0.28f);
+            DrawWindLineThick(image, refEndX, padY, barbLeft.X, barbLeft.Y, windColor, 1);
+            DrawWindLineThick(image, refEndX, padY, barbRight.X, barbRight.Y, windColor, 1);
         }
     }
 
-    private void DrawWindArrow(Image image, int x, int y, Vector2 vector, Color color)
+    private void DrawWindArrow(Image image, int x, int y, Vector2 vector, Color color, float refLength)
     {
         var magnitude = vector.Length();
-        if (magnitude <= 0.0001f)
+        if (magnitude < 0.35f)
         {
+            DrawWindPoint(image, x, y, 1, color);
             return;
         }
 
         var direction = vector / magnitude;
-        var shaftLength = Mathf.Lerp(12f, 30f, Mathf.Clamp(magnitude / 35f, 0f, 1f));
+        var ratio = Mathf.Clamp(magnitude / 10.0f, 0.10f, 1.45f);
+        var shaftLength = refLength * ratio;
         var endX = x + direction.X * shaftLength;
         var endY = y + direction.Y * shaftLength;
 
-        DrawWindLineThick(image, x, y, endX, endY, color, 2);
+        DrawWindLineThick(image, x, y, endX, endY, color, 1);
 
         var back = -direction;
-        const float headAngle = 0.55f;
-        var headLength = Mathf.Clamp(shaftLength * 0.38f, 5f, 11f);
+        const float headAngle = 0.50f;
+        var headLength = Mathf.Clamp(shaftLength * 0.28f, 3.2f, 7.0f);
         var leftHead = RotateVector(back, headAngle) * headLength;
         var rightHead = RotateVector(back, -headAngle) * headLength;
 
-        DrawWindLineThick(image, endX, endY, endX + leftHead.X, endY + leftHead.Y, color, 2);
-        DrawWindLineThick(image, endX, endY, endX + rightHead.X, endY + rightHead.Y, color, 2);
-        DrawWindPoint(image, x, y, 1, color);
+        DrawWindLineThick(image, endX, endY, endX + leftHead.X, endY + leftHead.Y, color, 1);
+        DrawWindLineThick(image, endX, endY, endX + rightHead.X, endY + rightHead.Y, color, 1);
     }
 
     private void DrawWindLineThick(Image image, float x0, float y0, float x1, float y1, Color color, int thickness)

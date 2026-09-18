@@ -149,7 +149,7 @@ public partial class Main : Control
 
 		_mapCanvas = new PlanetGeneration.Rendering.MapCanvas();
 		_mapCanvas.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
-		_mapCanvas.MouseFilter = MouseFilterEnum.Pass;
+		_mapCanvas.MouseFilter = MouseFilterEnum.Ignore;
 		_mapTexture.AddChild(_mapCanvas);
 		_mapCanvas.CellHovered += OnMapCanvasCellHovered;
 
@@ -321,19 +321,19 @@ public partial class Main : Control
 		{
 			if (mapZoomKey.Keycode == Key.Equal || mapZoomKey.Keycode == Key.KpAdd)
 			{
-				SetMapZoom(_mapZoom + MapZoomStep);
+				SetMapZoom(_mapZoom * MapZoomFactor);
 				GetViewport().SetInputAsHandled();
 				return;
 			}
 			if (mapZoomKey.Keycode == Key.Minus || mapZoomKey.Keycode == Key.KpSubtract)
 			{
-				SetMapZoom(_mapZoom - MapZoomStep);
+				SetMapZoom(_mapZoom / MapZoomFactor);
 				GetViewport().SetInputAsHandled();
 				return;
 			}
 			if (mapZoomKey.Keycode == Key.Key0 || mapZoomKey.Keycode == Key.Kp0)
 			{
-				SetMapZoom(1.0f);
+				ResetMapZoomAndPan();
 				GetViewport().SetInputAsHandled();
 				return;
 			}

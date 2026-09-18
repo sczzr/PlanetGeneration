@@ -23,6 +23,7 @@ public sealed class WorldSnapshot
     public WorldStatsSummary Stats { get; }
     public EcologyResult? Ecology { get; init; }
     public CivilizationResult? Civilization { get; init; }
+    public (float X, float Y)[,]? ContinuousWind { get; init; }
 
     public int CellCount => Geometry.Count;
     public WorldExtent Extent => Geometry.Extent;
@@ -68,6 +69,9 @@ public sealed class WorldSnapshot
             PlateSummary,
             Stats,
             newEcology,
-            newCivilization);
+            newCivilization)
+        {
+            ContinuousWind = ContinuousWind
+        };
     }
 }

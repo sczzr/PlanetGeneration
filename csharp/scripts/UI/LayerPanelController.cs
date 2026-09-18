@@ -28,7 +28,7 @@ public partial class LayerPanelController : ScrollContainer
 	private static readonly (string Id, string Name)[] OverlayCatalog = new[]
 	{
 		(LayerRegistry.LayerRivers, "河流水系 (Rivers)"),
-		("coastlines", "海岸轮廓 (Coastlines)"),
+		(LayerRegistry.LayerCoastlines, "海岸轮廓 (Coastlines)"),
 		(LayerRegistry.LayerPolityBorders, "政体国界 (Borders)"),
 		(LayerRegistry.LayerCities, "聚落城镇 (Cities)"),
 		(LayerRegistry.LayerTradeRoutes, "贸易走廊 (Trade Routes)"),
@@ -55,12 +55,13 @@ public partial class LayerPanelController : ScrollContainer
 		(LayerRegistry.LayerCellGrid, "地块网格调试 (Cell Grid)")
 	};
 
-	// 6 种内置预设
+	// 7 种内置预设
 	private static readonly (string Id, string Name)[] PresetCatalog = new[]
 	{
 		(LayerPresetCatalog.PresetPhysical, "自然地理 (默认)"),
 		(LayerPresetCatalog.PresetPolitical, "政治文明"),
 		(LayerPresetCatalog.PresetTrade, "贸易网络"),
+		(LayerPresetCatalog.PresetWindPrecipitation, "风场降水 (气象水文)"),
 		(LayerPresetCatalog.PresetClimate, "气候分析"),
 		(LayerPresetCatalog.PresetGeology, "地质资源"),
 		(LayerPresetCatalog.PresetCellDebug, "地块调试"),

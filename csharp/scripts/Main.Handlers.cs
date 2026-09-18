@@ -134,10 +134,7 @@ public partial class Main : Control
 		WindArrowDensity = Mathf.Clamp((float)value, 0.5f, 2.5f);
 		SaveAdvancedSettings();
 		UpdateLabels();
-		if (GetCurrentLayer() == MapLayer.Wind)
-		{
-			RedrawCurrentLayer();
-		}
+		RedrawCurrentLayer();
 	}
 
 	private void OnBasinSensitivityChanged(double value)

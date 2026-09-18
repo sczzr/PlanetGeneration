@@ -27,7 +27,7 @@ public partial class Main : Control
 		if (direction != Vector2.Zero)
 		{
 			var speed = 420f * Mathf.Max(1f, _mapZoom * 0.35f);
-			_mapAspect.Position += direction.Normalized() * speed * (float)delta;
+			PanMap(direction.Normalized() * speed * (float)delta);
 		}
 
 		UpdateMinimapViewportRect();
@@ -35,17 +35,87 @@ public partial class Main : Control
 
 	private void SyncMapAspectToCenter()
 	{
+		if (_mapCenter == null || !IsInstanceValid(_mapCenter) || _mapAspect == null || !IsInstanceValid(_mapAspect))
+		{
+			return;
+		}
+
 		var size = _mapCenter.Size;
 		_mapAspect.CustomMinimumSize = new Vector2(Mathf.Max(size.X, 0f), Mathf.Max(size.Y, 0f));
-		_mapAspect.PivotOffset = size * 0.5f;
+		_mapAspect.PivotOffset = Vector2.Zero;
 		_mapAspect.Scale = Vector2.One * _mapZoom;
+	}
+
+	public void ZoomAt(Vector2 globalPivot, float targetZoom)
+	{
+		var clampedZoom = Mathf.Clamp(targetZoom, MapZoomMin, MapZoomMax);
+		if (Mathf.IsEqualApprox(clampedZoom, _mapZoom))
+		{
+			return;
+		}
+
+		if (_mapTexture == null || !IsInstanceValid(_mapTexture) || _mapAspect == null || !IsInstanceValid(_mapAspect))
+		{
+			return;
+		}
+
+		// 确保 PivotOffset 为零，避免缩放原点二次偏移与画面抖动
+		_mapAspect.PivotOffset = Vector2.Zero;
+
+		// 1. 记录缩放前鼠标指针在地图纹理上的局部坐标
+		var mapLocal = _mapTexture.GetGlobalTransform().AffineInverse() * globalPivot;
+
+		// 2. 应用新缩放
+		_mapZoom = clampedZoom;
+		_mapAspect.Scale = Vector2.One * _mapZoom;
+
+		// 3. 计算缩放后该局部坐标在屏幕空间的新全局位置
+		var newGlobal = _mapTexture.GetGlobalTransform() * mapLocal;
+
+		// 4. 平移 _mapAspect 补偿偏移，使局部坐标精确回到鼠标指针所在屏幕位置
+		_mapAspect.Position -= (newGlobal - globalPivot);
+
+		if (_mapCanvas != null && IsInstanceValid(_mapCanvas))
+		{
+			_mapCanvas.QueueRedraw();
+		}
+
+		UpdateMinimapViewportRect();
 	}
 
 	private void SetMapZoom(float zoom)
 	{
-		_mapZoom = Mathf.Clamp(zoom, MapZoomMin, MapZoomMax);
-		_mapAspect.PivotOffset = _mapCenter.Size * 0.5f;
-		_mapAspect.Scale = Vector2.One * _mapZoom;
+		var pivot = _mapCenter != null && IsInstanceValid(_mapCenter)
+			? _mapCenter.GetGlobalRect().GetCenter()
+			: GetViewportRect().GetCenter();
+		ZoomAt(pivot, zoom);
+	}
+
+	private void PanMap(Vector2 screenDelta)
+	{
+		if (_mapAspect == null || !IsInstanceValid(_mapAspect))
+		{
+			return;
+		}
+
+		_mapAspect.Position += screenDelta;
+		UpdateMinimapViewportRect();
+	}
+
+	private void ResetMapZoomAndPan()
+	{
+		_mapZoom = 1.0f;
+		if (_mapAspect != null && IsInstanceValid(_mapAspect))
+		{
+			_mapAspect.PivotOffset = Vector2.Zero;
+			_mapAspect.Scale = Vector2.One;
+			_mapAspect.Position = Vector2.Zero;
+		}
+		if (_mapCanvas != null && IsInstanceValid(_mapCanvas))
+		{
+			_mapCanvas.QueueRedraw();
+		}
+		UpdateMinimapViewportRect();
 	}
 
 

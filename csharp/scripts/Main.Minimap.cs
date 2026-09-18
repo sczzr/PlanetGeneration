@@ -137,8 +137,7 @@ public partial class Main : Control
 
 		var currentGlobal = origin + uv * texSize * scale;
 		var targetGlobal = _mapCenter.GetGlobalRect().GetCenter();
-		// MapAspect is the zoomed ancestor: a global shift g requires a local Position shift of g / zoom.
-		_mapAspect.Position += (targetGlobal - currentGlobal) / Mathf.Max(_mapZoom, 0.0001f);
+		PanMap(targetGlobal - currentGlobal);
 	}
 
 	/// <summary>MapTexture letterboxes its texture (keep-aspect-centered); compute where texel (0,0) lands globally and the texel scale.</summary>
