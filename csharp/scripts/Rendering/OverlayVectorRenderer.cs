@@ -259,15 +259,14 @@ public static class OverlayVectorRenderer
             var cy = (float)geom.CentroidY[i];
             if (!visibleRect.HasPoint(new Vector2(cx, cy))) continue;
 
-            var vCount = geom.GetVertexCount(i);
-            if (vCount < 3) continue;
+            var poly = geom.GetCurvedPolygon(i, 3);
+            if (poly.Length < 3) continue;
 
-            var start = geom.CellVertexStart[i];
-            for (var k = 0; k < vCount; k++)
+            for (var k = 0; k < poly.Length; k++)
             {
-                var nextK = (k + 1) % vCount;
-                var p0 = new Vector2((float)geom.VertexX[start + k], (float)geom.VertexY[start + k]);
-                var p1 = new Vector2((float)geom.VertexX[start + nextK], (float)geom.VertexY[start + nextK]);
+                var nextK = (k + 1) % poly.Length;
+                var p0 = new Vector2((float)poly[k].X, (float)poly[k].Y);
+                var p1 = new Vector2((float)poly[nextK].X, (float)poly[nextK].Y);
 
                 if (Math.Abs(p0.X - p1.X) > geom.Width * 0.5f) continue;
                 item.DrawLine(p0, p1, color, lineWidth);

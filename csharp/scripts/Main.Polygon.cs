@@ -688,36 +688,18 @@ public partial class Main : Control
     private void UpdateCellHighlight(int cellId)
     {
         _highlightedCellId = cellId;
-
-        if (cellId < 0)
+        if (_mapCanvas != null && IsInstanceValid(_mapCanvas))
         {
-            HideCellHighlight();
-            return;
+            _mapCanvas.SetHoveredCell(cellId);
         }
-
-        var rings = BuildCellHighlightRings(cellId);
-        var overlay = EnsureCellHighlight();
-        if (rings == null || rings.Count == 0 || overlay == null || _cellHighlightClip == null)
-        {
-            HideCellHighlight();
-            return;
-        }
-
-        SyncCellHighlightRect();
-        overlay.SetRings(rings);
-        _cellHighlightClip.Visible = true;
     }
 
     private void HideCellHighlight()
     {
-        if (_cellHighlight != null && IsInstanceValid(_cellHighlight))
+        _highlightedCellId = -1;
+        if (_mapCanvas != null && IsInstanceValid(_mapCanvas))
         {
-            _cellHighlight.Clear();
-        }
-
-        if (_cellHighlightClip != null && IsInstanceValid(_cellHighlightClip))
-        {
-            _cellHighlightClip.Visible = false;
+            _mapCanvas.SetHoveredCell(-1);
         }
     }
 

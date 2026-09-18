@@ -188,6 +188,18 @@ public sealed class CellGeometry
     }
 
     /// <summary>
+    /// 取平滑曲线多边形角点序列（未展开帧，围绕地块质心对齐）。
+    /// </summary>
+    public PolyVec2[] GetCurvedPolygon(int cellId, int subdivisions = 3)
+        => CurvedCellGeometry.GetCurvedPolygon(this, cellId, subdivisions);
+
+    /// <summary>
+    /// 取平滑曲线的高亮环（包含基准环与经度缝 ±Width 镜像环）。
+    /// </summary>
+    public PolyVec2[][] GetCurvedHighlightRings(int cellId, int subdivisions = 3)
+        => CurvedCellGeometry.GetCurvedHighlightRings(this, cellId, subdivisions);
+
+    /// <summary>
     /// 精确拾取：均摊 O(1) 查询点 (x, y) 落在哪个 Voronoi 地块。
     /// </summary>
     public int FindCell(double x, double y)

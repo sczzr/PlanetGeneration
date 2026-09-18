@@ -28,6 +28,7 @@ internal static class Program
         RunTest("5. 组合图层栈、底图互斥与预设往返验证", TestLayerSystemAndPresets);
         RunTest("6. 模拟确定性与无竞争双源验证", TestSimulationDeterminism);
         RunTest("7. 缓存键稳定性与生成参数不可变性验证", TestCacheKeyStability);
+        RunTest("8. 平滑曲线几何与网格拓扑水密性验证", TestCurvedCellGeometryAndMeshTopology);
 
         sw.Stop();
 
@@ -278,5 +279,47 @@ internal static class Program
 
         var optDiffCells = opt1 with { TargetCellCount = 20000 };
         Assert(opt1.BuildCacheKey() != optDiffCells.BuildCacheKey(), "不同地块数的缓存键必须不同");
+    }
+
+    private static void TestCurvedCellGeometryAndMeshTopology()
+    {
+        var geom = PolygonGridBuilder.Create(WorldExtent.Default, 999, 2048, 8, out var stats);
+
+        // 1. 测试单地块平滑曲线多边形与高亮环
+        for (var i = 0; i < Math.Min(geom.Count, 50); i++)
+        {
+            var rawPoly = geom.GetPolygon(i);
+            var curvedPoly = geom.GetCurvedPolygon(i, 3);
+            Assert(curvedPoly.Length == rawPoly.Length * 3, $"细分后顶点数应为原始的 3 倍: 实际 {curvedPoly.Length}, 期望 {rawPoly.Length * 3}");
+
+            var rings = geom.GetCurvedHighlightRings(i, 3);
+            Assert(rings.Length == 3, "平滑高亮环必须返回 3 组环（基准 + ±Width 经度镜像）");
+            Assert(rings[0].Length == curvedPoly.Length, "基准高亮环点数必须与平滑多边形完全一致");
+            Assert(rings[1].Length == curvedPoly.Length && rings[2].Length == curvedPoly.Length, "镜像高亮环点数必须与基准环一致");
+
+            // 验证环 1 相对环 0 偏移精确为 -Width
+            Assert(Math.Abs((rings[1][0].X - rings[0][0].X) - (-geom.Width)) < 1e-6, "经度缝 -Width 镜像偏移不准确");
+            // 验证环 2 相对环 0 偏移精确为 +Width
+            Assert(Math.Abs((rings[2][0].X - rings[0][0].X) - geom.Width) < 1e-6, "经度缝 +Width 镜像偏移不准确");
+        }
+
+        // 2. 测试全图 2D 矢量网格拓扑构建
+        var topology = CurvedCellGeometry.BuildMeshTopology(geom, 3);
+        Assert(topology.Vertices.Length > 0, "网格拓扑顶点数不能为 0");
+        Assert(topology.Indices.Length > 0 && topology.Indices.Length % 3 == 0, "网格索引必须为 3 的倍数（三角形）");
+        Assert(topology.VertexToCell.Length == topology.Vertices.Length, "顶点与地块映射数组长度必须与顶点数组一致");
+
+        // 3. 校验网格索引无越界，且所有顶点均映射到有效 cellId
+        for (var k = 0; k < topology.Indices.Length; k++)
+        {
+            var idx = topology.Indices[k];
+            Assert(idx >= 0 && idx < topology.Vertices.Length, $"三角形索引越界: {idx}, 总顶点: {topology.Vertices.Length}");
+        }
+
+        for (var v = 0; v < topology.Vertices.Length; v++)
+        {
+            var cellId = topology.VertexToCell[v];
+            Assert(cellId >= 0 && cellId < geom.Count, $"顶点所属地块 ID 越界: {cellId}, 地块总数: {geom.Count}");
+        }
     }
 }

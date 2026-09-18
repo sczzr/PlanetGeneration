@@ -1,5 +1,6 @@
 using Godot;
 using PlanetGeneration.Core.Domain;
+using PlanetGeneration.Core.Geometry;
 using PlanetGeneration.Core.Layers;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,10 @@ namespace PlanetGeneration.Rendering;
 
 /// <summary>
 /// 地图画布控制器：
-/// 封装屏幕/视口到世界逻辑坐标变换（ScreenToWorld / WorldToScreen）、
+/// 封装屏幕/视口到世界逻辑坐标变换（CanvasToWorld / WorldToCanvas）、
+/// GPU 2D 矢量网格底图渲染（ArrayMesh）、
 /// 矢量覆盖层绘制（河流、边界、海岸线、城市、贸易、网格、风向）、
-/// 地块拾取与高亮。
+/// 地块拾取与平滑曲线高亮。
 /// </summary>
 public partial class MapCanvas : Control
 {
@@ -26,6 +28,12 @@ public partial class MapCanvas : Control
     private readonly Color _highlightFill = new(1f, 0.96f, 0.60f, 0.24f);
     private readonly Color _highlightStroke = new(1f, 0.94f, 0.46f, 0.95f);
 
+    private ArrayMesh? _cellMesh;
+    private CurvedMeshTopology? _topology;
+
+    private static readonly Texture2D WhiteTexture = ImageTexture.CreateFromImage(
+        Image.CreateFromData(1, 1, false, Image.Format.Rgba8, new byte[] { 255, 255, 255, 255 }));
+
     public WorldSnapshot? Snapshot => _snapshot;
     public int HoveredCellId => _hoveredCellId;
 
@@ -37,18 +45,110 @@ public partial class MapCanvas : Control
 
     public void AttachSnapshot(WorldSnapshot snapshot, LayerStackState layerStack, Font? font = null)
     {
+        var isSameGeometry = _snapshot?.Geometry == snapshot.Geometry && _topology != null;
         _snapshot = snapshot;
         _layerStack = layerStack;
         _labelFont = font;
         _hoveredCellId = -1;
         _highlightRings.Clear();
+
+        if (isSameGeometry)
+        {
+            UpdateMeshColors();
+        }
+        else
+        {
+            _topology = CurvedCellGeometry.BuildMeshTopology(snapshot.Geometry, 3);
+            RebuildCellMesh();
+        }
+
         QueueRedraw();
     }
 
     public void UpdateLayerStack(LayerStackState layerStack)
     {
         _layerStack = layerStack;
+        UpdateMeshColors();
         QueueRedraw();
+    }
+
+    private void RebuildCellMesh()
+    {
+        if (_snapshot == null || _layerStack == null || _topology == null)
+        {
+            return;
+        }
+
+        var vertices = new Vector2[_topology.Vertices.Length];
+        for (var i = 0; i < _topology.Vertices.Length; i++)
+        {
+            vertices[i] = new Vector2((float)_topology.Vertices[i].X, (float)_topology.Vertices[i].Y);
+        }
+
+        var colors = BuildMeshColors();
+        var indices = _topology.Indices;
+
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
+        arrays[(int)Mesh.ArrayType.Color] = colors;
+        arrays[(int)Mesh.ArrayType.Index] = indices;
+
+        var mesh = new ArrayMesh();
+        mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+        _cellMesh = mesh;
+    }
+
+    private Color[] BuildMeshColors()
+    {
+        if (_snapshot == null || _layerStack == null || _topology == null)
+        {
+            return Array.Empty<Color>();
+        }
+
+        var themeId = _layerStack.ActiveBaseThemeId;
+        var count = _snapshot.Geometry.Count;
+
+        var cellColors = new Color[count];
+        for (var i = 0; i < count; i++)
+        {
+            cellColors[i] = BaseThemeColorPalette.GetCellColor(_snapshot, themeId, i);
+        }
+
+        var vertCount = _topology.Vertices.Length;
+        var colors = new Color[vertCount];
+        for (var v = 0; v < vertCount; v++)
+        {
+            var cellId = _topology.VertexToCell[v];
+            colors[v] = cellColors[cellId];
+        }
+
+        return colors;
+    }
+
+    private void UpdateMeshColors()
+    {
+        if (_snapshot == null || _layerStack == null || _topology == null || _cellMesh == null)
+        {
+            RebuildCellMesh();
+            return;
+        }
+
+        var colors = BuildMeshColors();
+        var vertices = new Vector2[_topology.Vertices.Length];
+        for (var i = 0; i < _topology.Vertices.Length; i++)
+        {
+            vertices[i] = new Vector2((float)_topology.Vertices[i].X, (float)_topology.Vertices[i].Y);
+        }
+
+        var arrays = new Godot.Collections.Array();
+        arrays.Resize((int)Mesh.ArrayType.Max);
+        arrays[(int)Mesh.ArrayType.Vertex] = vertices;
+        arrays[(int)Mesh.ArrayType.Color] = colors;
+        arrays[(int)Mesh.ArrayType.Index] = _topology.Indices;
+
+        _cellMesh.ClearSurfaces();
+        _cellMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
     }
 
     /// <summary>
@@ -107,18 +207,18 @@ public partial class MapCanvas : Control
 
         if (_snapshot != null && cellId >= 0 && cellId < _snapshot.Geometry.Count)
         {
-            var rawRings = _snapshot.Geometry.GetHighlightRings(cellId);
+            var rawRings = _snapshot.Geometry.GetCurvedHighlightRings(cellId, 3);
             for (var r = 0; r < rawRings.Length; r++)
             {
                 var ring = rawRings[r];
                 if (ring.Length < 3) continue;
 
-                var canvasRing = new Vector2[ring.Length];
+                var vRing = new Vector2[ring.Length];
                 for (var i = 0; i < ring.Length; i++)
                 {
-                    canvasRing[i] = WorldToCanvas(new Vector2((float)ring[i].X, (float)ring[i].Y));
+                    vRing[i] = new Vector2((float)ring[i].X, (float)ring[i].Y);
                 }
-                _highlightRings.Add(canvasRing);
+                _highlightRings.Add(vRing);
             }
         }
 
@@ -158,14 +258,30 @@ public partial class MapCanvas : Control
             return;
         }
 
-        var visibleRect = new Rect2(Vector2.Zero, new Vector2((float)_snapshot.Geometry.Width, (float)_snapshot.Geometry.Height));
+        var geom = _snapshot.Geometry;
+        if (geom.Width <= 0 || geom.Height <= 0 || Size.X <= 0 || Size.Y <= 0)
+        {
+            return;
+        }
 
-        // 绘制矢量叠加图层
+        var scaleX = Size.X / (float)geom.Width;
+        var scaleY = Size.Y / (float)geom.Height;
+        DrawSetTransform(Vector2.Zero, 0f, new Vector2(scaleX, scaleY));
+
+        // 1. 绘制 GPU 2D 矢量网格底图（平滑曲线地块，放大无像素锯齿）
+        if (_cellMesh != null)
+        {
+            DrawMesh(_cellMesh, WhiteTexture);
+        }
+
+        // 2. 绘制矢量叠加图层
+        var visibleRect = new Rect2(Vector2.Zero, new Vector2((float)geom.Width, (float)geom.Height));
         OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, _labelFont);
 
-        // 绘制地块高亮环
+        // 3. 绘制平滑高亮环
         if (_highlightRings.Count > 0)
         {
+            var strokeWidth = 2.5f / Mathf.Max(scaleX, 0.001f);
             foreach (var ring in _highlightRings)
             {
                 if (ring.Length < 3) continue;
@@ -178,7 +294,7 @@ public partial class MapCanvas : Control
                     closed[i] = ring[i];
                 }
                 closed[ring.Length] = ring[0];
-                DrawPolyline(closed, _highlightStroke, 2.0f);
+                DrawPolyline(closed, _highlightStroke, strokeWidth);
             }
         }
     }

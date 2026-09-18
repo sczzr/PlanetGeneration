@@ -86,7 +86,7 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-ratio = 1.8
+ratio = 2.0
 
 [node name="MapTextureFrame" type="PanelContainer" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect" unique_id=2097853592]
 layout_mode = 2
@@ -95,12 +95,12 @@ size_flags_vertical = 3
 theme_override_styles/panel = SubResource("10")
 
 [node name="MapTexture" type="TextureRect" parent="PreviewPanel/MapRoot/MapViewport/MapViewportMargin/MapCenter/MapAspect/MapTextureFrame" unique_id=814670618]
-texture_filter = 1
+texture_filter = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 expand_mode = 1
-stretch_mode = 6
+stretch_mode = 0
 
 [node name="LegendPanel" type="PanelContainer" parent="PreviewPanel/MapRoot" unique_id=1673491028]
 visible = false
