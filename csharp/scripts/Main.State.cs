@@ -16,8 +16,8 @@ namespace PlanetGeneration;
 
 public partial class Main : Control
 {
-	[Export] public int MapWidth { get; set; } = 256;
-	[Export] public int MapHeight { get; set; } = 128;
+	[Export] public int MapWidth { get; set; } = 2048;
+	[Export] public int MapHeight { get; set; } = 1024;
 	[Export] public int Seed { get; set; } = 0;
 	[Export] public int PlateCount { get; set; } = 20;
 	[Export] public int WindCellCount { get; set; } = 10;
@@ -127,11 +127,18 @@ public partial class Main : Control
 
 	private static readonly Vector2I[] MapSizePresets =
 	{
-		new Vector2I(256, 128),
-		new Vector2I(512, 256),
 		new Vector2I(1024, 512),
 		new Vector2I(2048, 1024),
 		new Vector2I(4096, 2048)
+	};
+
+	private static readonly int[] CellCountPresets =
+	{
+		2048,
+		5000,
+		10000,
+		20000,
+		32768
 	};
 
 	private static readonly int[] NaturalLayerIds =
@@ -284,8 +291,21 @@ public partial class Main : Control
 	/// </summary>
 	private PolygonTileMode _polygonTileMode = PolygonTileMode.Cells;
 
-	/// <summary>目标地块数；0 表示按地图尺寸自动取值。</summary>
-	private int _cellsDesired;
+	/// <summary>目标地块数；默认 10,000 块。</summary>
+	private int _cellsDesired = 10000;
+	private int _targetCellCount = 10000;
+	private int _resolutionWidth = 2048;
+	private int _resolutionHeight = 1024;
+
+	private PlanetGeneration.UI.LayerPanelController? _layerPanelController;
+	private OptionButton? _cellScaleOption;
+	private SpinBox? _cellScaleSpin;
+	private Label? _cellCountDisplayLabel;
+
+	private PlanetGeneration.Core.Domain.WorldSnapshot? _primarySnapshot;
+	private PlanetGeneration.Core.Domain.WorldSnapshot? _compareSnapshot;
+	private readonly PlanetGeneration.Rendering.LayerRenderCoordinator _layerCoordinator = new();
+	private PlanetGeneration.Rendering.MapCanvas _mapCanvas = null!;
 
 	private enum ExportKind
 	{

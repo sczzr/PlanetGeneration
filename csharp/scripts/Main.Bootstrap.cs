@@ -140,6 +140,28 @@ public partial class Main : Control
 		_minimapTexture.GuiInput += OnMinimapGuiInput;
 		_minimapTexture.MouseExited += () => _minimapDragging = false;
 
+		_cellScaleOption = GetNodeOrNull<OptionButton>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs/ParamsPage/ParamsMargin/Content/ParamsBox/CellScaleRow/CellScaleOption") ?? GetNodeByName<OptionButton>("CellScaleOption");
+		_cellScaleSpin = GetNodeOrNull<SpinBox>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs/ParamsPage/ParamsMargin/Content/ParamsBox/CellScaleRow/CellScaleSpin") ?? GetNodeByName<SpinBox>("CellScaleSpin");
+		_cellCountDisplayLabel = GetNodeOrNull<Label>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs/ParamsPage/ParamsMargin/Content/ParamsBox/CellCountDisplayRow/CellCountDisplayLabel") ?? GetNodeByName<Label>("CellCountDisplayLabel");
+		_layerPanelController = GetNodeOrNull<PlanetGeneration.UI.LayerPanelController>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs/LayersPage") ?? GetNodeByName<PlanetGeneration.UI.LayerPanelController>("LayersPage");
+
+		_mapCanvas = new PlanetGeneration.Rendering.MapCanvas();
+		_mapCanvas.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
+		_mapCanvas.MouseFilter = MouseFilterEnum.Pass;
+		_mapTexture.AddChild(_mapCanvas);
+		_mapCanvas.CellHovered += OnMapCanvasCellHovered;
+
+		SetupCellScaleOptions();
+
+		if (_layerPanelController != null)
+		{
+			_layerPanelController.AttachLayerStack(_layerCoordinator.StackState);
+			_layerPanelController.LayerStackChanged += _ =>
+			{
+				RedrawCurrentLayer();
+			};
+		}
+
 		SetupLayerOptions();
 		SetupMapSizeOptions();
 		SetupContinentCountOptions();
@@ -339,5 +361,72 @@ public partial class Main : Control
 		return control.Visible && control.GetGlobalRect().HasPoint(point);
 	}
 
+	private void SetupCellScaleOptions()
+	{
+		if (!IsInstanceValid(_cellScaleOption)) return;
+		_cellScaleOption.Clear();
+		_cellScaleOption.AddItem("2,048 (极速)", 0);
+		_cellScaleOption.AddItem("5,000 (流畅)", 1);
+		_cellScaleOption.AddItem("10,000 (标准 · 默认)", 2);
+		_cellScaleOption.AddItem("20,000 (精细)", 3);
+		_cellScaleOption.AddItem("32,768 (极致)", 4);
+		_cellScaleOption.AddItem("自定义", 5);
+		_cellScaleOption.Select(2); // 10,000
 
+		if (IsInstanceValid(_cellScaleSpin))
+		{
+			_cellScaleSpin.Value = _targetCellCount;
+			_cellScaleSpin.ValueChanged += val =>
+			{
+				_targetCellCount = (int)val;
+				_cellsDesired = _targetCellCount;
+				_cellScaleOption.Select(5);
+				UpdateCellCountDisplay();
+			};
+		}
+
+		_cellScaleOption.ItemSelected += index =>
+		{
+			if (index < CellCountPresets.Length)
+			{
+				_targetCellCount = CellCountPresets[index];
+				_cellsDesired = _targetCellCount;
+				if (IsInstanceValid(_cellScaleSpin))
+				{
+					_cellScaleSpin.Value = _targetCellCount;
+				}
+				UpdateCellCountDisplay();
+			}
+		};
+
+		UpdateCellCountDisplay();
+	}
+
+	private void UpdateCellCountDisplay()
+	{
+		if (IsInstanceValid(_cellCountDisplayLabel))
+		{
+			var actualText = _primarySnapshot != null ? $"{_primarySnapshot.CellCount:N0}" : "--";
+			_cellCountDisplayLabel.Text = $"目标地块: {_targetCellCount:N0} · 实际地块: {actualText}";
+		}
+		_layerPanelController?.UpdateStatus(_targetCellCount, _primarySnapshot?.CellCount ?? _targetCellCount, _resolutionWidth, _resolutionHeight);
+	}
+
+	private void OnMapCanvasCellHovered(int cellId)
+	{
+		if (_primarySnapshot == null || cellId < 0 || cellId >= _primarySnapshot.CellCount)
+		{
+			ResetBiomeHoverState();
+			return;
+		}
+
+		var sample = PlanetGeneration.Core.Application.WorldQueryService.GetCellSample(_primarySnapshot, cellId);
+		var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
+		if (sample.Settlement != null)
+		{
+			detailText += $"\n聚落:{sample.Settlement.Name} ({sample.Settlement.Rank})";
+		}
+		_biomeHoverText.Text = detailText;
+		_biomeHoverPanel.Visible = true;
+	}
 }

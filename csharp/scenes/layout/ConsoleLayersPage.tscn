@@ -1,4 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/UI/LayerPanelController.cs" id="1_layer_panel"]
 
 [sub_resource type="StyleBoxFlat" id="sb_section"]
 bg_color = Color(0.36, 0.27, 0.2, 0.98)
@@ -35,11 +37,23 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="sb_status_card"]
+bg_color = Color(0.24, 0.18, 0.13, 0.85)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+
 [node name="LayersPage" type="ScrollContainer"]
 custom_minimum_size = Vector2(320, 0)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
+script = ExtResource("1_layer_panel")
 
 [node name="LayersMargin" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -65,7 +79,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
 theme_override_font_sizes/font_size = 15
-text = "MAP LAYERS"
+text = "MAP LAYERS · 图层与主题"
 
 [node name="MapLayersSpacer" type="Control" parent="LayersMargin/Content/MapLayersBar/MapLayersRow"]
 layout_mode = 2
@@ -75,10 +89,30 @@ size_flags_horizontal = 3
 layout_mode = 2
 theme_override_colors/font_color = Color(0.88, 0.8, 0.68, 1)
 theme_override_font_sizes/font_size = 11
-text = "点击行切换图层 | 完整度: High"
+text = "13 底图 · 8 叠加"
 
-[node name="LayerOption" type="OptionButton" parent="LayersMargin/Content"]
-visible = false
+[node name="StatusCard" type="PanelContainer" parent="LayersMargin/Content"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("sb_status_card")
+
+[node name="StatusLabel" type="Label" parent="LayersMargin/Content/StatusCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "地块: 目标 10,000 · 实际 10,000 | 分辨率: 2048×1024"
+horizontal_alignment = 1
+
+[node name="PresetSection" type="VBoxContainer" parent="LayersMargin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="PresetLabel" type="Label" parent="LayersMargin/Content/PresetSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
+theme_override_font_sizes/font_size = 12
+text = "── 组合预设 ──"
+
+[node name="PresetOption" type="OptionButton" parent="LayersMargin/Content/PresetSection"]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
@@ -87,13 +121,43 @@ theme_override_styles/normal = SubResource("sb_field")
 theme_override_styles/hover = SubResource("sb_field_active")
 theme_override_styles/pressed = SubResource("sb_field_active")
 
-[node name="LayerTree" type="Tree" parent="LayersMargin/Content"]
-custom_minimum_size = Vector2(0, 220)
+[node name="BaseThemeSection" type="VBoxContainer" parent="LayersMargin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BaseThemeLabel" type="Label" parent="LayersMargin/Content/BaseThemeSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
+theme_override_font_sizes/font_size = 12
+text = "── 基础底图主题 (单选) ──"
+
+[node name="BaseThemeOption" type="OptionButton" parent="LayersMargin/Content/BaseThemeSection"]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-columns = 2
-column_titles_visible = true
-allow_reselect = true
-select_mode = 1
-hide_root = true
+theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="OverlaysSection" type="VBoxContainer" parent="LayersMargin/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="OverlaysLabel" type="Label" parent="LayersMargin/Content/OverlaysSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.42, 0.26, 0.14, 1)
+theme_override_font_sizes/font_size = 12
+text = "── 矢量叠加图层 (多选/排序/粗细) ──"
+
+[node name="OverlaysContainer" type="VBoxContainer" parent="LayersMargin/Content/OverlaysSection"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LayerOption" type="OptionButton" parent="LayersMargin/Content"]
+visible = false
+layout_mode = 2
+
+[node name="LayerTree" type="Tree" parent="LayersMargin/Content"]
+visible = false
+layout_mode = 2

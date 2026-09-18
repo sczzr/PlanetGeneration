@@ -177,6 +177,48 @@ theme_override_styles/hover = SubResource("sb_apply_hover")
 theme_override_styles/pressed = SubResource("sb_apply_hover")
 text = "APPLY"
 
+[node name="CellScaleRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CellScaleLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
+custom_minimum_size = Vector2(76, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
+theme_override_font_sizes/font_size = 13
+text = "地块规模"
+vertical_alignment = 1
+
+[node name="CellScaleOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.25, 0.16, 0.1, 1)
+theme_override_styles/normal = SubResource("sb_field")
+theme_override_styles/hover = SubResource("sb_field_active")
+theme_override_styles/pressed = SubResource("sb_field_active")
+
+[node name="CellScaleSpin" type="SpinBox" parent="ParamsMargin/Content/ParamsBox/CellScaleRow"]
+custom_minimum_size = Vector2(80, 34)
+layout_mode = 2
+min_value = 1000.0
+max_value = 65536.0
+step = 500.0
+value = 10000.0
+rounded = true
+
+[node name="CellCountDisplayRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CellCountDisplayLabel" type="Label" parent="ParamsMargin/Content/ParamsBox/CellCountDisplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.42, 0.28, 0.18, 1)
+theme_override_font_sizes/font_size = 11
+text = "目标地块: 10,000 · 实际地块: --"
+horizontal_alignment = 2
+
 [node name="MapSizeRow" type="HBoxContainer" parent="ParamsMargin/Content/ParamsBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -186,7 +228,7 @@ custom_minimum_size = Vector2(76, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.28, 0.18, 0.11, 1)
 theme_override_font_sizes/font_size = 13
-text = "地图大小"
+text = "输出分辨率"
 vertical_alignment = 1
 
 [node name="MapSizeOption" type="OptionButton" parent="ParamsMargin/Content/ParamsBox/MapSizeRow"]

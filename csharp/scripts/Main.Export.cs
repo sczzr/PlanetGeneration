@@ -87,6 +87,32 @@ public partial class Main : Control
 
 	private void SavePngToPath(string selectedPath)
 	{
+		if (_primarySnapshot != null)
+		{
+			var themeTag = _layerCoordinator.StackState.ActiveBaseThemeId;
+			var snapshotPath = EnsureLayerTagInPath(EnsureFileExtension(selectedPath, ".png"), themeTag);
+			try
+			{
+				_layerCoordinator.ExportPng(_primarySnapshot, snapshotPath, _resolutionWidth, _resolutionHeight);
+				if (_compareMode && _compareSnapshot != null)
+				{
+					var comparePath = InsertSuffixBeforeExtension(snapshotPath, "_B");
+					_layerCoordinator.ExportPng(_compareSnapshot, comparePath, _resolutionWidth, _resolutionHeight);
+					_infoLabel.Text = $"PNG exported ({_resolutionWidth}×{_resolutionHeight}): {snapshotPath} + {comparePath}";
+				}
+				else
+				{
+					_infoLabel.Text = $"PNG exported ({_resolutionWidth}×{_resolutionHeight}): {snapshotPath}";
+				}
+				return;
+			}
+			catch (Exception ex)
+			{
+				_infoLabel.Text = $"PNG export failed: {ex.Message}";
+				return;
+			}
+		}
+
 		if (_lastRenderedImage == null)
 		{
 			_infoLabel.Text = "PNG export failed: no image.";

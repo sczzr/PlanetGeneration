@@ -66,16 +66,32 @@ public partial class Main : Control
 
 			await SetProgressAsync(2f, IsHighInfoPointSelected() ? "准备中（高地图信息）" : "准备中");
 
+			var options = BuildGenerationOptions(_tuning, Seed);
+			var adapter = new PlanetGeneration.Rendering.BaseFieldGeneratorAdapter();
+			var genService = new PlanetGeneration.Core.Application.WorldGenerationService(adapter);
+
 			if (_compareMode)
 			{
+				_primarySnapshot = await genService.GenerateAsync(options);
 				_primaryWorld = await BuildWorldAsync(_tuning, "A组", 4f, 48f);
+
+				var compareOptions = BuildGenerationOptions(GetAlternateTuning(_tuning), Seed + 1);
+				_compareSnapshot = await genService.GenerateAsync(compareOptions);
 				_compareWorld = await BuildWorldAsync(GetAlternateTuning(_tuning), "B组", 50f, 94f);
 			}
 			else
 			{
+				var progress = new Progress<(float Progress, string Stage)>(async p =>
+				{
+					await SetProgressAsync(p.Progress * 0.9f, p.Stage);
+				});
+				_primarySnapshot = await genService.GenerateAsync(options, progress);
 				_primaryWorld = await BuildWorldAsync(_tuning, "主世界", 4f, 94f);
+				_compareSnapshot = null;
 				_compareWorld = null;
 			}
+
+			UpdateCellCountDisplay();
 
 			StoreWorldGenerationCache(generationCacheKey, _primaryWorld, _compareWorld);
 			generatedFromScratch = true;
@@ -453,4 +469,34 @@ public partial class Main : Control
 		return tuning.Name == "Legacy" ? WorldTuning.Balanced() : WorldTuning.Legacy();
 	}
 
+	private PlanetGeneration.Core.Domain.GenerationOptions BuildGenerationOptions(WorldTuning tuning, int seed)
+	{
+		return new PlanetGeneration.Core.Domain.GenerationOptions
+		{
+			Seed = seed,
+			TargetCellCount = _targetCellCount,
+			Extent = new PlanetGeneration.Core.Domain.WorldExtent(2048, 1024),
+			SeaLevel = SeaLevel,
+			HeatFactor = HeatFactor,
+			EnableRivers = EnableRivers,
+			RiverDensity = RiverDensity,
+			ErosionIterations = ErosionIterations,
+			MoistureIterations = MoistureIterations,
+			PlateCount = PlateCount,
+			OceanicRatio = _terrainOceanicRatio,
+			ContinentBias = _terrainContinentBias,
+			InteriorRelief = _interiorRelief,
+			OrogenyStrength = _orogenyStrength,
+			SubductionArcRatio = _subductionArcRatio,
+			ContinentalAge = _continentalAge,
+			Morphology = (PlanetGeneration.Core.Domain.TerrainMorphology)_terrainMorphology,
+			ContinentCount = _continentCount,
+			WindCellCount = WindCellCount,
+			BasinSensitivity = BasinSensitivity,
+			SpeciesDiversity = _speciesDiversity,
+			CivilAggression = _civilAggression,
+			MagicDensity = _magicDensity,
+			Epoch = _currentEpoch
+		};
+	}
 }

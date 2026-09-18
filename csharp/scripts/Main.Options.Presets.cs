@@ -25,7 +25,7 @@ public partial class Main : Control
 			_mapSizeOption.AddItem(BuildInfoPointOptionText(index, size), index);
 		}
 
-		const int selectedIndex = 0;
+		const int selectedIndex = 1;
 
 		ApplyMapSizePreset(selectedIndex);
 		_mapSizeOption.Select(selectedIndex);
@@ -516,16 +516,13 @@ public partial class Main : Control
 
 	private static string BuildInfoPointOptionText(int index, Vector2I size)
 	{
-		var profile = index switch
+		return index switch
 		{
-			0 => "预览",
-			1 => "标准",
-			2 => "精细",
-			3 => "高清",
-			_ => "极致"
+			0 => "1K (1024×512)",
+			1 => "2K (2048×1024 · 推荐默认)",
+			2 => "4K (4096×2048 · 超清)",
+			_ => $"{size.X}×{size.Y}"
 		};
-
-		return profile;
 	}
 
 	private void ApplyMapSizePreset(int presetIndex)
@@ -533,6 +530,9 @@ public partial class Main : Control
 		var index = Mathf.Clamp(presetIndex, 0, MapSizePresets.Length - 1);
 		MapWidth = MapSizePresets[index].X;
 		MapHeight = MapSizePresets[index].Y;
+		_resolutionWidth = MapWidth;
+		_resolutionHeight = MapHeight;
+		_layerPanelController?.UpdateStatus(_targetCellCount, _primarySnapshot?.CellCount ?? _targetCellCount, _resolutionWidth, _resolutionHeight);
 	}
 
 	private int FindMapSizePresetIndex(int width, int height)

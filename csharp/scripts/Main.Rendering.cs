@@ -51,6 +51,45 @@ public partial class Main : Control
 
 	private void RedrawCurrentLayer()
 	{
+		if (_primarySnapshot != null)
+		{
+			var primaryImage = _layerCoordinator.RenderBaseThemeImage(_primarySnapshot, _resolutionWidth, _resolutionHeight);
+			var primaryTex = ImageTexture.CreateFromImage(primaryImage);
+			_mapTexture.Texture = primaryTex;
+			UpdateMinimapTexture(primaryTex, primaryImage);
+			_lastRenderedImage = primaryImage;
+
+			if (_mapCanvas != null)
+			{
+				_mapCanvas.AttachSnapshot(_primarySnapshot, _layerCoordinator.StackState);
+			}
+
+			if (_compareMode && _compareSnapshot != null)
+			{
+				var compareImage = _layerCoordinator.RenderBaseThemeImage(_compareSnapshot, _resolutionWidth, _resolutionHeight);
+				_lastCompareImage = compareImage;
+				_compareStatsLabel.Visible = true;
+				_compareStatsLabel.Text = $"A组: {_primarySnapshot.CellCount:N0} 块 | B组: {_compareSnapshot.CellCount:N0} 块";
+			}
+			else
+			{
+				_lastCompareImage = null;
+				_compareStatsLabel.Visible = false;
+				_compareStatsLabel.Text = string.Empty;
+			}
+
+			var themeId = _layerCoordinator.StackState.ActiveBaseThemeId;
+			UpdateLegendForTheme(themeId);
+
+			var s = _primarySnapshot.Stats;
+			var snapMorphologyText = GetMorphologyText(_terrainMorphology);
+			var snapContinentSuffix = _terrainMorphology == TerrainMorphology.Continents ? $"（{_continentCount}块）" : string.Empty;
+			var avgTempC = NormalizedTemperatureToCelsius(s.AvgTemperature);
+			_infoLabel.Text = $"多边形地块: {_primarySnapshot.CellCount:N0} (目标 {_targetCellCount:N0}) | 分辨率: {_resolutionWidth}×{_resolutionHeight} | 地形形态:{snapMorphologyText}{snapContinentSuffix} | 海洋占比:{s.OceanPercent:0.0}% | 森林占比:{s.ForestPercent:0.0}% | 平均温度:{avgTempC:0.0}℃ | 聚落:{s.CityCount} 座";
+			UpdateLorePanel();
+			return;
+		}
+
 		if (_primaryWorld == null)
 		{
 			UpdateLorePanel();
@@ -204,6 +243,26 @@ public partial class Main : Control
 		UpdateLorePanel();
 	}
 
+
+	private void UpdateLegendForTheme(string themeId)
+	{
+		var layer = themeId switch
+		{
+			"elevation" => MapLayer.Elevation,
+			"biomes" => MapLayer.Biomes,
+			"temperature" => MapLayer.Temperature,
+			"moisture" => MapLayer.Moisture,
+			"landform" or "landforms" => MapLayer.Landform,
+			"plates" => MapLayer.Plates,
+			"rock_types" => MapLayer.RockTypes,
+			"ores" => MapLayer.Ores,
+			"ecology" => MapLayer.Ecology,
+			"civilization" => MapLayer.Civilization,
+			"trade_flow" or "trade_routes" => MapLayer.TradeRoutes,
+			_ => MapLayer.Satellite
+		};
+		UpdateLegend(layer);
+	}
 
 	private static string GetMorphologyText(TerrainMorphology morphology)
 	{

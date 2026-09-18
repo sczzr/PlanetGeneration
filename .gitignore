@@ -1,1 +1,17 @@
+# Godot 4+ cache & export
+.godot/
+*.translation
+
+# .NET / C# build outputs
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.userosscache
+*.sln.docstates
+*.suo
+
+# Local external repos
 /Fantasy-Map-Generator

@@ -15,10 +15,6 @@ run/main_scene="res://scenes/Main.tscn"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://logo.png"
 
-[autoload]
-
-_mcp_game_helper="*res://addons/godot_ai/runtime/game_helper.gd"
-
 [display]
 
 window/size/viewport_width=1600
@@ -29,7 +25,3 @@ window/stretch/aspect="expand"
 [dotnet]
 
 project/assembly_name="PlanetGeneration"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/godot_ai/plugin.cfg")
