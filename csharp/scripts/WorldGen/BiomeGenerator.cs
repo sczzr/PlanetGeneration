@@ -58,37 +58,36 @@ public sealed class BiomeGenerator
                     continue;
                 }
 
-                if (riverLayer[x, y] > 0.24f && e < tuning.MountainThreshold + 0.06f)
-                {
-                    biome[x, y] = BiomeType.River;
-                    continue;
-                }
+                var riverFlow = riverLayer[x, y];
+                var effectiveMoisture = riverFlow > 0.02f
+                    ? Mathf.Clamp(m + (Mathf.Sqrt(Mathf.Clamp(riverFlow, 0f, 1.5f)) * 0.28f), 0f, 1.2f)
+                    : m;
 
                 if (polarBand > 0f)
                 {
                     var polarIceCutoff = Mathf.Lerp(0.11f, 0.22f, polarBand);
                     if (t <= polarIceCutoff)
                     {
-                        biome[x, y] = m < 0.10f ? BiomeType.Tundra : BiomeType.Ice;
+                        biome[x, y] = effectiveMoisture < 0.10f ? BiomeType.Tundra : BiomeType.Ice;
                         continue;
                     }
                 }
 
                 if (t > 0.6f)
                 {
-                    if (m < 0.15f)
+                    if (effectiveMoisture < 0.15f)
                     {
                         biome[x, y] = BiomeType.TropicalDesert;
                     }
-                    else if (m < seaLevel)
+                    else if (effectiveMoisture < seaLevel)
                     {
                         biome[x, y] = BiomeType.Savanna;
                     }
-                    else if (m < 0.5f)
+                    else if (effectiveMoisture < 0.5f)
                     {
                         biome[x, y] = BiomeType.Shrubland;
                     }
-                    else if (m < 0.75f)
+                    else if (effectiveMoisture < 0.75f)
                     {
                         biome[x, y] = BiomeType.TropicalSeasonalForest;
                     }
@@ -102,23 +101,23 @@ public sealed class BiomeGenerator
 
                 if (t > 0.25f)
                 {
-                    if (m < 0.15f)
+                    if (effectiveMoisture < 0.15f)
                     {
                         biome[x, y] = BiomeType.TemperateDesert;
                     }
-                    else if (m < 0.2f)
+                    else if (effectiveMoisture < 0.2f)
                     {
                         biome[x, y] = BiomeType.Steppe;
                     }
-                    else if (m < 0.4f)
+                    else if (effectiveMoisture < 0.4f)
                     {
                         biome[x, y] = BiomeType.Grassland;
                     }
-                    else if (m < 0.5f)
+                    else if (effectiveMoisture < 0.5f)
                     {
                         biome[x, y] = BiomeType.Chaparral;
                     }
-                    else if (m < 0.85f)
+                    else if (effectiveMoisture < 0.85f)
                     {
                         biome[x, y] = BiomeType.TemperateSeasonalForest;
                     }
@@ -132,11 +131,11 @@ public sealed class BiomeGenerator
 
                 if (t > 0.05f)
                 {
-                    if (m < 0.2f)
+                    if (effectiveMoisture < 0.2f)
                     {
                         biome[x, y] = BiomeType.Tundra;
                     }
-                    else if (m < 0.55f)
+                    else if (effectiveMoisture < 0.55f)
                     {
                         biome[x, y] = BiomeType.Taiga;
                     }
@@ -148,7 +147,7 @@ public sealed class BiomeGenerator
                     continue;
                 }
 
-                biome[x, y] = m < 0.1f ? BiomeType.Tundra : BiomeType.Ice;
+                biome[x, y] = effectiveMoisture < 0.1f ? BiomeType.Tundra : BiomeType.Ice;
             }
         });
 

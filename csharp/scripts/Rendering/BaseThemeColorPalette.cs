@@ -81,7 +81,7 @@ public static class BaseThemeColorPalette
         Color.FromHtml("#7acb33"), // TropicalRainForest
         Color.FromHtml("#8f8067"), // RockyMountain
         Color.FromHtml("#e7edf0"), // SnowyMountain
-        Color.FromHtml("#4f7ea8")  // River
+        Color.FromHtml("#2ea3d4")  // River
     };
 
     public static readonly Color[] RockColors =

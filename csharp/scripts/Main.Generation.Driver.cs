@@ -213,7 +213,7 @@ public partial class Main : Control
 		await SetBuildProgressAsync(label, "湿度基础", ++step, totalSteps, startProgress, endProgress);
 
 		stageTimer.Restart();
-		var moisture = await Task.Run(() => _moistureGenerator.DistributeMoisture(MapWidth, MapHeight, SeaLevel, elevation, baseMoisture, temperature, wind, MoistureIterations, Seed));
+		var moisture = await Task.Run(() => _moistureGenerator.DistributeMoisture(MapWidth, MapHeight, SeaLevel, elevation, baseMoisture, temperature, wind, MoistureIterations, Seed, MoistureFactor));
 		LogGenerationStage(label, "湿度扩散", stageTimer, worldTimer);
 		await SetBuildProgressAsync(label, "湿度扩散", ++step, totalSteps, startProgress, endProgress);
 
@@ -478,6 +478,7 @@ public partial class Main : Control
 			Extent = new PlanetGeneration.Core.Domain.WorldExtent(2048, 1024),
 			SeaLevel = SeaLevel,
 			HeatFactor = HeatFactor,
+			MoistureFactor = MoistureFactor,
 			EnableRivers = EnableRivers,
 			RiverDensity = RiverDensity,
 			ErosionIterations = ErosionIterations,

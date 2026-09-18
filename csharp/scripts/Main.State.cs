@@ -23,6 +23,7 @@ public partial class Main : Control
 	[Export] public int WindCellCount { get; set; } = 10;
 	[Export(PropertyHint.Range, "0,1,0.01")] public float SeaLevel { get; set; } = 0.5f;
 	[Export(PropertyHint.Range, "0.01,1,0.01")] public float HeatFactor { get; set; } = 0.5f;
+	[Export(PropertyHint.Range, "0.2,2.5,0.01")] public float MoistureFactor { get; set; } = 1.0f;
 	[Export(PropertyHint.Range, "1,20,1")] public int MoistureIterations { get; set; } = 8;
 	[Export(PropertyHint.Range, "0,20,1")] public int ErosionIterations { get; set; } = 5;
 	[Export(PropertyHint.Range, "0.4,2.5,0.01")] public float RiverDensity { get; set; } = 1.0f;
@@ -36,6 +37,7 @@ public partial class Main : Control
 	private SpinBox _seedSpin = null!;
 	private HSlider _seaLevelSlider = null!;
 	private HSlider _heatSlider = null!;
+	private HSlider _moistureSlider = null!;
 	private HSlider _erosionSlider = null!;
 	private HSlider _riverDensitySlider = null!;
 	private HSlider _windArrowDensitySlider = null!;
@@ -53,6 +55,7 @@ public partial class Main : Control
 	private Button _nextEpochButton = null!;
 	private Label _seaLevelValue = null!;
 	private Label _heatValue = null!;
+	private Label _moistureValue = null!;
 	private Label _erosionValue = null!;
 	private Label _riverDensityValue = null!;
 	private Label _windArrowDensityValue = null!;

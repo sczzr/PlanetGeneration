@@ -84,40 +84,39 @@ public static class CellBiomeClassifier
             return t > 0.2f ? BiomeType.RockyMountain : BiomeType.SnowyMountain;
         }
 
-        if (r > 0.24f && e < tuning.MountainThreshold + 0.06f)
-        {
-            return BiomeType.River;
-        }
+        var effectiveMoisture = r > 0.02f
+            ? Math.Clamp(m + (MathF.Sqrt(Math.Clamp(r, 0f, 1.5f)) * 0.28f), 0f, 1.2f)
+            : m;
 
         if (polarBand > 0f)
         {
             var polarIceCutoff = 0.11f + (0.11f * polarBand);
             if (t <= polarIceCutoff)
             {
-                return m < 0.10f ? BiomeType.Tundra : BiomeType.Ice;
+                return effectiveMoisture < 0.10f ? BiomeType.Tundra : BiomeType.Ice;
             }
         }
 
         if (t > 0.6f)
         {
-            if (m < 0.15f) return BiomeType.TropicalDesert;
-            if (m < seaLevel) return BiomeType.Savanna;
-            if (m < 0.5f) return BiomeType.Shrubland;
-            if (m < 0.75f) return BiomeType.TropicalSeasonalForest;
+            if (effectiveMoisture < 0.15f) return BiomeType.TropicalDesert;
+            if (effectiveMoisture < seaLevel) return BiomeType.Savanna;
+            if (effectiveMoisture < 0.5f) return BiomeType.Shrubland;
+            if (effectiveMoisture < 0.75f) return BiomeType.TropicalSeasonalForest;
             return BiomeType.TropicalRainForest;
         }
 
         if (t > 0.3f)
         {
-            if (m < 0.15f) return BiomeType.TemperateDesert;
-            if (m < 0.35f) return BiomeType.Steppe;
-            if (m < 0.55f) return BiomeType.Grassland;
-            if (m < 0.75f) return BiomeType.TemperateSeasonalForest;
+            if (effectiveMoisture < 0.15f) return BiomeType.TemperateDesert;
+            if (effectiveMoisture < 0.35f) return BiomeType.Steppe;
+            if (effectiveMoisture < 0.55f) return BiomeType.Grassland;
+            if (effectiveMoisture < 0.75f) return BiomeType.TemperateSeasonalForest;
             return BiomeType.TemperateRainForest;
         }
 
-        if (m < 0.2f) return BiomeType.Tundra;
-        if (m < 0.45f) return BiomeType.Taiga;
+        if (effectiveMoisture < 0.2f) return BiomeType.Tundra;
+        if (effectiveMoisture < 0.45f) return BiomeType.Taiga;
         return BiomeType.BorealForest;
     }
 

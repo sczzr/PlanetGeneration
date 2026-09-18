@@ -58,6 +58,13 @@ public partial class Main : Control
 		GenerateWorld();
 	}
 
+	private void OnMoistureChanged(double value)
+	{
+		MoistureFactor = Mathf.Clamp((float)value, 0.2f, 2.5f);
+		UpdateLabels();
+		GenerateWorld();
+	}
+
 	private void OnErosionChanged(double value)
 	{
 		ErosionIterations = Mathf.Clamp((int)Mathf.Round((float)value), 0, 20);

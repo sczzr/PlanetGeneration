@@ -19,6 +19,7 @@ public partial class Main : Control
 	{
 		_seaLevelValue.Text = SeaLevel.ToString("0.00");
 		_heatValue.Text = HeatFactor.ToString("0.00");
+		_moistureValue.Text = MoistureFactor.ToString("0.00");
 		_erosionValue.Text = ErosionIterations.ToString();
 		_riverDensityValue.Text = RiverDensity.ToString("0.00");
 		_windArrowDensityValue.Text = WindArrowDensity.ToString("0.00");

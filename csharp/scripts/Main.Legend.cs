@@ -145,7 +145,8 @@ public partial class Main : Control
 			("#c7c5ac", "寒漠"),
 			("#e9d79b", "热带沙漠"),
 			("#aed45a", "热带季雨林"),
-			("#7acb33", "热带雨林")
+			("#7acb33", "热带雨林"),
+			("#2ea3d4", "河流/湿润河谷")
 		};
 
 		var builder = new StringBuilder(768);

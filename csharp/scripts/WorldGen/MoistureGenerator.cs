@@ -118,7 +118,8 @@ public sealed class MoistureGenerator
         float[,] temperature,
         Vector2[,] wind,
         int iterations,
-        int seed = 0)
+        int seed = 0,
+        float moistureFactor = 1.0f)
     {
         var distributed = Array2D.Create(width, height, 0f);
 
@@ -141,6 +142,8 @@ public sealed class MoistureGenerator
             }
         });
 
+        var factor = Mathf.Clamp(moistureFactor, 0.1f, 3.0f);
+
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
@@ -150,10 +153,7 @@ public sealed class MoistureGenerator
                 var isLand = elevation[x, y] >= seaLevel;
                 if (isLand)
                 {
-                    distributed[x, y] += 0.15f * noiseValue;
-                }
-                else
-                {
+                    distributed[x, y] += 0.15f * noiseValue * factor;
                     continue;
                 }
 
@@ -165,7 +165,7 @@ public sealed class MoistureGenerator
                     continue;
                 }
 
-                var moistureRemaining = baseMoisture[x, y] * 50f;
+                var moistureRemaining = baseMoisture[x, y] * 50f * factor;
                 var lastElevation = elevation[x, y];
 
                 var unitX = windX / windSpeed;
@@ -277,6 +277,10 @@ public sealed class MoistureGenerator
                 if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f)
                 {
                     values[x, y] = 0f;
+                }
+                else
+                {
+                    values[x, y] = Mathf.Clamp(value, 0f, 1.2f);
                 }
             }
         });

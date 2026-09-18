@@ -49,6 +49,7 @@ public sealed record GenerationOptions
     public float RiverDensity { get; init; } = 1.0f;
     public int ErosionIterations { get; init; } = 4;
     public int MoistureIterations { get; init; } = 3;
+    public float MoistureFactor { get; init; } = 1.0f;
 
     public int PlateCount { get; init; } = 18;
     public float OceanicRatio { get; init; } = 0.60f;
@@ -82,6 +83,7 @@ public sealed record GenerationOptions
         sb.Append($"|ext:{Extent.Width:0}x{Extent.Height:0}");
         sb.Append($"|sea:{(int)MathF.Round(SeaLevel * 10000f)}");
         sb.Append($"|heat:{(int)MathF.Round(HeatFactor * 10000f)}");
+        sb.Append($"|moif:{(int)MathF.Round(MoistureFactor * 10000f)}");
         sb.Append($"|riv:{(EnableRivers ? 1 : 0)}:{(int)MathF.Round(RiverDensity * 10000f)}");
         sb.Append($"|ero:{ErosionIterations}");
         sb.Append($"|moi:{MoistureIterations}");

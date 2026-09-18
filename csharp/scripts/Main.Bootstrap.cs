@@ -30,9 +30,11 @@ public partial class Main : Control
 		_seedSpin = controlsController?.SeedSpin ?? GetNodeByName<SpinBox>("SeedSpin");
 		_seaLevelSlider = controlsController?.SeaLevelSlider ?? GetNodeByName<HSlider>("SeaLevelSlider");
 		_heatSlider = controlsController?.HeatSlider ?? GetNodeByName<HSlider>("HeatSlider");
+		_moistureSlider = controlsController?.MoistureSlider ?? GetNodeByName<HSlider>("MoistureSlider");
 		_erosionSlider = controlsController?.ErosionSlider ?? GetNodeByName<HSlider>("ErosionSlider");
 		_seaLevelValue = controlsController?.SeaLevelValue ?? GetNodeByName<Label>("SeaLevelValue");
 		_heatValue = controlsController?.HeatValue ?? GetNodeByName<Label>("HeatValue");
+		_moistureValue = controlsController?.MoistureValue ?? GetNodeByName<Label>("MoistureValue");
 		_erosionValue = controlsController?.ErosionValue ?? GetNodeByName<Label>("ErosionValue");
 		_infoLabel = GetNodeByName<Label>("InfoLabel");
 		_compareStatsLabel = GetNodeByName<Label>("CompareStatsLabel");
@@ -202,6 +204,7 @@ public partial class Main : Control
 			controlsController.RandomRequested += OnRandomPressed;
 			controlsController.SeaLevelChanged += OnSeaLevelChanged;
 			controlsController.HeatChanged += OnHeatChanged;
+			controlsController.MoistureChanged += OnMoistureChanged;
 			controlsController.ErosionChanged += OnErosionChanged;
 			controlsController.InteriorReliefChanged += OnInteriorReliefChanged;
 			controlsController.OrogenyStrengthChanged += OnOrogenyStrengthChanged;
@@ -216,6 +219,7 @@ public partial class Main : Control
 			_randomButton.Pressed += OnRandomPressed;
 			_seaLevelSlider.ValueChanged += OnSeaLevelChanged;
 			_heatSlider.ValueChanged += OnHeatChanged;
+			_moistureSlider.ValueChanged += OnMoistureChanged;
 			_erosionSlider.ValueChanged += OnErosionChanged;
 			_riverToggle.Toggled += OnRiversToggled;
 			_riverDensitySlider.ValueChanged += OnRiverDensityChanged;
@@ -252,6 +256,7 @@ public partial class Main : Control
 		_seedSpin.Value = Seed;
 		_seaLevelSlider.Value = SeaLevel;
 		_heatSlider.Value = HeatFactor;
+		_moistureSlider.Value = MoistureFactor;
 		_erosionSlider.Value = ErosionIterations;
 		_riverDensitySlider.Value = RiverDensity;
 		_windArrowDensitySlider.Value = WindArrowDensity;

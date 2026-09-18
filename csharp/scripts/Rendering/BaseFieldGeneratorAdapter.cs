@@ -75,7 +75,8 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
             temperature,
             windVectors,
             options.MoistureIterations,
-            seed);
+            seed,
+            options.MoistureFactor);
 
         // 6. 转换格式至 Core 域模型
         var corePlateSites = new List<PlateSiteInfo>(plateResult.Sites.Count);

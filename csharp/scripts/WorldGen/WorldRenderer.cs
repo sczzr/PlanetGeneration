@@ -106,7 +106,7 @@ public sealed class WorldRenderer
         Hex("#7acb33"), // TropicalRainForest
         Hex("#8f8067"), // RockyMountain
         Hex("#e7edf0"), // SnowyMountain
-        Hex("#4f7ea8")  // River
+        Hex("#2ea3d4")  // River
     };
 
     private static readonly Color[] RockColors =

@@ -15,6 +15,7 @@ public partial class GeneratorControlsController : TabContainer
 	public event Action? ApplyRequested;
 	public event Action<double>? SeaLevelChanged;
 	public event Action<double>? HeatChanged;
+	public event Action<double>? MoistureChanged;
 	public event Action<double>? ErosionChanged;
 	public event Action<double>? InteriorReliefChanged;
 	public event Action<double>? OrogenyStrengthChanged;
@@ -28,6 +29,7 @@ public partial class GeneratorControlsController : TabContainer
 	public SpinBox SeedSpin { get; private set; } = null!;
 	public HSlider SeaLevelSlider { get; private set; } = null!;
 	public HSlider HeatSlider { get; private set; } = null!;
+	public HSlider MoistureSlider { get; private set; } = null!;
 	public HSlider ErosionSlider { get; private set; } = null!;
 	public HSlider InteriorReliefSlider { get; private set; } = null!;
 	public HSlider OrogenyStrengthSlider { get; private set; } = null!;
@@ -37,6 +39,7 @@ public partial class GeneratorControlsController : TabContainer
 	public HSlider RiverDensitySlider { get; private set; } = null!;
 	public Label SeaLevelValue { get; private set; } = null!;
 	public Label HeatValue { get; private set; } = null!;
+	public Label MoistureValue { get; private set; } = null!;
 	public Label ErosionValue { get; private set; } = null!;
 	public Label InteriorReliefValue { get; private set; } = null!;
 	public Label OrogenyStrengthValue { get; private set; } = null!;
@@ -61,6 +64,7 @@ public partial class GeneratorControlsController : TabContainer
 		SeedSpin = GetNode<SpinBox>($"{ParamsRoot}/SeedRow/SeedSpin");
 		SeaLevelSlider = GetNode<HSlider>($"{ParamsRoot}/SeaWrap/SeaLevelSlider");
 		HeatSlider = GetNode<HSlider>($"{ParamsRoot}/HeatWrap/HeatSlider");
+		MoistureSlider = GetNode<HSlider>($"{ParamsRoot}/MoistureWrap/MoistureSlider");
 		ErosionSlider = GetNode<HSlider>($"{ParamsRoot}/ErosionWrap/ErosionSlider");
 		InteriorReliefSlider = GetNode<HSlider>($"{MountainRoot}/InteriorReliefRow/InteriorReliefSlider");
 		OrogenyStrengthSlider = GetNode<HSlider>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthSlider");
@@ -70,6 +74,7 @@ public partial class GeneratorControlsController : TabContainer
 		RiverDensitySlider = GetNode<HSlider>($"{ParamsRoot}/RiverDensityRow/RiverDensitySlider");
 		SeaLevelValue = GetNode<Label>($"{ParamsRoot}/SeaWrap/SeaLevelValue");
 		HeatValue = GetNode<Label>($"{ParamsRoot}/HeatWrap/HeatValue");
+		MoistureValue = GetNode<Label>($"{ParamsRoot}/MoistureWrap/MoistureValue");
 		ErosionValue = GetNode<Label>($"{ParamsRoot}/ErosionWrap/ErosionValue");
 		InteriorReliefValue = GetNode<Label>($"{MountainRoot}/InteriorReliefRow/InteriorReliefValue");
 		OrogenyStrengthValue = GetNode<Label>($"{MountainRoot}/OrogenyStrengthRow/OrogenyStrengthValue");
@@ -81,6 +86,7 @@ public partial class GeneratorControlsController : TabContainer
 		ApplyButton.Pressed += () => ApplyRequested?.Invoke();
 		SeaLevelSlider.ValueChanged += value => SeaLevelChanged?.Invoke(value);
 		HeatSlider.ValueChanged += value => HeatChanged?.Invoke(value);
+		MoistureSlider.ValueChanged += value => MoistureChanged?.Invoke(value);
 		ErosionSlider.ValueChanged += value => ErosionChanged?.Invoke(value);
 		InteriorReliefSlider.ValueChanged += value => InteriorReliefChanged?.Invoke(value);
 		OrogenyStrengthSlider.ValueChanged += value => OrogenyStrengthChanged?.Invoke(value);
