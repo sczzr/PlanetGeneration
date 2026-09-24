@@ -1,0 +1,102 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/loading_overlay.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/math_curve_loader.gd" id="2_loader"]
+[ext_resource type="FontVariation" path="res://assets/fonts/ui_handwritten_bold.tres" id="3_font_bold"]
+[ext_resource type="FontVariation" path="res://assets/fonts/ui_handwritten.tres" id="4_font"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/loading_backdrop.png" id="5_backdrop"]
+[ext_resource type="Shader" path="res://assets/shaders/menu_background.gdshader" id="6_backdrop_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_backdrop"]
+shader = ExtResource("6_backdrop_shader")
+shader_parameter/blur_level = 1.8
+shader_parameter/brightness = 0.95
+shader_parameter/saturation = 0.85
+shader_parameter/tint = Color(0.62, 0.82, 0.74, 1)
+shader_parameter/tint_amount = 0.3
+shader_parameter/vignette_start = 0.25
+shader_parameter/vignette_strength = 0.6
+shader_parameter/light_speed = 0.05
+shader_parameter/light_strength = 0.1
+shader_parameter/grain_strength = 0.018
+
+[node name="LoadingOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+modulate = Color(1, 1, 1, 0)
+script = ExtResource("1_script")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+texture_filter = 4
+material = SubResource("ShaderMaterial_backdrop")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_backdrop")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.055, 0.09, 0.075, 0.32)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 30
+mouse_filter = 2
+
+[node name="Loader" type="Control" parent="Center/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+script = ExtResource("2_loader")
+curve_type = 3
+trail_color = Color(0.32, 0.54, 0.4, 1)
+head_color = Color(1, 0.96, 0.84, 1)
+loop_duration = 6.4
+pulse_duration = 5.6
+rotation_duration = 36.0
+
+[node name="Title" type="Label" parent="Center/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.97, 0.94, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 30
+text = "NOTICE_WORLD_GENERATING"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="Center/VBox"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.66, 0.75, 0.69, 0.95)
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 17
+text = "LOADING_HINT_TERRAIN"
+horizontal_alignment = 1

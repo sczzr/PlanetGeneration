@@ -1,391 +1,87 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using PlanetGeneration.Core.Domain;
-using PlanetGeneration.Core.Geometry;
-using PlanetGeneration.Core.Layers;
-using PlanetGeneration.Core.Simulation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PlanetGeneration.Core.SelfTest;
 
-internal static class Program
+internal static partial class Program
 {
-    private static int _passedCount = 0;
-    private static int _failedCount = 0;
+    private sealed record TestCase(string Name, Action Run, string Suite, bool Quick = false);
 
     public static int Main(string[] args)
     {
-        Console.WriteLine("==========================================================");
-        Console.WriteLine(" PlanetGeneration.Core 独立自检套件 (纯 .NET 8 / 零外部依赖)");
-        Console.WriteLine("==========================================================\n");
-
-        var sw = Stopwatch.StartNew();
-
-        RunTest("1. 多边形几何与守恒性自检 (2048 ~ 32768 档位)", TestGeometricIntegrity);
-        RunTest("2. 目标地块数与实际地块数映射验证", TestTargetVsActualCounts);
-        RunTest("3. 水文管线正确性与河流开关修复验证", TestHydrologyPipeline);
-        RunTest("4. 分辨率解耦与全图精确拾取一致性 (1K / 2K / 4K)", TestResolutionDecoupling);
-        RunTest("5. 组合图层栈、底图互斥与预设往返验证", TestLayerSystemAndPresets);
-        RunTest("6. 模拟确定性与无竞争双源验证", TestSimulationDeterminism);
-        RunTest("7. 缓存键稳定性与生成参数不可变性验证", TestCacheKeyStability);
-        RunTest("8. 平滑曲线几何与网格拓扑水密性验证", TestCurvedCellGeometryAndMeshTopology);
-
-        sw.Stop();
-
-        Console.WriteLine("\n----------------------------------------------------------");
-        Console.WriteLine($" 自检完成: 通过 {_passedCount} 项, 失败 {_failedCount} 项 (耗时 {sw.ElapsedMilliseconds} ms)");
-        Console.WriteLine("----------------------------------------------------------");
-
-        return _failedCount == 0 ? 0 : 1;
-    }
-
-    private static void RunTest(string testName, Action testAction)
-    {
-        Console.Write($"[测试] {testName} ... ");
-        try
+        var tests = new TestCase[]
         {
-            testAction();
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("PASS");
-            Console.ResetColor();
-            _passedCount++;
-        }
-        catch (Exception ex)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("FAIL");
-            Console.ResetColor();
-            Console.WriteLine($"       错误详情: {ex.Message}");
-            Console.WriteLine($"       {ex.StackTrace}");
-            _failedCount++;
-        }
-    }
-
-    private static void Assert(bool condition, string message)
-    {
-        if (!condition)
-        {
-            throw new InvalidOperationException($"断言失败: {message}");
-        }
-    }
-
-    private static void TestGeometricIntegrity()
-    {
-        var tiers = new[] { 2048, 5000, 10000, 20000, 32768 };
-        var seeds = new[] { 12345, 98765 };
-
-        foreach (var seed in seeds)
-        {
-            foreach (var target in tiers)
-            {
-                var geom = PolygonGridBuilder.Create(WorldExtent.Default, seed, target, 8, out var stats);
-                Assert(geom.Count == stats.CellCount, "地块网格计数与统计不一致");
-                Assert(stats.DegenerateCells == 0, $"发现退化地块: {stats.DegenerateCells}");
-
-                // 执行全量几何校验
-                var report = PolygonGridValidator.Validate(geom, seed);
-                Assert(report.Passed, $"几何校验失败: {report}");
-                Assert(Math.Abs(report.AreaCoverageRatio - 1.0) < 0.01, $"面积守恒率偏差超出 1%: {report.AreaCoverageRatio}");
-                Assert(report.AverageNeighbors >= 5.0 && report.AverageNeighbors <= 7.0, $"平均邻接偏离正常范围: {report.AverageNeighbors}");
-            }
-        }
-    }
-
-    private static void TestTargetVsActualCounts()
-    {
-        var targets = new[] { 2048, 5000, 10000, 20000, 32768 };
-        foreach (var target in targets)
-        {
-            var geom = PolygonGridBuilder.Create(WorldExtent.Default, 42, target, 8, out var stats);
-            var ratio = (double)stats.CellCount / target;
-            Assert(ratio >= 0.90 && ratio <= 1.15, $"实际地块数 ({stats.CellCount}) 与目标 ({target}) 偏离过大");
-            Assert(stats.CellCount == geom.Columns * geom.Rows, "实际地块数必须等于规则列数乘行数");
-        }
-    }
-
-    private static void TestHydrologyPipeline()
-    {
-        var geom = PolygonGridBuilder.Create(WorldExtent.Default, 777, 5000, 8, out _);
-        var count = geom.Count;
-        var fields = CellFields.Create(count);
-
-        // 构造倾斜地形测试：左高右低
-        for (var i = 0; i < count; i++)
-        {
-            var xRatio = (float)(geom.SiteX[i] / geom.Width);
-            fields.Height[i] = 0.2f + (0.6f * (1f - xRatio));
-            fields.Moisture[i] = 0.5f;
-        }
-
-        const float seaLevel = 0.35f;
-
-        // 1. 验证下泄构建
-        PolygonTopologyBuilder.BuildDownslope(geom, fields);
-        var downslopeCount = 0;
-        for (var i = 0; i < count; i++)
-        {
-            if (fields.Downslope[i] >= 0) downslopeCount++;
-        }
-        Assert(downslopeCount > 0, "最陡下降方向未正确建立");
-
-        // 2. 验证河流关闭 (EnableRivers = false) 时河道彻底清零
-        PolygonRiverBuilder.Generate(geom, fields, seaLevel, enableRivers: false, riverDensity: 1.0f);
-        var riverActiveCount = 0;
-        for (var i = 0; i < count; i++)
-        {
-            if (fields.River[i] > 0f) riverActiveCount++;
-        }
-        Assert(riverActiveCount == 0, $"关闭河流时 river 属性应全部为 0，实测有 {riverActiveCount} 块激活");
-        Assert(fields.Flux[0] >= 0f, "即便河流关闭，基本地表径流 Flux 仍应累积");
-
-        // 3. 验证河流开启 (EnableRivers = true) 时产生有效且连通的河道
-        PolygonRiverBuilder.Generate(geom, fields, seaLevel, enableRivers: true, riverDensity: 1.0f);
-        riverActiveCount = 0;
-        for (var i = 0; i < count; i++)
-        {
-            if (fields.River[i] > 0f) riverActiveCount++;
-        }
-        Assert(riverActiveCount > 50, $"开启河流后应产生足够的河网地块，实测: {riverActiveCount}");
-
-        // 4. 全海极端情况
-        for (var i = 0; i < count; i++) fields.Height[i] = 0.1f;
-        PolygonRiverBuilder.Generate(geom, fields, seaLevel, enableRivers: true, riverDensity: 1.0f);
-        riverActiveCount = 0;
-        for (var i = 0; i < count; i++)
-        {
-            if (fields.River[i] > 0f) riverActiveCount++;
-        }
-        Assert(riverActiveCount == 0, "全海地形下不应产生任何河道");
-    }
-
-    private static void TestResolutionDecoupling()
-    {
-        var geom = PolygonGridBuilder.Create(WorldExtent.Default, 888, 5000, 8, out _);
-
-        // 分别为 1K, 2K, 4K 光栅化
-        var map1K = PolygonRasterizer.BuildCellMap(geom, 1024, 512);
-        var map2K = PolygonRasterizer.BuildCellMap(geom, 2048, 1024);
-        var map4K = PolygonRasterizer.BuildCellMap(geom, 4096, 2048);
-
-        Assert(map1K.UnassignedPixels <= 2, "1K 归属图存在过多未分配像素");
-        Assert(map2K.UnassignedPixels <= 5, "2K 归属图存在过多未分配像素");
-        Assert(map4K.UnassignedPixels <= 10, "4K 归属图存在过多未分配像素");
-
-        // 验证同一归一化逻辑坐标的拾取一致性
-        var rng = new PolygonRandom(1234UL);
-        for (var i = 0; i < 500; i++)
-        {
-            var u = rng.NextDouble();
-            var v = rng.NextDouble();
-
-            var wx = u * geom.Width;
-            var wy = v * geom.Height;
-            var cellWorld = geom.FindCell(wx, wy);
-
-            var c1 = map1K.CellAt((int)(u * 1024), (int)(v * 512));
-            var c2 = map2K.CellAt((int)(u * 2048), (int)(v * 1024));
-            var c4 = map4K.CellAt((int)(u * 4096), (int)(v * 2048));
-
-            // 在 4K 和 2K 尺度下，采样点与世界拾取一致
-            Assert(cellWorld == c4 || geom.GetNeighborCount(cellWorld) > 0, "光栅拾取地块必须在几何单元或其邻近内");
-            Assert(c2 >= 0 && c4 >= 0, "光栅化结果不可为负");
-        }
-    }
-
-    private static void TestLayerSystemAndPresets()
-    {
-        var stack = new LayerStackState();
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerTerrainOverview, "默认底图应为地形总览");
-
-        // 底图单选互斥
-        stack.SetBaseTheme(LayerRegistry.LayerBiomes);
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerBiomes, "底图切换为群系失败");
-
-        stack.SetBaseTheme(LayerRegistry.LayerElevation);
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerElevation, "底图切换为高程失败");
-
-        // 叠加层多选与排序
-        stack.SetOverlayActive(LayerRegistry.LayerRivers, true);
-        stack.SetOverlayActive(LayerRegistry.LayerCities, true);
-        stack.SetOverlayActive(LayerRegistry.LayerPolityBorders, true);
-
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerRivers), "河流叠加层未激活");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerPolityBorders), "政体边界叠加层未激活");
-
-        var oldTop = stack.ActiveOverlayIds[0];
-        stack.MoveOverlayDown(oldTop);
-        Assert(stack.ActiveOverlayIds[1] == oldTop, "叠加层下移顺序错误");
-
-        // 预设应用：验证河流默认只在地形总览中开启显示
-        var ok = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetPolitical, stack);
-        Assert(ok, "政治文明预设应用失败");
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerCivilization, "政治文明预设底图应为文明疆域");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerPolityBorders), "政治文明预设应包含政体边界");
-        Assert(!stack.IsOverlayActive(LayerRegistry.LayerRivers), "政治文明预设默认不应包含河流（河流仅在地形总览中默认开启）");
-
-        var okClimate = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetClimate, stack);
-        Assert(okClimate, "气候分析预设应用失败");
-        Assert(!stack.IsOverlayActive(LayerRegistry.LayerRivers), "气候分析预设默认不应包含河流");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerWindArrows), "气候分析预设应包含风向箭头");
-
-        var okWind = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetWindPrecipitation, stack);
-        Assert(okWind, "风场降水预设应用失败");
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerMoisture, "风场降水预设底图应为降水湿度");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerWindArrows), "风场降水预设应包含风向洋流");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerCoastlines), "风场降水预设应包含海岸轮廓");
-
-        // 验证 CellFields Wind 属性
-        var testFields = CellFields.Create(16);
-        Assert(testFields.WindX.Length == 16, "CellFields.WindX 长度不匹配");
-        Assert(testFields.WindY.Length == 16, "CellFields.WindY 长度不匹配");
-        testFields.WindX[0] = 5.5f;
-        testFields.WindY[0] = -3.2f;
-        var cloneFields = testFields.Clone();
-        Assert(cloneFields.WindX[0] == 5.5f, "CellFields.WindX 克隆不正确");
-        Assert(cloneFields.WindY[0] == -3.2f, "CellFields.WindY 克隆不正确");
-
-        var okPhysical = LayerPresetCatalog.ApplyPreset(LayerPresetCatalog.PresetPhysical, stack);
-        Assert(okPhysical, "自然地理预设应用失败");
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerRivers), "自然地理（地形总览）预设应默认开启河流");
-
-        // 验证城市图层与 city_labels 的关闭联动，防止城市点点无法关闭
-        stack.SetOverlayActive(LayerRegistry.LayerCities, false);
-        Assert(!stack.IsOverlayActive(LayerRegistry.LayerCities), "城市图层关闭失败");
-        Assert(!stack.IsOverlayActive(LayerRegistry.LayerCityLabels), "关闭城市时必须同步清理 city_labels，防止孤立残留");
-
-        stack.SetOverlayActive(LayerRegistry.LayerCities, true);
-        Assert(stack.IsOverlayActive(LayerRegistry.LayerCities), "城市图层开启失败");
-
-        // 未知图层 ID 容错
-        stack.SetBaseTheme("non_existent_theme_id");
-        Assert(stack.ActiveBaseThemeId == LayerRegistry.LayerTerrainOverview, "未知底图 ID 应被安全忽略并保持原状");
-
-        stack.SetOverlayActive("non_existent_overlay_id", true);
-        Assert(!stack.IsOverlayActive("non_existent_overlay_id"), "未知叠加层 ID 应被安全忽略");
-    }
-
-    private static void TestSimulationDeterminism()
-    {
-        var geom = PolygonGridBuilder.Create(WorldExtent.Default, 555, 3000, 8, out _);
-        var fields1 = CellFields.Create(geom.Count);
-        var fields2 = CellFields.Create(geom.Count);
-
-        for (var i = 0; i < geom.Count; i++)
-        {
-            fields1.Height[i] = 0.5f;
-            fields1.Temperature[i] = 0.6f;
-            fields1.Moisture[i] = 0.7f;
-            fields1.Biome[i] = (byte)BiomeType.TemperateSeasonalForest;
-
-            fields2.Height[i] = 0.5f;
-            fields2.Temperature[i] = 0.6f;
-            fields2.Moisture[i] = 0.7f;
-            fields2.Biome[i] = (byte)BiomeType.TemperateSeasonalForest;
-        }
-
-        var eco1 = PolygonEcologySimulator.Simulate(geom, fields1, 1001, 50, 50, 50, 50, 0.45f);
-        var eco2 = PolygonEcologySimulator.Simulate(geom, fields2, 1001, 50, 50, 50, 50, 0.45f);
-
-        Assert(Math.Abs(eco1.AvgEcologyHealth - eco2.AvgEcologyHealth) < 1e-6f, "生态模拟在相同输入下不具备确定性");
-        Assert(eco1.LandCellCount == eco2.LandCellCount, "陆地地块计数不一致");
-
-        var civ1 = PolygonCivilizationSimulator.Simulate(geom, fields1, 1001, 50, 50, 50, 0.45f);
-        var civ2 = PolygonCivilizationSimulator.Simulate(geom, fields2, 1001, 50, 50, 50, 0.45f);
-
-        Assert(civ1.PolityCount == civ2.PolityCount, "政体数量确定性校验失败");
-        Assert(civ1.TradeRouteCells == civ2.TradeRouteCells, "贸易网络确定性校验失败");
-        Assert(civ1.Routes != null && civ2.Routes != null && civ1.Routes.Count == civ2.Routes.Count, "贸易路线数量确定性校验失败");
-    }
-
-    private static void TestCacheKeyStability()
-    {
-        var opt1 = new GenerationOptions
-        {
-            Seed = 100,
-            TargetCellCount = 10000,
-            SeaLevel = 0.45f,
+            new("1. 多边形几何与守恒性自检 (2048 ~ 32768 档位)", TestGeometricIntegrity, "geometry", false),
+            new("2. 目标地块数与实际地块数映射验证", TestTargetVsActualCounts, "geometry", false),
+            new("3. 水文管线正确性与河流开关修复验证", TestHydrologyPipeline, "simulation", false),
+            new("4. 分辨率解耦与全图精确拾取一致性 (1K / 2K / 4K)", TestResolutionDecoupling, "geometry", false),
+            new("5. 组合图层栈、底图互斥与预设往返验证", TestLayerSystemAndPresets, "layers", true),
+            new("6. 模拟确定性与无竞争双源验证", TestSimulationDeterminism, "simulation", false),
+            new("7. 缓存键稳定性与生成参数不可变性验证", TestCacheKeyStability, "cache", true),
+            new("8. 平滑曲线几何与网格拓扑水密性验证", TestCurvedCellGeometryAndMeshTopology, "geometry", false),
+            new("9. 大型生态地貌识别、脊线骨架与边界平滑验证", TestMegaTerrainRegions, "terrain", false),
+            new("10. 幻想制图层（Cartography）笔刷指令、区域风格与图层构建验证", TestFantasyCartographySystem, "cartography", false),
+            new("11. Phase 4 美术控制（MountainRangePainter 2.0 / ForestTransition / 古地图符号 / 留白微地貌）验证", TestPhase4ArtisticControl, "cartography", false),
+            new("12. CartographyDesigner 与 FantasyContinent01 构图蓝图编译验证", TestCartographyDesignerAndFantasyContinent01, "cartography", false),
+            new("13. NarrativeRegion 叙事大区与 6 阶段流水线验证", TestNarrativeRegionsAnd6StagePipeline, "cartography", false),
+            new("14. 世界规划式生成架构 (World Layout Graph / 连绵山墙 / 高山起源九曲水系 / 体块林海) 验证", TestWorldPlannerArchitecture, "cartography", false),
+            new("15. 25 种地球典型地貌分类完整性、物理成因与守恒性验证", TestEarthGeomorphologyClassification, "terrain", false),
+            new("16. Map Effects 奇幻制图方法论 (蛇曲/牛轭湖/三角洲/地裂/智能海岸/沼泽/托尔金排线) 验证", TestMapEffectsProceduralCartography, "cartography", false),
+            new("缓存键字段覆盖与区域无关性", TestCacheKeyCoverage, "cache", true),
+            new("新旧档案头部兼容性", TestArchiveHeaderCompatibility, "cache", true),
+            new("旧几何入口与 Core 对照", TestLegacyGeometryCompatibility, "compatibility", true),
+            new("旧模拟入口与 Core 逐字段对照", TestLegacySimulationCompatibility, "compatibility", true),
+            new("生成服务、制图与模拟的快照隔离", TestSnapshotIsolation, "snapshot"),
+            new("世界规划器搬移前后固定输入指纹", TestPlanningBaseline, "planning", true),
+            new("A/B 完整快照存档往返", TestSnapshotArchiveRoundTrip, "persistence"),
+            new("快照档案校验和原子保存", TestSnapshotArchiveValidationAndAtomicSave, "persistence"),
         };
 
-        var opt2 = opt1 with { TargetCellCount = 10000 };
-        Assert(opt1.BuildCacheKey() == opt2.BuildCacheKey(), "相同参数的缓存键必须完全一致");
+        IEnumerable<TestCase> selected = tests;
+        if (args.Length == 1 && args[0] == "--list")
+        {
+            foreach (var test in tests) Console.WriteLine($"{test.Suite}: {test.Name}");
+            return 0;
+        }
+        if (args.Length == 1 && args[0] == "--quick") selected = tests.Where(t => t.Quick);
+        else if (args.Length == 2 && args[0] == "--suite")
+            selected = tests.Where(t => t.Suite.Equals(args[1], StringComparison.OrdinalIgnoreCase));
+        else if (args.Length > 0 && !(args.Length == 1 && args[0] == "--full"))
+        {
+            Console.Error.WriteLine("用法: [--full | --quick | --list | --suite <suite>]");
+            return 2;
+        }
 
-        var optDiffSeed = opt1 with { Seed = 101 };
-        Assert(opt1.BuildCacheKey() != optDiffSeed.BuildCacheKey(), "不同种子的缓存键必须不同");
-
-        var optDiffCells = opt1 with { TargetCellCount = 20000 };
-        Assert(opt1.BuildCacheKey() != optDiffCells.BuildCacheKey(), "不同地块数的缓存键必须不同");
+        var cases = selected.ToArray();
+        if (cases.Length == 0)
+        {
+            Console.Error.WriteLine("没有匹配的测试；使用 --list 查看可用分组。");
+            return 2;
+        }
+        Console.WriteLine($"PlanetGeneration 自检: {cases.Length} 项");
+        var total = Stopwatch.StartNew();
+        var failed = 0;
+        foreach (var test in cases)
+        {
+            var timer = Stopwatch.StartNew();
+            Console.Write($"[测试] {test.Name} ... ");
+            try
+            {
+                test.Run();
+                Console.WriteLine($"PASS ({timer.ElapsedMilliseconds} ms)");
+            }
+            catch (Exception ex)
+            {
+                failed++;
+                Console.WriteLine($"FAIL ({timer.ElapsedMilliseconds} ms)\n{ex}");
+            }
+        }
+        Console.WriteLine($"自检完成: {cases.Length - failed} 通过, {failed} 失败 ({total.ElapsedMilliseconds} ms)");
+        return failed == 0 ? 0 : 1;
     }
 
-    private static void TestCurvedCellGeometryAndMeshTopology()
+    private static void Assert([DoesNotReturnIf(false)] bool condition, string message)
     {
-        var geom = PolygonGridBuilder.Create(WorldExtent.Default, 999, 2048, 8, out var stats);
-
-        // 1. 测试单地块平滑曲线多边形与高亮环
-        for (var i = 0; i < Math.Min(geom.Count, 50); i++)
-        {
-            var rawPoly = geom.GetPolygon(i);
-            var curvedPoly = geom.GetCurvedPolygon(i, 3);
-            Assert(curvedPoly.Length == rawPoly.Length * 3, $"细分后顶点数应为原始的 3 倍: 实际 {curvedPoly.Length}, 期望 {rawPoly.Length * 3}");
-
-            var rings = geom.GetCurvedHighlightRings(i, 3);
-            Assert(rings.Length == 3, "平滑高亮环必须返回 3 组环（基准 + ±Width 经度镜像）");
-            Assert(rings[0].Length == curvedPoly.Length, "基准高亮环点数必须与平滑多边形完全一致");
-            Assert(rings[1].Length == curvedPoly.Length && rings[2].Length == curvedPoly.Length, "镜像高亮环点数必须与基准环一致");
-
-            // 验证环 1 相对环 0 偏移精确为 -Width
-            Assert(Math.Abs((rings[1][0].X - rings[0][0].X) - (-geom.Width)) < 1e-6, "经度缝 -Width 镜像偏移不准确");
-            // 验证环 2 相对环 0 偏移精确为 +Width
-            Assert(Math.Abs((rings[2][0].X - rings[0][0].X) - geom.Width) < 1e-6, "经度缝 +Width 镜像偏移不准确");
-        }
-
-        // 2. 测试全图 2D 矢量网格拓扑构建
-        var topology = CurvedCellGeometry.BuildMeshTopology(geom, 3);
-        Assert(topology.Vertices.Length > 0, "网格拓扑顶点数不能为 0");
-        Assert(topology.Indices.Length > 0 && topology.Indices.Length % 3 == 0, "网格索引必须为 3 的倍数（三角形）");
-        Assert(topology.VertexToCell.Length == topology.Vertices.Length, "顶点与地块映射数组长度必须与顶点数组一致");
-
-        // 3. 校验网格索引无越界，且所有顶点均映射到有效 cellId
-        for (var k = 0; k < topology.Indices.Length; k++)
-        {
-            var idx = topology.Indices[k];
-            Assert(idx >= 0 && idx < topology.Vertices.Length, $"三角形索引越界: {idx}, 总顶点: {topology.Vertices.Length}");
-        }
-
-        for (var v = 0; v < topology.Vertices.Length; v++)
-        {
-            var cellId = topology.VertexToCell[v];
-            Assert(cellId >= 0 && cellId < geom.Count, $"顶点所属地块 ID 越界: {cellId}, 地块总数: {geom.Count}");
-        }
-
-        // 4. 校验全图规范平滑边去重正确性
-        var canonicalEdges = CurvedCellGeometry.GetCanonicalCurvedEdges(geom, 3);
-        Assert(canonicalEdges.Length > 0, "规范平滑曲线边数量必须大于 0");
-        Assert(canonicalEdges.Length < geom.Count * 4, "去重后的规范边总数应约为地块数的 3 倍");
-        for (var i = 0; i < Math.Min(canonicalEdges.Length, 50); i++)
-        {
-            Assert(canonicalEdges[i].Length == 4, $"细分 3 时的曲线边点数应为 4，实际为 {canonicalEdges[i].Length}");
-        }
-
-        // 5. 校验带拓扑平滑曲线共享边（CellA 与 CellB）
-        var topoEdges = CurvedCellGeometry.GetCanonicalCurvedEdgesWithTopology(geom, 3);
-        Assert(topoEdges.Length == canonicalEdges.Length, "拓扑边数量必须与规范边严格一致");
-        var internalCount = 0;
-        var boundaryCount = 0;
-        for (var i = 0; i < topoEdges.Length; i++)
-        {
-            var e = topoEdges[i];
-            Assert(e.CellA >= 0 && e.CellA < geom.Count, $"CellA 越界: {e.CellA}");
-            if (e.CellB >= 0)
-            {
-                Assert(e.CellB < geom.Count, $"CellB 越界: {e.CellB}");
-                Assert(e.CellA != e.CellB, "内部边两侧地块不能相同");
-                internalCount++;
-            }
-            else
-            {
-                boundaryCount++;
-            }
-        }
-        Assert(internalCount > topoEdges.Length * 0.95, $"绝大多数边应为双侧内部边: 内部 {internalCount}, 边界 {boundaryCount}");
+        if (!condition) throw new InvalidOperationException($"断言失败: {message}");
     }
 }

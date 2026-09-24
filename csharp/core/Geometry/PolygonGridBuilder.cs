@@ -59,7 +59,7 @@ public static class PolygonGridBuilder
     {
         var safeSpacing = Math.Max(spacing, 0.5d);
         var desired = (int)Math.Round(width * height / (safeSpacing * safeSpacing));
-        return Math.Clamp(desired, MinCellsDesired, (int)(width * height));
+        return Math.Clamp(desired, Math.Min(MinCellsDesired, (int)(width * height)), (int)(width * height));
     }
 
     /// <summary>
@@ -71,11 +71,28 @@ public static class PolygonGridBuilder
         int cellsDesired,
         int maxRepairRounds,
         out PolygonBuildStats stats)
+        => Build(extent, seed, Math.Clamp(cellsDesired, MinCellsDesired, 131072), maxRepairRounds, out stats);
+
+    /// <summary>
+    /// 栅格兼容入口：保留旧地图的最小尺寸与“最多每像素一个目标地块”约束，
+    /// 但与逻辑世界共用同一套站点、Voronoi、邻接和拾取实现。
+    /// </summary>
+    public static CellGeometry CreateForRaster(
+        int sourceWidth, int sourceHeight, int seed, int cellsDesired,
+        int maxRepairRounds, out PolygonBuildStats stats)
+    {
+        var width = Math.Max(sourceWidth, 2);
+        var height = Math.Max(sourceHeight, 2);
+        var maxDesired = checked(width * height);
+        var desired = Math.Clamp(cellsDesired, Math.Min(MinCellsDesired, maxDesired), maxDesired);
+        return Build(new WorldExtent(width, height), seed, desired, maxRepairRounds, out stats);
+    }
+
+    private static CellGeometry Build(
+        WorldExtent extent, int seed, int desired, int maxRepairRounds, out PolygonBuildStats stats)
     {
         var width = extent.Width;
         var height = extent.Height;
-
-        var desired = Math.Clamp(cellsDesired, MinCellsDesired, 131072);
 
         // 由目标地块数反推点距，并整除经度周期。
         var spacing = Math.Sqrt(width * height / desired);

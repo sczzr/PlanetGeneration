@@ -21,8 +21,9 @@ public static class LayerRegistry
     public const string LayerOres = "ores";
     public const string LayerEcology = "ecology";
     public const string LayerCivilization = "civilization";
-    public const string LayerTradeFlow = "trade_flow";
     public const string LayerCellGrid = "cell_grid";
+    public const string LayerInkWashLandscape = "inkwash_landscape";
+    public const string LayerGuohuaHanddrawn = "guohua_handdrawn";
 
     public const string LayerRivers = "rivers";
     public const string LayerCoastlines = "coastlines";
@@ -34,9 +35,20 @@ public static class LayerRegistry
     public const string LayerCellBorders = "cell_borders";
     public const string LayerPlateBorders = "plate_borders";
 
+    // ── 幻想制图手绘图层 (PainterLayer) ──
+    public const string LayerPainterPaper = "painter_paper";
+    public const string LayerPainterMountain = "painter_mountain";
+    public const string LayerPainterForest = "painter_forest";
+    public const string LayerPainterRiver = "painter_river";
+    public const string LayerPainterFog = "painter_fog";
+    public const string LayerPainterTexture = "painter_texture";
+    public const string LayerPainterLandmark = "painter_landmark";
+    public const string LayerPainterLabel = "painter_label";
+
     private static readonly Dictionary<string, LayerDefinition> _layers = new(StringComparer.OrdinalIgnoreCase);
     private static readonly List<LayerDefinition> _baseThemes = new();
     private static readonly List<LayerDefinition> _overlays = new();
+    private static readonly List<LayerDefinition> _painterLayers = new();
 
     static LayerRegistry()
     {
@@ -80,6 +92,26 @@ public static class LayerRegistry
             Category = LayerCategory.BaseTheme,
             DrawBand = LayerDrawBand.BaseMesh,
             DataDependencies = new[] { "Biome" }
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerInkWashLandscape,
+            DisplayName = "山水舆图",
+            GroupName = "地理",
+            Category = LayerCategory.BaseTheme,
+            DrawBand = LayerDrawBand.BaseMesh,
+            DataDependencies = new[] { "Height", "Temperature", "Moisture", "Landform", "River", "Biome", "Influence" }
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerGuohuaHanddrawn,
+            DisplayName = "国风手绘舆图",
+            GroupName = "地理",
+            Category = LayerCategory.BaseTheme,
+            DrawBand = LayerDrawBand.BaseMesh,
+            DataDependencies = new[] { "Height", "Temperature", "Moisture", "Landform", "River", "Biome", "Influence", "CityId", "TradeRouteMask" }
         });
 
         Register(new LayerDefinition
@@ -129,7 +161,7 @@ public static class LayerRegistry
             GroupName = "地质",
             Category = LayerCategory.BaseTheme,
             DrawBand = LayerDrawBand.BaseMesh,
-            DataDependencies = new[] { "Ore", "Height" }
+            DataDependencies = new[] { "Ore", "Height", "MagicDensity" }
         });
 
         Register(new LayerDefinition
@@ -150,16 +182,6 @@ public static class LayerRegistry
             Category = LayerCategory.BaseTheme,
             DrawBand = LayerDrawBand.BaseMesh,
             DataDependencies = new[] { "Influence", "PolityId", "BorderMask", "Height" }
-        });
-
-        Register(new LayerDefinition
-        {
-            Id = LayerTradeFlow,
-            DisplayName = "贸易强度",
-            GroupName = "人文",
-            Category = LayerCategory.BaseTheme,
-            DrawBand = LayerDrawBand.BaseMesh,
-            DataDependencies = new[] { "TradeRouteMask", "TradeFlow", "Height" }
         });
 
         Register(new LayerDefinition
@@ -281,6 +303,87 @@ public static class LayerRegistry
             DefaultWidthOrSize = 2.4f,
             DataDependencies = new[] { "PlateBoundary" }
         });
+
+        // ── 幻想制图手绘图层 (PainterLayer) ──
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterPaper,
+            DisplayName = "宣纸地子",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.BaseMesh,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterRiver,
+            DisplayName = "水墨江河",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Lines,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterForest,
+            DisplayName = "水墨林海",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.BaseMesh,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterMountain,
+            DisplayName = "青绿群峰",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Symbols,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterFog,
+            DisplayName = "云岚烟霭",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Symbols,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterLandmark,
+            DisplayName = "名胜古建",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Symbols,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterLabel,
+            DisplayName = "金石题名",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Labels,
+            IsDefaultActive = true
+        });
+
+        Register(new LayerDefinition
+        {
+            Id = LayerPainterTexture,
+            DisplayName = "纸本肌理",
+            GroupName = "制图",
+            Category = LayerCategory.PainterLayer,
+            DrawBand = LayerDrawBand.Interaction,
+            IsDefaultActive = true
+        });
     }
 
     private static void Register(LayerDefinition layer)
@@ -289,6 +392,10 @@ public static class LayerRegistry
         if (layer.Category == LayerCategory.BaseTheme)
         {
             _baseThemes.Add(layer);
+        }
+        else if (layer.Category == LayerCategory.PainterLayer)
+        {
+            _painterLayers.Add(layer);
         }
         else
         {
@@ -301,5 +408,6 @@ public static class LayerRegistry
 
     public static IReadOnlyList<LayerDefinition> GetAllBaseThemes() => _baseThemes;
     public static IReadOnlyList<LayerDefinition> GetAllOverlays() => _overlays;
+    public static IReadOnlyList<LayerDefinition> GetAllPainterLayers() => _painterLayers;
     public static IReadOnlyCollection<LayerDefinition> GetAllLayers() => _layers.Values;
 }

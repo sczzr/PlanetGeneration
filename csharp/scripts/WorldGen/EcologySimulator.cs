@@ -1,5 +1,5 @@
 using Godot;
-using PlanetGeneration.WorldGen.Polygon;
+using PlanetGeneration.Core.Simulation;
 
 namespace PlanetGeneration.WorldGen;
 

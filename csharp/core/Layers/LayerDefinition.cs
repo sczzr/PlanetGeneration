@@ -7,6 +7,7 @@ public enum LayerCategory
 {
     BaseTheme = 0,
     Overlay = 1,
+    PainterLayer = 2,
 }
 
 /// <summary>图层绘制层级带，保证几何图层间正确的遮挡与层叠关系。</summary>

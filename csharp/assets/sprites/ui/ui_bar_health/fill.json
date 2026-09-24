@@ -1,0 +1,13 @@
+{
+  "task": "ui_bar_health_fill",
+  "part": "fill",
+  "style": "ui",
+  "split": "bar",
+  "size": [
+    1032,
+    168
+  ],
+  "parts": {
+    "fill": "fill.png"
+  }
+}

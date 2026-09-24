@@ -1,0 +1,27 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/pause_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/themes/main_menu.tres" id="2_theme"]
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_fx_sound.gd" id="3_fx_sound"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_open.wav" id="4_sfx_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_close.wav" id="5_sfx_close"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_click.wav" id="6_sfx_click"]
+
+[node name="PauseMenu" type="Control"]
+process_mode = 3
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_fx_sound")
+open_sound = ExtResource("4_sfx_open")
+close_sound = ExtResource("5_sfx_close")
+click_sound = ExtResource("6_sfx_click")

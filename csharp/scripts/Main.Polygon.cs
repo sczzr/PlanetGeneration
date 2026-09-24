@@ -1,10 +1,13 @@
+using PlanetGeneration.Application;
 using Godot;
+using LandformType = PlanetGeneration.Core.Domain.LandformType;
 using PlanetGeneration.WorldGen;
-using PlanetGeneration.WorldGen.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using PlanetGeneration.UI.State;
+using PlanetGeneration.WorldGen.Polygon;
 
 namespace PlanetGeneration;
 
@@ -83,12 +86,29 @@ public partial class Main : Control
         // 河流：不再采样栅格河流，而是在地块图上按最陡下降方向重新生成河网。
         // 河道占比直接由"河流密度"滑杆线性换算——密度是用户可解释的量，不需要按地图尺寸重新标定。
         // 栅格河流（world.River）保持不变，继续供栅格渲染与文明模拟使用，等 P4 收尾时再统一。
-        PolygonRiverBuilder.Generate(grid, SeaLevel, DefaultRiverCellFraction * RiverDensity);
+        PolygonTopologyBuilder.BuildDownslope(grid);
+        PolygonRiverBuilder.Generate(grid, SeaLevel, DefaultRiverCellFraction * RiverDensity, EnableRivers);
 
         // 离散量：质心采样，避免一个地块里出现两个群系。
         RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.Biome), fields.Biome);
         RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.Rock), fields.Rock);
         RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.Ore), fields.Ore);
+        if (world.IndustrialOre != null)
+        {
+            RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.IndustrialOre), fields.IndustrialOre);
+        }
+        if (world.SupernaturalOre != null)
+        {
+            RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.SupernaturalOre), fields.SupernaturalOre);
+        }
+        if (world.CardOre != null)
+        {
+            RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, ConvertToByteRaster(world.CardOre), fields.CardOre);
+        }
+        if (world.Leyline != null)
+        {
+            RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, world.Leyline, fields.Leyline);
+        }
         RasterPolygonBridge.SampleDiscreteAtCentroid(grid, cellMap, world.PlateResult.PlateIds, fields.PlateId);
         RasterPolygonBridge.SampleDiscreteAtCentroid(
             grid, cellMap, ConvertToByteRaster(world.PlateResult.BoundaryTypes), fields.PlateBoundary);
@@ -96,14 +116,12 @@ public partial class Main : Control
         // 地貌：用**地块邻接**（Cells.C）分类，而不是在质心像素上跑栅格分类器。
         // 这样地貌区域的边界会贴着地块边界走，与"地块划分"图层对齐；
         // 悬停面板读的也是同一份结果（见 SampleFromCell），不会出现"图层画的和悬停说的不一致"。
-        PolygonLandformClassifier.ClassifyAll(grid, SeaLevel, BasinSensitivity, fields.Landform);
+        PolygonLandformClassifier.ClassifyAll(grid, SeaLevel, LandformTuning with { BasinSensitivity = BasinSensitivity }, fields.Landform);
 
         AssignCitiesToCells(grid, world.Cities, fields.CityId, out var cityCell);
         world.CityCell = cityCell;
 
-        // 拓扑派生：下游方向与汇流量。这是旧栅格模型给不出的结构。
-        PolygonTopologyBuilder.BuildDownslope(grid);
-        PolygonTopologyBuilder.BuildFlux(grid);
+        // 汇流已由河流阶段产生，不能在此再次覆盖。
         sampleTimer.Stop();
 
         world.PolygonGrid = grid;
@@ -234,6 +252,12 @@ public partial class Main : Control
     /// </summary>
     private void EnsurePolygonEcology(GeneratedWorldData world)
     {
+        if (world.Snapshot != null)
+        {
+            SnapshotWorldProjection.EnsureSimulation(world, _currentEpoch, _speciesDiversity, _civilAggression, _magicDensity);
+            return;
+        }
+
         var grid = EnsurePolygonLayer(world);
         if (grid == null)
         {
@@ -268,6 +292,12 @@ public partial class Main : Control
     /// </summary>
     private void EnsurePolygonCivilization(GeneratedWorldData world)
     {
+        if (world.Snapshot != null)
+        {
+            SnapshotWorldProjection.EnsureSimulation(world, _currentEpoch, _speciesDiversity, _civilAggression, _magicDensity);
+            return;
+        }
+
         var grid = EnsurePolygonLayer(world);
         if (grid == null)
         {

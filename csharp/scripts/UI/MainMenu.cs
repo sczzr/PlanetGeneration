@@ -11,6 +11,7 @@ public partial class MainMenu : Control
 {
 	public event Action? ContinueRequested;
 	public event Action? NewWorldRequested;
+	public event Action? LoadRequested;
 	public event Action? SettingsRequested;
 
 	public override void _Ready()
@@ -25,7 +26,11 @@ public partial class MainMenu : Control
 			Close();
 			NewWorldRequested?.Invoke();
 		};
-		GetNode<Button>("%LoadButton").Pressed += Close;
+		GetNode<Button>("%LoadButton").Pressed += () =>
+		{
+			Close();
+			LoadRequested?.Invoke();
+		};
 		GetNode<Button>("%SettingsButton").Pressed += () =>
 		{
 			Close();

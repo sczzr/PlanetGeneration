@@ -1,4 +1,5 @@
 using Godot;
+using PlanetGeneration.Core.Domain;
 using PlanetGeneration.WorldGen;
 using System;
 using System.Collections.Generic;
@@ -159,7 +160,7 @@ public partial class Main : Control
 				UpdateCellHighlight(cellId);
 
 				var sample = PlanetGeneration.Core.Application.WorldQueryService.GetCellSample(_primarySnapshot, cellId);
-				var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
+				var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform} | 矿:{FormatCellOreDetail(sample)}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
 				if (sample.Settlement != null)
 				{
 					detailText += $"\n聚落:{sample.Settlement.Name} ({sample.Settlement.Rank})";
@@ -254,7 +255,7 @@ public partial class Main : Control
 		if (current < safeSea)
 		{
 			var depth = (safeSea - current) / Mathf.Max(safeSea, 0.0001f);
-			return depth > 0.45f ? LandformType.DeepOcean : LandformType.ShallowSea;
+			return depth > 0.45f ? LandformType.DeepOcean : LandformType.ShallowOcean;
 		}
 
 		var relativeHeight = (current - safeSea) / Mathf.Max(1f - safeSea, 0.0001f);
@@ -308,12 +309,12 @@ public partial class Main : Control
 
 		if (!nearSea && river[x, y] > 0.20f && relativeHeight > 0.10f && relativeHeight < 0.66f && slopeSignal > 0.014f)
 		{
-			return LandformType.Valley;
+			return LandformType.Canyon;
 		}
 
 		if (nearSea && relativeHeight < 0.12f)
 		{
-			return LandformType.CoastalPlain;
+			return LandformType.Coast;
 		}
 
 		if (relativeHeight < 0.30f)
@@ -323,7 +324,7 @@ public partial class Main : Control
 
 		if (relativeHeight < 0.50f)
 		{
-			return LandformType.RollingHills;
+			return LandformType.Hill;
 		}
 
 		if (relativeHeight > 0.78f || (relativeHeight > 0.68f && (localRelief > 0.045f || slopeSignal > 0.050f)))
@@ -338,10 +339,10 @@ public partial class Main : Control
 
 		if (relativeHeight > 0.52f)
 		{
-			return LandformType.Upland;
+			return LandformType.Hill;
 		}
 
-		return LandformType.RollingHills;
+		return LandformType.Hill;
 	}
 
 	private static (float Mean, float Min, float Max) SampleNeighborStats(float[,] elevation, int x, int y, int width, int height)

@@ -1,0 +1,13 @@
+{
+  "task": "ui_bar_health_base",
+  "part": "base",
+  "style": "ui",
+  "split": "bar",
+  "size": [
+    1192,
+    328
+  ],
+  "parts": {
+    "base": "base.png"
+  }
+}

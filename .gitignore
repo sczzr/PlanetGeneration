@@ -15,3 +15,19 @@
 
 # Local external repos
 /Fantasy-Map-Generator
+
+# Temporary & Test outputs
+scratch/
+gemini_media/
+*verification*.png*
+*preview.png*
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Large design source files & raw assets
+*.psd
+csharp/architect/
+mountain_cluster_src/

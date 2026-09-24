@@ -52,7 +52,7 @@ public partial class MapCanvas : Control
         var isSameGeometry = _snapshot?.Geometry == snapshot.Geometry && _topology != null;
         _snapshot = snapshot;
         _layerStack = layerStack;
-        _labelFont = font;
+        _labelFont = font ?? ThemeDB.FallbackFont;
         _hoveredCellId = -1;
         _highlightRings.Clear();
 
@@ -69,6 +69,24 @@ public partial class MapCanvas : Control
             RebuildCellMesh();
         }
 
+        QueueRedraw();
+    }
+
+    /// <summary>
+    /// 清空地块网格渲染状态。读档等场景下当前会话没有与之匹配的核心库快照，
+    /// 继续持有旧快照会让悬停拾取与矢量叠加层指向另一个世界。
+    /// </summary>
+    public void DetachSnapshot()
+    {
+        _snapshot = null;
+        _layerStack = null;
+        _topology = null;
+        _cellMesh = null;
+        _cachedCurvedEdges = null;
+        _cachedRenderEdges = null;
+        _cachedPlateBoundaries = null;
+        _hoveredCellId = -1;
+        _highlightRings.Clear();
         QueueRedraw();
     }
 
@@ -202,10 +220,95 @@ public partial class MapCanvas : Control
 
         var vertCount = _topology.Vertices.Length;
         var colors = new Color[vertCount];
+
+        var isContinuousTheme = themeId is LayerRegistry.LayerGuohuaHanddrawn 
+            or "guohua_handdrawn" 
+            or "inkwash_landscape" 
+            or "satellite" 
+            or "terrain_overview" 
+            or "elevation" 
+            or "temperature" 
+            or "moisture"
+            or "ecology";
+
+        if (!isContinuousTheme)
+        {
+            for (var v = 0; v < vertCount; v++)
+            {
+                var cellId = _topology.VertexToCell[v];
+                colors[v] = cellColors[cellId];
+            }
+            return colors;
+        }
+
+        // 连续自然主题：顶点级智能加权平滑晕染（消灭 Voronoi 多边形色块接缝）
+        var fields = _snapshot.Fields;
+        var seaLevel = _snapshot.Options.SeaLevel;
+        var geom = _snapshot.Geometry;
+        var width = (float)geom.Width;
+
+        var isLand = new bool[count];
+        for (var i = 0; i < count; i++)
+        {
+            isLand[i] = fields.Height[i] > seaLevel;
+        }
+
+        const float eps = 220f; // 宣纸水墨晕染平滑核半径
+
         for (var v = 0; v < vertCount; v++)
         {
             var cellId = _topology.VertexToCell[v];
-            colors[v] = cellColors[cellId];
+            var vPos = _topology.Vertices[v];
+            var cX = (float)geom.CentroidX[cellId];
+            var cY = (float)geom.CentroidY[cellId];
+
+            var dx0 = (float)vPos.X - cX;
+            dx0 -= MathF.Round(dx0 / width) * width;
+            var dy0 = (float)vPos.Y - cY;
+            var d0Sq = (dx0 * dx0) + (dy0 * dy0);
+
+            // 接近地块质心中心点时直接赋自身色彩
+            if (d0Sq < 4.0f)
+            {
+                colors[v] = cellColors[cellId];
+                continue;
+            }
+
+            var myIsLand = isLand[cellId];
+            var start = geom.CellNeighborStart[cellId];
+            var end = geom.CellNeighborStart[cellId + 1];
+
+            var w0 = 1.0f / (d0Sq + eps);
+            var totalWeight = w0;
+            var r = cellColors[cellId].R * w0;
+            var g = cellColors[cellId].G * w0;
+            var b = cellColors[cellId].B * w0;
+            var a = cellColors[cellId].A * w0;
+
+            for (var k = start; k < end; k++)
+            {
+                var nb = geom.CellNeighbors[k];
+                // 严格保持海陆海岸线轮廓分明：陆地只与陆地邻居平滑，水体只与水体邻居平滑
+                if (isLand[nb] != myIsLand) continue;
+
+                var nbX = (float)geom.CentroidX[nb];
+                var nbY = (float)geom.CentroidY[nb];
+                var dx = (float)vPos.X - nbX;
+                dx -= MathF.Round(dx / width) * width;
+                var dy = (float)vPos.Y - nbY;
+                var dSq = (dx * dx) + (dy * dy);
+
+                var w = 1.0f / (dSq + eps);
+                totalWeight += w;
+                var c = cellColors[nb];
+                r += c.R * w;
+                g += c.G * w;
+                b += c.B * w;
+                a += c.A * w;
+            }
+
+            var inv = 1.0f / totalWeight;
+            colors[v] = new Color(r * inv, g * inv, b * inv, a * inv);
         }
 
         return colors;
@@ -367,9 +470,16 @@ public partial class MapCanvas : Control
             DrawMesh(_cellMesh, WhiteTexture);
         }
 
-        // 2. 绘制矢量叠加图层
+        // 2. 绘制矢量叠加图层或国风手绘舆图
         var visibleRect = new Rect2(Vector2.Zero, new Vector2((float)geom.Width, (float)geom.Height));
-        OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, screenScale, _labelFont, _cachedCurvedEdges, _cachedRenderEdges, _cachedPlateBoundaries);
+        if (string.Equals(_layerStack.ActiveBaseThemeId, LayerRegistry.LayerGuohuaHanddrawn, StringComparison.OrdinalIgnoreCase))
+        {
+            GuohuaMapRenderer.Draw(this, _snapshot, visibleRect, screenScale, _labelFont);
+        }
+        else
+        {
+            OverlayVectorRenderer.DrawOverlays(this, _snapshot, _layerStack, visibleRect, screenScale, _labelFont, _cachedCurvedEdges, _cachedRenderEdges, _cachedPlateBoundaries);
+        }
 
         // 3. 绘制平滑高亮环
         if (_highlightRings.Count > 0)

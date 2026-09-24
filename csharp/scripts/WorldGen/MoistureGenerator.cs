@@ -1,10 +1,17 @@
 using Godot;
+using System;
 using System.Threading.Tasks;
 
 namespace PlanetGeneration.WorldGen;
 
 public sealed class MoistureGenerator
 {
+    /// <summary>
+    /// 分带并行时全部私有缓冲的总内存上限。超过则减少带数
+    /// （4K 地图全图缓冲约 32 MB，8 带就要 256 MB，必须收着用）。
+    /// </summary>
+    private const long MaxParallelBufferMemoryBytes = 96L * 1024 * 1024;
+
     public float[,] GenerateBaseMoisture(int width, int height, float seaLevel, float[,] elevation, float[,] temperature)
     {
         var moisture = new float[width, height];
@@ -144,111 +151,161 @@ public sealed class MoistureGenerator
 
         var factor = Mathf.Clamp(moistureFactor, 0.1f, 3.0f);
 
-        for (var y = 0; y < height; y++)
+        void MarchPath(int startX, int startY, float[,] targetBuffer)
         {
-            for (var x = 0; x < width; x++)
+            var noiseValue = noiseValues[startX, startY];
+
+            var isLand = elevation[startX, startY] >= seaLevel;
+            if (isLand)
             {
-                var noiseValue = noiseValues[x, y];
+                targetBuffer[startX, startY] += 0.15f * noiseValue * factor;
+                return;
+            }
 
-                var isLand = elevation[x, y] >= seaLevel;
-                if (isLand)
+            var windX = wind[startX, startY].X;
+            var windY = wind[startX, startY].Y;
+            var windSpeed = Mathf.Sqrt(windX * windX + windY * windY);
+            if (windSpeed <= 0.0001f)
+            {
+                return;
+            }
+
+            var moistureRemaining = baseMoisture[startX, startY] * 50f * factor;
+            var lastElevation = elevation[startX, startY];
+
+            var unitX = windX / windSpeed;
+            var unitY = windY / windSpeed;
+
+            var xvec = startX + Mathf.RoundToInt(unitX);
+            var yvec = startY + Mathf.RoundToInt(unitY);
+            var stepCount = 0;
+
+            while (moistureRemaining > 0.1f && stepCount < 1000)
+            {
+                WrapX(ref xvec, width);
+                if (yvec < 0 || yvec >= height)
                 {
-                    distributed[x, y] += 0.15f * noiseValue * factor;
-                    continue;
+                    break;
                 }
 
-                var windX = wind[x, y].X;
-                var windY = wind[x, y].Y;
-                var windSpeed = Mathf.Sqrt(windX * windX + windY * windY);
-                if (windSpeed <= 0.0001f)
+                var currentElevation = elevation[xvec, yvec];
+                var currentTemperature = temperature[xvec, yvec];
+
+                float slope;
+                var slopeBasis = Mathf.Sqrt(currentElevation) - (0.5f * currentTemperature) - (0.005f * windSpeed) + 0.7f;
+
+                if (lastElevation >= seaLevel)
                 {
-                    continue;
+                    slope = (currentElevation - lastElevation) * slopeBasis;
+                }
+                else
+                {
+                    slope = 0.01f * (currentElevation - lastElevation) * slopeBasis;
                 }
 
-                var moistureRemaining = baseMoisture[x, y] * 50f * factor;
-                var lastElevation = elevation[x, y];
-
-                var unitX = windX / windSpeed;
-                var unitY = windY / windSpeed;
-
-                var xvec = x + Mathf.RoundToInt(unitX);
-                var yvec = y + Mathf.RoundToInt(unitY);
-                var stepCount = 0;
-
-                while (moistureRemaining > 0.1f && stepCount < 1000)
+                if (slope <= 0.002f)
                 {
-                    WrapX(ref xvec, width);
-                    if (yvec < 0 || yvec >= height)
+                    slope = 0.002f;
+                }
+
+                var transfer = moistureRemaining * slope;
+                if (float.IsNaN(transfer) || float.IsInfinity(transfer))
+                {
+                    break;
+                }
+
+                targetBuffer[xvec, yvec] += transfer;
+                windSpeed = wind[xvec, yvec].Length();
+
+                if (currentElevation < seaLevel)
+                {
+                    targetBuffer[xvec, yvec] = 0.0001f;
+                }
+
+                if (currentElevation > 0.6f)
+                {
+                    moistureRemaining -= 4f * targetBuffer[xvec, yvec];
+                }
+                else
+                {
+                    moistureRemaining -= targetBuffer[xvec, yvec];
+                }
+
+                lastElevation = currentElevation;
+
+                xvec += Mathf.RoundToInt(unitX);
+                yvec += Mathf.RoundToInt(unitY);
+
+                WrapX(ref xvec, width);
+                if (yvec < 0 || yvec >= height)
+                {
+                    break;
+                }
+
+                var resultantX = wind[xvec, yvec].X + windX;
+                var resultantY = wind[xvec, yvec].Y + windY;
+                var resultantMagnitude = Mathf.Sqrt(resultantX * resultantX + resultantY * resultantY);
+                if (resultantMagnitude <= 0.0001f)
+                {
+                    break;
+                }
+
+                unitX = resultantX / resultantMagnitude;
+                unitY = resultantY / resultantMagnitude;
+
+                stepCount++;
+            }
+        }
+
+        // 主循环是本阶段的热点：每个海洋格沿风场步进最多 1000 步，2K 地图上亿级步数
+        // 在单线程下要 30 秒以上。按行分带并行：每条路径可能跨带读写，
+        // 共享一个缓冲会产生数据竞争，所以每带持有自己的全图私有缓冲，
+        // 带内保持与旧实现完全相同的串行顺序、带间按固定下标顺序合并——
+        // 结果仍然是确定性的（同种子同参数逐位一致），只与旧单线程结果存在
+        // 微小的路径回读时序差异。缓冲内存以 MaxParallelBufferMemoryBytes 封顶，
+        // 超限或单核时回退到原始串行路径。
+        var bandCount = Mathf.Clamp(System.Environment.ProcessorCount, 1, 8);
+        var bufferBytes = (long)width * height * sizeof(float);
+        bandCount = (int)Math.Min(bandCount, Math.Max(1, MaxParallelBufferMemoryBytes / Math.Max(bufferBytes, 1)));
+        if (bandCount > 1)
+        {
+            var rowsPerBand = Mathf.CeilToInt(height / (float)bandCount);
+            var bandBuffers = new float[bandCount][,];
+
+            Parallel.For(0, bandCount, band =>
+            {
+                var bandBuffer = new float[width, height];
+                bandBuffers[band] = bandBuffer;
+                var yStart = band * rowsPerBand;
+                var yEnd = Math.Min(height, yStart + rowsPerBand);
+                for (var y = yStart; y < yEnd; y++)
+                {
+                    for (var x = 0; x < width; x++)
                     {
-                        break;
+                        MarchPath(x, y, bandBuffer);
                     }
+                }
+            });
 
-                    var currentElevation = elevation[xvec, yvec];
-                    var currentTemperature = temperature[xvec, yvec];
-
-                    float slope;
-                    var slopeBasis = Mathf.Sqrt(currentElevation) - (0.5f * currentTemperature) - (0.005f * windSpeed) + 0.7f;
-
-                    if (lastElevation >= seaLevel)
+            for (var band = 0; band < bandCount; band++)
+            {
+                var bandBuffer = bandBuffers[band];
+                for (var y = 0; y < height; y++)
+                {
+                    for (var x = 0; x < width; x++)
                     {
-                        slope = (currentElevation - lastElevation) * slopeBasis;
+                        distributed[x, y] += bandBuffer[x, y];
                     }
-                    else
-                    {
-                        slope = 0.01f * (currentElevation - lastElevation) * slopeBasis;
-                    }
-
-                    if (slope <= 0.002f)
-                    {
-                        slope = 0.002f;
-                    }
-
-                    var transfer = moistureRemaining * slope;
-                    if (float.IsNaN(transfer) || float.IsInfinity(transfer))
-                    {
-                        break;
-                    }
-
-                    distributed[xvec, yvec] += transfer;
-                    windSpeed = wind[xvec, yvec].Length();
-
-                    if (currentElevation < seaLevel)
-                    {
-                        distributed[xvec, yvec] = 0.0001f;
-                    }
-
-                    if (currentElevation > 0.6f)
-                    {
-                        moistureRemaining -= 4f * distributed[xvec, yvec];
-                    }
-                    else
-                    {
-                        moistureRemaining -= distributed[xvec, yvec];
-                    }
-
-                    lastElevation = currentElevation;
-
-                    xvec += Mathf.RoundToInt(unitX);
-                    yvec += Mathf.RoundToInt(unitY);
-
-                    WrapX(ref xvec, width);
-                    if (yvec < 0 || yvec >= height)
-                    {
-                        break;
-                    }
-
-                    var resultantX = wind[xvec, yvec].X + windX;
-                    var resultantY = wind[xvec, yvec].Y + windY;
-                    var resultantMagnitude = Mathf.Sqrt(resultantX * resultantX + resultantY * resultantY);
-                    if (resultantMagnitude <= 0.0001f)
-                    {
-                        break;
-                    }
-
-                    unitX = resultantX / resultantMagnitude;
-                    unitY = resultantY / resultantMagnitude;
-
-                    stepCount++;
+                }
+            }
+        }
+        else
+        {
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
+                    MarchPath(x, y, distributed);
                 }
             }
         }

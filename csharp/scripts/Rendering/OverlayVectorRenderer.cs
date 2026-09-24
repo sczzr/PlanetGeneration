@@ -32,6 +32,7 @@ public sealed class PlateBoundarySegment
 /// 8 种叠加图层矢量绘制器：
 /// 河流、政体边界、海岸线、城市、贸易路线、地块轮廓、风向箭头、板块边界。
 /// 支持屏幕像素线宽归一化（无论放大缩小，线条始终保持纤细平滑）。
+/// 山水舆图底图激活时，河流与聚落改用墨绘笔法以保齐全图风格统一。
 /// </summary>
 public static class OverlayVectorRenderer
 {
@@ -46,6 +47,14 @@ public static class OverlayVectorRenderer
     private static readonly Color PlateDivergent = new(0.22f, 0.92f, 0.95f);
     private static readonly Color PlateTransform = new(0.98f, 0.80f, 0.28f);
 
+    // ── 山水舆图底图下的手绘注记配色 ──
+    private static readonly Color InkRiverTint = Color.FromHtml("#3f8fb8");
+    private static readonly Color InkBrush = Color.FromHtml("#2f2b26");
+    private static readonly Color InkLabel = Color.FromHtml("#33302a");
+    private static readonly Color InkPaperHalo = Color.FromHtml("#f3e9d4");
+    private static readonly Color InkWallFill = Color.FromHtml("#e9d9ae");
+    private static readonly Color InkCinnabar = Color.FromHtml("#a83a2b");
+
     public static void DrawOverlays(
         CanvasItem item,
         WorldSnapshot snapshot,
@@ -58,6 +67,25 @@ public static class OverlayVectorRenderer
         PlateBoundarySegment[]? cachedPlateBoundaries = null)
     {
         var safeScale = Mathf.Max(screenScale, 0.0001f);
+        // 舆图底图要求全图风格统一：河线改敷碧蓝，聚落改用墨绘城邑符号与朱砂印。
+        var handDrawn = layerStack.ActiveBaseThemeId == LayerRegistry.LayerInkWashLandscape;
+        var riverTint = handDrawn ? InkRiverTint : RiverColor;
+
+        // 矿产图上矿点只占陆地一小撮，没有大陆轮廓就完全看不出矿脉落在哪块陆地上。
+        // 玩家自己勾了海岸轮廓时按他的透明度与线宽走，这里不重复画。
+        if (layerStack.ActiveBaseThemeId == LayerRegistry.LayerOres &&
+            !layerStack.IsOverlayActive(LayerRegistry.LayerCoastlines))
+        {
+            DrawCoastlines(item, snapshot, 0.9f, 1.3f, visibleRect, safeScale, cachedRenderEdges);
+        }
+
+        // 板块底图只有平铺色块，交界必须靠线条才读得出断裂带走向。
+        // 玩家自己勾了板块边界时按他的透明度与线宽走，这里不重复画。
+        if (layerStack.ActiveBaseThemeId == LayerRegistry.LayerPlates &&
+            !layerStack.IsOverlayActive(LayerRegistry.LayerPlateBorders))
+        {
+            DrawPlateBoundaries(item, snapshot, 0.95f, 1.0f, visibleRect, safeScale, cachedPlateBoundaries, cachedRenderEdges);
+        }
 
         foreach (var overlayId in layerStack.ActiveOverlayIds)
         {
@@ -72,7 +100,7 @@ public static class OverlayVectorRenderer
             switch (overlayId)
             {
                 case "rivers":
-                    DrawRivers(item, snapshot, alpha, widthScale, visibleRect, safeScale);
+                    DrawRivers(item, snapshot, alpha, widthScale, visibleRect, safeScale, riverTint);
                     break;
                 case LayerRegistry.LayerCoastlines or "coastlines":
                     DrawCoastlines(item, snapshot, alpha, widthScale, visibleRect, safeScale, cachedRenderEdges);
@@ -81,12 +109,12 @@ public static class OverlayVectorRenderer
                     DrawBorders(item, snapshot, alpha, widthScale, visibleRect, safeScale, cachedRenderEdges);
                     break;
                 case "cities":
-                    DrawCities(item, snapshot, alpha, font, visibleRect, safeScale);
+                    DrawCities(item, snapshot, alpha, font, visibleRect, safeScale, handDrawn);
                     break;
                 case "city_labels":
                     if (!layerStack.IsOverlayActive("cities") && font != null)
                     {
-                        DrawCityLabelsOnly(item, snapshot, alpha, font, visibleRect, safeScale);
+                        DrawCityLabelsOnly(item, snapshot, alpha, font, visibleRect, safeScale, handDrawn);
                     }
                     break;
                 case "trade_routes" or "trade_network":
@@ -134,11 +162,11 @@ public static class OverlayVectorRenderer
         Font? font)
         => DrawOverlays(item, snapshot, layerStack, visibleRect, 1.0f, font, null, null, null);
 
-    private static void DrawRivers(CanvasItem item, WorldSnapshot snapshot, float alpha, float widthScale, Rect2 visibleRect, float screenScale)
+    private static void DrawRivers(CanvasItem item, WorldSnapshot snapshot, float alpha, float widthScale, Rect2 visibleRect, float screenScale, Color tint)
     {
         var geom = snapshot.Geometry;
         var fields = snapshot.Fields;
-        var color = new Color(RiverColor.R, RiverColor.G, RiverColor.B, alpha * 0.92f);
+        var color = new Color(tint.R, tint.G, tint.B, alpha * 0.92f);
 
         for (var i = 0; i < geom.Count; i++)
         {
@@ -321,10 +349,12 @@ public static class OverlayVectorRenderer
         }
     }
 
-    private static void DrawCities(CanvasItem item, WorldSnapshot snapshot, float alpha, Font? font, Rect2 visibleRect, float screenScale)
+    private static void DrawCities(CanvasItem item, WorldSnapshot snapshot, float alpha, Font? font, Rect2 visibleRect, float screenScale, bool handDrawn)
     {
         var settlements = snapshot.Settlements;
         if (settlements.Count == 0) return;
+
+        var capital = handDrawn ? FindCapital(settlements) : null;
 
         var capitalColor = new Color(1f, 0.85f, 0.2f, alpha);
         var majorColor = new Color(0.95f, 0.95f, 0.98f, alpha);
@@ -336,6 +366,12 @@ public static class OverlayVectorRenderer
         {
             var pos = new Vector2((float)s.Position.X, (float)s.Position.Y);
             if (!visibleRect.HasPoint(pos)) continue;
+
+            if (handDrawn)
+            {
+                DrawInkSettlement(item, s, pos, font, alpha, screenScale, ReferenceEquals(s, capital));
+                continue;
+            }
 
             var (baseRadius, color) = s.Rank switch
             {
@@ -364,7 +400,7 @@ public static class OverlayVectorRenderer
         }
     }
 
-    private static void DrawCityLabelsOnly(CanvasItem item, WorldSnapshot snapshot, float alpha, Font font, Rect2 visibleRect, float screenScale)
+    private static void DrawCityLabelsOnly(CanvasItem item, WorldSnapshot snapshot, float alpha, Font font, Rect2 visibleRect, float screenScale, bool handDrawn)
     {
         var settlements = snapshot.Settlements;
         if (settlements.Count == 0) return;
@@ -379,6 +415,13 @@ public static class OverlayVectorRenderer
 
             if (!string.IsNullOrEmpty(s.Name))
             {
+                if (handDrawn)
+                {
+                    var half = InkSettlementHalf(s.Rank) / screenScale;
+                    DrawInkLabel(item, font, pos + new Vector2(half + 4f / screenScale, 4f / screenScale), s.Name, alpha, screenScale);
+                    continue;
+                }
+
                 var fontSize = Mathf.Clamp((int)(11f / screenScale), 8, 16);
                 var textPos = pos + new Vector2(8f / screenScale, 4f / screenScale);
                 item.DrawString(font, textPos + (Vector2.One / screenScale), s.Name, HorizontalAlignment.Left, -1, fontSize, shadowColor);
@@ -386,6 +429,117 @@ public static class OverlayVectorRenderer
             }
         }
     }
+
+    private static SettlementInfo? FindCapital(IReadOnlyList<SettlementInfo> settlements)
+    {
+        SettlementInfo? capital = null;
+        foreach (var s in settlements)
+        {
+            if (capital == null || s.Rank > capital.Rank || (s.Rank == capital.Rank && s.Score > capital.Score))
+            {
+                capital = s;
+            }
+        }
+        return capital;
+    }
+
+    private static float InkSettlementHalf(SettlementRank rank) => rank switch
+    {
+        SettlementRank.CityState => 7.0f,
+        SettlementRank.Town => 5.2f,
+        _ => 3.6f
+    };
+
+    /// <summary>
+    /// 墨绘聚落符号：都城作重郭城邑（外郭 + 内城 + 楼阁飞檐 + 城门），
+    /// 城镇作单郭方城，村落作人字村舍；全图最尊的都城另钤一方朱砂印。
+    /// </summary>
+    private static void DrawInkSettlement(CanvasItem item, SettlementInfo s, Vector2 pos, Font? font, float alpha, float screenScale, bool isCapital)
+    {
+        var ink = new Color(InkBrush.R, InkBrush.G, InkBrush.B, alpha);
+        var wallFill = new Color(InkWallFill.R, InkWallFill.G, InkWallFill.B, alpha * 0.8f);
+        var stroke = 1.35f / screenScale;
+        var half = InkSettlementHalf(s.Rank) / screenScale;
+
+        if (s.Rank == SettlementRank.Hamlet)
+        {
+            var apex = pos + new Vector2(0f, -half);
+            item.DrawLine(apex, pos + new Vector2(-half, 0f), ink, stroke, true);
+            item.DrawLine(apex, pos + new Vector2(half, 0f), ink, stroke, true);
+            item.DrawLine(pos + new Vector2(-half * 0.6f, half * 0.5f), pos + new Vector2(half * 0.6f, half * 0.5f), ink, stroke, true);
+        }
+        else
+        {
+            var wall = new Rect2(pos - new Vector2(half, half * 0.8f), new Vector2(half * 2f, half * 1.6f));
+            item.DrawRect(wall, wallFill);
+            item.DrawRect(wall, ink, false, stroke);
+
+            if (s.Rank == SettlementRank.CityState)
+            {
+                // 内城（保）：实心墨块，缩到最小时仍可辨认为重郭城邑
+                var keep = new Rect2(pos - new Vector2(half * 0.42f, half * 0.34f), new Vector2(half * 0.84f, half * 0.68f));
+                item.DrawRect(keep, ink);
+
+                // 楼阁重檐：外郭之上起飞角
+                var eaveY = wall.Position.Y - half * 0.16f;
+                var eaveHalf = half * 0.86f;
+                var roofApex = new Vector2(pos.X, eaveY - half * 0.66f);
+                item.DrawLine(new Vector2(pos.X - eaveHalf, eaveY), new Vector2(pos.X + eaveHalf, eaveY), ink, stroke, true);
+                item.DrawLine(roofApex, new Vector2(pos.X - eaveHalf, eaveY - half * 0.08f), ink, stroke * 0.9f, true);
+                item.DrawLine(roofApex, new Vector2(pos.X + eaveHalf, eaveY - half * 0.08f), ink, stroke * 0.9f, true);
+
+                // 城门缺口
+                var gateHalf = half * 0.24f;
+                var gateTop = wall.End.Y - half * 0.52f;
+                item.DrawLine(new Vector2(pos.X - gateHalf, wall.End.Y), new Vector2(pos.X - gateHalf, gateTop), ink, stroke, true);
+                item.DrawLine(new Vector2(pos.X + gateHalf, wall.End.Y), new Vector2(pos.X + gateHalf, gateTop), ink, stroke, true);
+            }
+        }
+
+        if (isCapital)
+        {
+            DrawInkSeal(item, pos + new Vector2(half * 1.7f, -half * 1.5f), 4.0f / screenScale, alpha);
+        }
+
+        if (font != null && !string.IsNullOrEmpty(s.Name))
+        {
+            DrawInkLabel(item, font, pos + new Vector2(half + 4f / screenScale, half * 0.7f), s.Name, alpha, screenScale);
+        }
+    }
+
+    /// <summary>朱砂方印：印体微沉，印文以纸面留白刻出横竖两道。</summary>
+    private static void DrawInkSeal(CanvasItem item, Vector2 center, float half, float alpha)
+    {
+        var seal = new Color(InkCinnabar.R, InkCinnabar.G, InkCinnabar.B, alpha * 0.82f);
+        var paper = new Color(InkPaperHalo.R, InkPaperHalo.G, InkPaperHalo.B, alpha * 0.85f);
+        var rect = new Rect2(center - new Vector2(half, half), new Vector2(half * 2f, half * 2f));
+        var inset = half * 0.32f;
+        var sealStroke = half * 0.26f;
+
+        item.DrawRect(rect, seal);
+        item.DrawLine(new Vector2(rect.Position.X + inset, center.Y), new Vector2(rect.End.X - inset, center.Y), paper, sealStroke, true);
+        item.DrawLine(new Vector2(center.X, rect.Position.Y + inset), new Vector2(center.X, rect.End.Y - inset), paper, sealStroke, true);
+    }
+
+    /// <summary>墨书地名：先四向提亮纸面作晕，再落笔书写，压在山墨上依然可读。</summary>
+    private static void DrawInkLabel(CanvasItem item, Font font, Vector2 pos, string text, float alpha, float screenScale)
+    {
+        var fontSize = Mathf.Clamp((int)(11f / screenScale), 8, 16);
+        var halo = new Color(InkPaperHalo.R, InkPaperHalo.G, InkPaperHalo.B, alpha * 0.66f);
+        var ink = new Color(InkLabel.R, InkLabel.G, InkLabel.B, alpha);
+        var offset = 1.3f / screenScale;
+
+        foreach (var dir in InkHaloOffsets)
+        {
+            item.DrawString(font, pos + dir * offset, text, HorizontalAlignment.Left, -1, fontSize, halo);
+        }
+        item.DrawString(font, pos, text, HorizontalAlignment.Left, -1, fontSize, ink);
+    }
+
+    private static readonly Vector2[] InkHaloOffsets =
+    {
+        new(1f, 0f), new(-1f, 0f), new(0f, 1f), new(0f, -1f)
+    };
 
     /// <summary>
     /// 绘制贸易走廊：

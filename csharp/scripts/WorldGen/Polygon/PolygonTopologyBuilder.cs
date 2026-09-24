@@ -1,20 +1,8 @@
+using PolygonComponentResult = PlanetGeneration.Core.Geometry.PolygonComponentResult;
 using System;
 using System.Collections.Generic;
 
 namespace PlanetGeneration.WorldGen.Polygon;
-
-/// <summary>连通分量划分结果。</summary>
-public sealed class PolygonComponentResult
-{
-    /// <summary>每个地块所属的连通分量编号；不属于任何分量时为 -1。</summary>
-    public required int[] ComponentId { get; init; }
-
-    /// <summary>连通分量数量。</summary>
-    public required int Count { get; init; }
-
-    /// <summary>每个分量的地块数量，下标即分量编号。</summary>
-    public required int[] ComponentSize { get; init; }
-}
 
 /// <summary>
 /// 地块拓扑运算：邻接关系之上派生出来的结构。
@@ -34,84 +22,12 @@ public static class PolygonTopologyBuilder
     /// <param name="grid">地块网格。</param>
     /// <param name="minDrop">最小落差；低于此值视为平地，不形成流向（避免抖动噪声造出假河道）。</param>
     public static void BuildDownslope(PolygonGrid grid, double minDrop = 1e-4d)
-    {
-        var count = grid.Count;
-        var height = grid.Fields.Height;
-        var downslope = grid.Fields.Downslope;
+        => Core.Geometry.PolygonTopologyBuilder.BuildDownslope(grid.Geometry, grid.Fields, minDrop);
 
-        for (var i = 0; i < count; i++)
-        {
-            var best = -1;
-            var bestDrop = minDrop;
-            var currentHeight = height[i];
-
-            var start = grid.CellNeighborStart[i];
-            var end = grid.CellNeighborStart[i + 1];
-            for (var k = start; k < end; k++)
-            {
-                var neighbor = grid.CellNeighbors[k];
-
-                // 按"单位距离的落差"比较，而不是绝对落差：
-                // 地块面积不均，用绝对落差会让大地块上的河流跑偏。
-                var distance = grid.WrappedDistance(grid.SiteX[i], grid.SiteY[i], grid.SiteX[neighbor], grid.SiteY[neighbor]);
-                if (distance <= 1e-6d)
-                {
-                    continue;
-                }
-
-                var drop = (currentHeight - height[neighbor]) / distance;
-                if (drop <= bestDrop)
-                {
-                    continue;
-                }
-
-                bestDrop = drop;
-                best = neighbor;
-            }
-
-            downslope[i] = best;
-        }
-    }
-
-    /// <summary>
-    /// 按流向累积汇流量（FMG 的 <c>cells.flux</c> 思路）。
-    ///
-    /// 做法：把地块按高程降序排列，然后从高到低把每个地块的累积水量推给它的下游。
-    /// 因为处理到某个地块时，所有比它高的上游一定已经处理完，所以一次遍历即可，无需迭代收敛。
-    /// </summary>
-    /// <param name="grid">地块网格，需先调用 <see cref="BuildDownslope"/>。</param>
-    /// <param name="initialWater">每个地块的初始降水；为 null 时按湿度取值。</param>
+    /// <summary>保留旧 API 直接使用湿度的默认值，避免改成 Core 的最低降水阈值。</summary>
     public static void BuildFlux(PolygonGrid grid, float[]? initialWater = null)
-    {
-        var count = grid.Count;
-        var height = grid.Fields.Height;
-        var moisture = grid.Fields.Moisture;
-        var downslope = grid.Fields.Downslope;
-        var flux = grid.Fields.Flux;
-
-        var order = new int[count];
-        for (var i = 0; i < count; i++)
-        {
-            order[i] = i;
-            flux[i] = 0f;
-        }
-
-        // 按高程降序：保证"上游先算完"。
-        Array.Sort(order, (a, b) => height[b].CompareTo(height[a]));
-
-        for (var index = 0; index < count; index++)
-        {
-            var cell = order[index];
-            var water = initialWater != null ? initialWater[cell] : moisture[cell];
-            flux[cell] += water;
-
-            var down = downslope[cell];
-            if (down >= 0)
-            {
-                flux[down] += flux[cell];
-            }
-        }
-    }
+        => Core.Geometry.PolygonTopologyBuilder.BuildFlux(
+            grid.Geometry, grid.Fields, initialWater ?? grid.Fields.Moisture);
 
     /// <summary>
     /// 从起点出发按邻接扩展指定环数，返回途中的全部地块。
@@ -163,70 +79,10 @@ public static class PolygonTopologyBuilder
     /// <param name="land">true 统计陆地连通分量，false 统计水域。</param>
     public static PolygonComponentResult FindComponents(PolygonGrid grid, float seaLevel, bool land = true)
     {
-        var count = grid.Count;
-        var height = grid.Fields.Height;
-        var componentId = new int[count];
-        var sizes = new List<int>();
-
-        for (var i = 0; i < count; i++)
-        {
-            componentId[i] = -1;
-        }
-
-        var queue = new Queue<int>();
-
-        for (var seed = 0; seed < count; seed++)
-        {
-            if (componentId[seed] >= 0)
-            {
-                continue;
-            }
-
-            var isLand = height[seed] > seaLevel;
-            if (isLand != land)
-            {
-                continue;
-            }
-
-            var id = sizes.Count;
-            var size = 0;
-            componentId[seed] = id;
-            queue.Enqueue(seed);
-
-            while (queue.Count > 0)
-            {
-                var cell = queue.Dequeue();
-                size++;
-
-                var start = grid.CellNeighborStart[cell];
-                var end = grid.CellNeighborStart[cell + 1];
-                for (var k = start; k < end; k++)
-                {
-                    var neighbor = grid.CellNeighbors[k];
-                    if (componentId[neighbor] >= 0)
-                    {
-                        continue;
-                    }
-
-                    if (height[neighbor] > seaLevel != land)
-                    {
-                        continue;
-                    }
-
-                    componentId[neighbor] = id;
-                    queue.Enqueue(neighbor);
-                }
-            }
-
-            sizes.Add(size);
-        }
-
-        return new PolygonComponentResult
-        {
-            ComponentId = componentId,
-            Count = sizes.Count,
-            ComponentSize = sizes.ToArray(),
-        };
+        var mask = new bool[grid.Count];
+        for (var cell = 0; cell < grid.Count; cell++)
+            mask[cell] = (grid.Fields.Height[cell] > seaLevel) == land;
+        return Core.Geometry.PolygonTopologyBuilder.FindConnectedComponents(grid.Geometry, mask);
     }
 
     /// <summary>

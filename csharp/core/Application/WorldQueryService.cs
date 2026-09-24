@@ -22,6 +22,10 @@ public sealed record CellSampleDetails
     public required LandformType Landform { get; init; }
     public required RockType Rock { get; init; }
     public required OreType Ore { get; init; }
+    public OreType IndustrialOre { get; init; }
+    public OreType SupernaturalOre { get; init; }
+    public OreType CardOre { get; init; }
+    public byte Leyline { get; init; }
     public required int PlateId { get; init; }
     public required PlateBoundaryType PlateBoundary { get; init; }
 
@@ -69,6 +73,10 @@ public static class WorldQueryService
             Landform = (LandformType)fields.Landform[safeId],
             Rock = (RockType)fields.Rock[safeId],
             Ore = (OreType)fields.Ore[safeId],
+            IndustrialOre = safeId < fields.IndustrialOre.Length ? (OreType)fields.IndustrialOre[safeId] : OreType.None,
+            SupernaturalOre = safeId < fields.SupernaturalOre.Length ? (OreType)fields.SupernaturalOre[safeId] : OreType.None,
+            CardOre = safeId < fields.CardOre.Length ? (OreType)fields.CardOre[safeId] : OreType.None,
+            Leyline = safeId < fields.Leyline.Length ? fields.Leyline[safeId] : (byte)0,
             PlateId = fields.PlateId[safeId],
             PlateBoundary = (PlateBoundaryType)fields.PlateBoundary[safeId],
             EcologyHealth = fields.EcologyHealth[safeId],

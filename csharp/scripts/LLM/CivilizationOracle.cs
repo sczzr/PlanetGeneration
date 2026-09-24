@@ -302,10 +302,7 @@ namespace PlanetGeneration
 			return "[错误] 文明模拟数据不可用";
 		}
 
-		CancelCurrentInference();
-		_currentInferenceCts = new CancellationTokenSource();
-		_isInferring = true;
-		InferenceStateChanged?.Invoke(true);
+		var operation = BeginInferenceOperation();
 
 		try
 		{
@@ -339,8 +336,9 @@ namespace PlanetGeneration
 					CacheTtlSeconds = 240,
 					FallbackFactory = static () => "1. 世界局势短期稳定\n2. 建议继续观察贸易与边境变化\n3. 下一纪元重点关注联盟波动"
 				},
-				_currentInferenceCts.Token);
+				operation.Token);
 
+			operation.Token.ThrowIfCancellationRequested();
 			var result = NormalizeAnalysisOutput(rawResult, maxChars: 800, maxListItems: 8);
 
 			StatusChanged?.Invoke("分析完成");
@@ -359,8 +357,7 @@ namespace PlanetGeneration
 		}
 		finally
 		{
-			_isInferring = false;
-			InferenceStateChanged?.Invoke(false);
+			CompleteInferenceOperation(operation);
 		}
 	}
 
@@ -382,10 +379,7 @@ namespace PlanetGeneration
 			return "[错误] 文明模拟数据不可用";
 		}
 
-		CancelCurrentInference();
-		_currentInferenceCts = new CancellationTokenSource();
-		_isInferring = true;
-		InferenceStateChanged?.Invoke(true);
+		var operation = BeginInferenceOperation();
 
 		try
 		{
@@ -417,8 +411,9 @@ namespace PlanetGeneration
 					CacheTtlSeconds = 180,
 					FallbackFactory = () => $"1. 区域({x},{y})维持当前格局\n2. 建议关注边境与贸易通路变化"
 				},
-				_currentInferenceCts.Token);
+				operation.Token);
 
+			operation.Token.ThrowIfCancellationRequested();
 			var result = NormalizeAnalysisOutput(rawResult, maxChars: 500, maxListItems: 6);
 
 			StatusChanged?.Invoke("区域分析完成");
@@ -437,8 +432,7 @@ namespace PlanetGeneration
 		}
 		finally
 		{
-			_isInferring = false;
-			InferenceStateChanged?.Invoke(false);
+			CompleteInferenceOperation(operation);
 		}
 	}
 
@@ -453,10 +447,7 @@ namespace PlanetGeneration
 			return "[错误] 请先加载模型";
 		}
 
-		CancelCurrentInference();
-		_currentInferenceCts = new CancellationTokenSource();
-		_isInferring = true;
-		InferenceStateChanged?.Invoke(true);
+		var operation = BeginInferenceOperation();
 
 		try
 		{
@@ -482,9 +473,10 @@ namespace PlanetGeneration
 				"你是一个奇幻世界观的历史记录者，擅长生成引人入胜的历史事件描述。",
 				maxTokens: 300,
 				temperature: 0.8f,
-				ct: _currentInferenceCts.Token
+				ct: operation.Token
 			);
 
+			operation.Token.ThrowIfCancellationRequested();
 			StatusChanged?.Invoke("事件生成完成");
 			OutputReceived?.Invoke(result);
 			
@@ -501,8 +493,7 @@ namespace PlanetGeneration
 		}
 		finally
 		{
-			_isInferring = false;
-			InferenceStateChanged?.Invoke(false);
+			CompleteInferenceOperation(operation);
 		}
 	}
 
@@ -523,15 +514,13 @@ namespace PlanetGeneration
 			}
 
 			EnsureService();
-			CancelCurrentInference();
-			_currentInferenceCts = new CancellationTokenSource();
-			_isInferring = true;
-			InferenceStateChanged?.Invoke(true);
+			var operation = BeginInferenceOperation();
 
 			try
 			{
 				StatusChanged?.Invoke("正在生成结构化任务草案...");
-				var result = await _questDraftService!.GenerateAsync(civilization, epoch, _currentInferenceCts.Token);
+				var result = await _questDraftService!.GenerateAsync(civilization, epoch, operation.Token);
+				operation.Token.ThrowIfCancellationRequested();
 				StatusChanged?.Invoke(result.UsedFallback ? "任务草案已回退模板" : "任务草案生成完成");
 				return result;
 			}
@@ -547,16 +536,38 @@ namespace PlanetGeneration
 			}
 			finally
 			{
-				_isInferring = false;
-				InferenceStateChanged?.Invoke(false);
+				CompleteInferenceOperation(operation);
 			}
 		}
 
+	private CancellationTokenSource BeginInferenceOperation()
+	{
+		CancelCurrentInference();
+		var operation = new CancellationTokenSource();
+		_currentInferenceCts = operation;
+		_isInferring = true;
+		InferenceStateChanged?.Invoke(true);
+		return operation;
+	}
+
+	private void CompleteInferenceOperation(CancellationTokenSource operation)
+	{
+		// 被新请求替换的旧请求只能释放自己的令牌，不能改变新请求的 UI 状态。
+		if (!ReferenceEquals(_currentInferenceCts, operation))
+		{
+			operation.Dispose();
+			return;
+		}
+		_currentInferenceCts = null;
+		_isInferring = false;
+		operation.Dispose();
+		InferenceStateChanged?.Invoke(false);
+	}
+
 	public void CancelCurrentInference()
 	{
+		// 令牌由所属请求的 finally 释放；取消不等于请求已经停止使用令牌。
 		_currentInferenceCts?.Cancel();
-		_currentInferenceCts?.Dispose();
-		_currentInferenceCts = null;
 	}
 
 	public void Dispose()

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" path="res://scenes/layout/MainRightLore.tscn" id="5_lore"]
 [ext_resource type="PackedScene" path="res://scenes/layout/ConsoleHistoryPage.tscn" id="6_history"]
 [ext_resource type="PackedScene" path="res://scenes/layout/MainCenterWorkspace.tscn" id="7_center"]
-[ext_resource type="PackedScene" path="res://scenes/MainMenu.tscn" id="8_menu"]
+[ext_resource type="PackedScene" path="res://scenes/main_menu.tscn" id="8_menu"]
 [ext_resource type="Script" path="res://scripts/UI/GeneratorControlsController.cs" id="9_console_controller"]
 [ext_resource type="PackedScene" path="res://scenes/WorldSetupMenu.tscn" id="10_world_setup"]
 
@@ -166,4 +166,5 @@ visible = false
 layout_mode = 1
 
 [node name="MainMenu" parent="." instance=ExtResource("8_menu")]
+z_index = 20
 layout_mode = 1

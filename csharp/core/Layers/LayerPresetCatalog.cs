@@ -19,6 +19,7 @@ public sealed record LayerPreset
 public static class LayerPresetCatalog
 {
     public const string PresetPhysical = "physical_geography";
+    public const string PresetGuohua = "guohua_handdrawn";
     public const string PresetPolitical = "political_civilization";
     public const string PresetTrade = "trade_network";
     public const string PresetClimate = "climate_analysis";
@@ -41,6 +42,15 @@ public static class LayerPresetCatalog
 
         Register(new LayerPreset
         {
+            Id = PresetGuohua,
+            DisplayName = "国风手绘",
+            BaseThemeId = LayerRegistry.LayerGuohuaHanddrawn,
+            ActiveOverlayIds = new[] { LayerRegistry.LayerRivers, LayerRegistry.LayerCities, LayerRegistry.LayerCityLabels, LayerRegistry.LayerTradeRoutes },
+            IsBuiltIn = true
+        });
+
+        Register(new LayerPreset
+        {
             Id = PresetPolitical,
             DisplayName = "政治文明",
             BaseThemeId = LayerRegistry.LayerCivilization,
@@ -52,7 +62,8 @@ public static class LayerPresetCatalog
         {
             Id = PresetTrade,
             DisplayName = "贸易网络",
-            BaseThemeId = LayerRegistry.LayerTradeFlow,
+            // 贸易强度底图已下线：改以自然地理铺底，政体归属交给政体国界叠加层表达。
+            BaseThemeId = LayerRegistry.LayerTerrainOverview,
             ActiveOverlayIds = new[] { LayerRegistry.LayerCities, LayerRegistry.LayerTradeRoutes, LayerRegistry.LayerPolityBorders },
             IsBuiltIn = true
         });

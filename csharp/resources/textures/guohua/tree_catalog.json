@@ -1,0 +1,1855 @@
+{
+  "total_sprites": 71,
+  "atlases": [
+    "tree_atlas_single.png",
+    "tree_atlas_cluster.png"
+  ],
+  "sprites": [
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        16,
+        684,
+        1115
+      ],
+      "pivot": [
+        0.504,
+        0.999
+      ],
+      "native_size": [
+        684,
+        1115
+      ],
+      "world_size": [
+        3.08,
+        5.02
+      ],
+      "aspect": 0.61,
+      "area": 346343,
+      "id": 0
+    },
+    {
+      "category": "Single",
+      "family": "Cypress",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        716,
+        16,
+        509,
+        1071
+      ],
+      "pivot": [
+        0.504,
+        0.998
+      ],
+      "native_size": [
+        509,
+        1071
+      ],
+      "world_size": [
+        2.29,
+        4.82
+      ],
+      "aspect": 0.48,
+      "area": 261646,
+      "id": 1
+    },
+    {
+      "category": "Single",
+      "family": "Cypress",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1241,
+        16,
+        469,
+        1070
+      ],
+      "pivot": [
+        0.485,
+        0.999
+      ],
+      "native_size": [
+        469,
+        1070
+      ],
+      "world_size": [
+        2.11,
+        4.81
+      ],
+      "aspect": 0.44,
+      "area": 231893,
+      "id": 2
+    },
+    {
+      "category": "Single",
+      "family": "Cypress",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1726,
+        16,
+        465,
+        1068
+      ],
+      "pivot": [
+        0.503,
+        0.998
+      ],
+      "native_size": [
+        465,
+        1068
+      ],
+      "world_size": [
+        2.09,
+        4.81
+      ],
+      "aspect": 0.44,
+      "area": 219233,
+      "id": 3
+    },
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2207,
+        16,
+        549,
+        1068
+      ],
+      "pivot": [
+        0.521,
+        0.998
+      ],
+      "native_size": [
+        549,
+        1068
+      ],
+      "world_size": [
+        2.47,
+        4.81
+      ],
+      "aspect": 0.51,
+      "area": 307612,
+      "id": 4
+    },
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2772,
+        16,
+        549,
+        1008
+      ],
+      "pivot": [
+        0.529,
+        0.998
+      ],
+      "native_size": [
+        549,
+        1008
+      ],
+      "world_size": [
+        2.47,
+        4.54
+      ],
+      "aspect": 0.54,
+      "area": 270047,
+      "id": 5
+    },
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        3337,
+        16,
+        487,
+        979
+      ],
+      "pivot": [
+        0.498,
+        0.998
+      ],
+      "native_size": [
+        487,
+        979
+      ],
+      "world_size": [
+        2.19,
+        4.41
+      ],
+      "aspect": 0.5,
+      "area": 203068,
+      "id": 6
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        1147,
+        952,
+        972
+      ],
+      "pivot": [
+        0.508,
+        0.998
+      ],
+      "native_size": [
+        952,
+        972
+      ],
+      "world_size": [
+        4.28,
+        4.37
+      ],
+      "aspect": 0.98,
+      "area": 492293,
+      "id": 7
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        984,
+        1147,
+        846,
+        971
+      ],
+      "pivot": [
+        0.502,
+        0.999
+      ],
+      "native_size": [
+        846,
+        971
+      ],
+      "world_size": [
+        3.81,
+        4.37
+      ],
+      "aspect": 0.87,
+      "area": 409040,
+      "id": 8
+    },
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1846,
+        1147,
+        596,
+        971
+      ],
+      "pivot": [
+        0.496,
+        0.997
+      ],
+      "native_size": [
+        596,
+        971
+      ],
+      "world_size": [
+        2.68,
+        4.37
+      ],
+      "aspect": 0.61,
+      "area": 279997,
+      "id": 9
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2458,
+        1147,
+        1068,
+        969
+      ],
+      "pivot": [
+        0.502,
+        0.999
+      ],
+      "native_size": [
+        1068,
+        969
+      ],
+      "world_size": [
+        4.81,
+        4.36
+      ],
+      "aspect": 1.1,
+      "area": 604221,
+      "id": 10
+    },
+    {
+      "category": "Single",
+      "family": "Pine",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        2135,
+        559,
+        967
+      ],
+      "pivot": [
+        0.526,
+        0.998
+      ],
+      "native_size": [
+        559,
+        967
+      ],
+      "world_size": [
+        2.52,
+        4.35
+      ],
+      "aspect": 0.58,
+      "area": 244366,
+      "id": 11
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        591,
+        2135,
+        963,
+        966
+      ],
+      "pivot": [
+        0.506,
+        0.999
+      ],
+      "native_size": [
+        963,
+        966
+      ],
+      "world_size": [
+        4.33,
+        4.35
+      ],
+      "aspect": 1.0,
+      "area": 537556,
+      "id": 12
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1570,
+        2135,
+        970,
+        964
+      ],
+      "pivot": [
+        0.511,
+        0.999
+      ],
+      "native_size": [
+        970,
+        964
+      ],
+      "world_size": [
+        4.36,
+        4.34
+      ],
+      "aspect": 1.01,
+      "area": 520581,
+      "id": 13
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2556,
+        2135,
+        868,
+        964
+      ],
+      "pivot": [
+        0.499,
+        0.998
+      ],
+      "native_size": [
+        868,
+        964
+      ],
+      "world_size": [
+        3.91,
+        4.34
+      ],
+      "aspect": 0.9,
+      "area": 419732,
+      "id": 14
+    },
+    {
+      "category": "Single",
+      "family": "Cypress",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        3440,
+        2135,
+        457,
+        963
+      ],
+      "pivot": [
+        0.497,
+        0.998
+      ],
+      "native_size": [
+        457,
+        963
+      ],
+      "world_size": [
+        2.06,
+        4.33
+      ],
+      "aspect": 0.47,
+      "area": 175966,
+      "id": 15
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        3118,
+        658,
+        961
+      ],
+      "pivot": [
+        0.496,
+        0.998
+      ],
+      "native_size": [
+        658,
+        961
+      ],
+      "world_size": [
+        2.96,
+        4.32
+      ],
+      "aspect": 0.68,
+      "area": 360852,
+      "id": 16
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        690,
+        3118,
+        915,
+        957
+      ],
+      "pivot": [
+        0.499,
+        0.998
+      ],
+      "native_size": [
+        915,
+        957
+      ],
+      "world_size": [
+        4.12,
+        4.31
+      ],
+      "aspect": 0.96,
+      "area": 442747,
+      "id": 17
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1621,
+        3118,
+        954,
+        954
+      ],
+      "pivot": [
+        0.494,
+        0.999
+      ],
+      "native_size": [
+        954,
+        954
+      ],
+      "world_size": [
+        4.29,
+        4.29
+      ],
+      "aspect": 1.0,
+      "area": 507244,
+      "id": 18
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2591,
+        3118,
+        819,
+        941
+      ],
+      "pivot": [
+        0.513,
+        0.999
+      ],
+      "native_size": [
+        819,
+        941
+      ],
+      "world_size": [
+        3.69,
+        4.23
+      ],
+      "aspect": 0.87,
+      "area": 431980,
+      "id": 19
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        4095,
+        879,
+        940
+      ],
+      "pivot": [
+        0.499,
+        0.999
+      ],
+      "native_size": [
+        879,
+        940
+      ],
+      "world_size": [
+        3.96,
+        4.23
+      ],
+      "aspect": 0.94,
+      "area": 442309,
+      "id": 20
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        911,
+        4095,
+        877,
+        939
+      ],
+      "pivot": [
+        0.503,
+        0.999
+      ],
+      "native_size": [
+        877,
+        939
+      ],
+      "world_size": [
+        3.95,
+        4.23
+      ],
+      "aspect": 0.93,
+      "area": 471133,
+      "id": 21
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1804,
+        4095,
+        857,
+        939
+      ],
+      "pivot": [
+        0.497,
+        0.999
+      ],
+      "native_size": [
+        857,
+        939
+      ],
+      "world_size": [
+        3.86,
+        4.23
+      ],
+      "aspect": 0.91,
+      "area": 529546,
+      "id": 22
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2677,
+        4095,
+        604,
+        932
+      ],
+      "pivot": [
+        0.49,
+        0.998
+      ],
+      "native_size": [
+        604,
+        932
+      ],
+      "world_size": [
+        2.72,
+        4.19
+      ],
+      "aspect": 0.65,
+      "area": 294088,
+      "id": 23
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        3297,
+        4095,
+        573,
+        925
+      ],
+      "pivot": [
+        0.526,
+        0.998
+      ],
+      "native_size": [
+        573,
+        925
+      ],
+      "world_size": [
+        2.58,
+        4.16
+      ],
+      "aspect": 0.62,
+      "area": 268158,
+      "id": 24
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        5051,
+        593,
+        872
+      ],
+      "pivot": [
+        0.48,
+        0.998
+      ],
+      "native_size": [
+        593,
+        872
+      ],
+      "world_size": [
+        2.67,
+        3.92
+      ],
+      "aspect": 0.68,
+      "area": 283479,
+      "id": 25
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        625,
+        5051,
+        614,
+        870
+      ],
+      "pivot": [
+        0.502,
+        0.998
+      ],
+      "native_size": [
+        614,
+        870
+      ],
+      "world_size": [
+        2.76,
+        3.91
+      ],
+      "aspect": 0.71,
+      "area": 279933,
+      "id": 26
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1255,
+        5051,
+        437,
+        870
+      ],
+      "pivot": [
+        0.485,
+        0.998
+      ],
+      "native_size": [
+        437,
+        870
+      ],
+      "world_size": [
+        1.97,
+        3.91
+      ],
+      "aspect": 0.5,
+      "area": 156401,
+      "id": 27
+    },
+    {
+      "category": "Willow",
+      "family": "Willow",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1708,
+        5051,
+        614,
+        870
+      ],
+      "pivot": [
+        0.502,
+        0.998
+      ],
+      "native_size": [
+        614,
+        870
+      ],
+      "world_size": [
+        2.76,
+        3.91
+      ],
+      "aspect": 0.71,
+      "area": 279933,
+      "id": 28
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2338,
+        5051,
+        669,
+        827
+      ],
+      "pivot": [
+        0.5,
+        0.998
+      ],
+      "native_size": [
+        669,
+        827
+      ],
+      "world_size": [
+        3.01,
+        3.72
+      ],
+      "aspect": 0.81,
+      "area": 323667,
+      "id": 29
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        3023,
+        5051,
+        569,
+        827
+      ],
+      "pivot": [
+        0.494,
+        0.998
+      ],
+      "native_size": [
+        569,
+        827
+      ],
+      "world_size": [
+        2.56,
+        3.72
+      ],
+      "aspect": 0.69,
+      "area": 246143,
+      "id": 30
+    },
+    {
+      "category": "Willow",
+      "family": "Willow",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        5939,
+        669,
+        827
+      ],
+      "pivot": [
+        0.5,
+        0.998
+      ],
+      "native_size": [
+        669,
+        827
+      ],
+      "world_size": [
+        3.01,
+        3.72
+      ],
+      "aspect": 0.81,
+      "area": 323667,
+      "id": 31
+    },
+    {
+      "category": "Willow",
+      "family": "Willow",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        701,
+        5939,
+        569,
+        827
+      ],
+      "pivot": [
+        0.494,
+        0.998
+      ],
+      "native_size": [
+        569,
+        827
+      ],
+      "world_size": [
+        2.56,
+        3.72
+      ],
+      "aspect": 0.69,
+      "area": 246143,
+      "id": 32
+    },
+    {
+      "category": "Single",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1286,
+        5939,
+        549,
+        826
+      ],
+      "pivot": [
+        0.515,
+        0.999
+      ],
+      "native_size": [
+        549,
+        826
+      ],
+      "world_size": [
+        2.47,
+        3.72
+      ],
+      "aspect": 0.66,
+      "area": 257344,
+      "id": 33
+    },
+    {
+      "category": "Willow",
+      "family": "Willow",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1851,
+        5939,
+        549,
+        826
+      ],
+      "pivot": [
+        0.515,
+        0.999
+      ],
+      "native_size": [
+        549,
+        826
+      ],
+      "world_size": [
+        2.47,
+        3.72
+      ],
+      "aspect": 0.66,
+      "area": 257344,
+      "id": 34
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2416,
+        5939,
+        428,
+        437
+      ],
+      "pivot": [
+        0.507,
+        0.998
+      ],
+      "native_size": [
+        428,
+        437
+      ],
+      "world_size": [
+        1.93,
+        1.97
+      ],
+      "aspect": 0.98,
+      "area": 98458,
+      "id": 35
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        2860,
+        5939,
+        480,
+        436
+      ],
+      "pivot": [
+        0.502,
+        0.998
+      ],
+      "native_size": [
+        480,
+        436
+      ],
+      "world_size": [
+        2.16,
+        1.96
+      ],
+      "aspect": 1.1,
+      "area": 120844,
+      "id": 36
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        3356,
+        5939,
+        380,
+        436
+      ],
+      "pivot": [
+        0.501,
+        0.998
+      ],
+      "native_size": [
+        380,
+        436
+      ],
+      "world_size": [
+        1.71,
+        1.96
+      ],
+      "aspect": 0.87,
+      "area": 81808,
+      "id": 37
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        16,
+        6782,
+        436,
+        433
+      ],
+      "pivot": [
+        0.51,
+        0.998
+      ],
+      "native_size": [
+        436,
+        433
+      ],
+      "world_size": [
+        1.96,
+        1.95
+      ],
+      "aspect": 1.01,
+      "area": 104116,
+      "id": 38
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        468,
+        6782,
+        368,
+        423
+      ],
+      "pivot": [
+        0.512,
+        0.998
+      ],
+      "native_size": [
+        368,
+        423
+      ],
+      "world_size": [
+        1.66,
+        1.9
+      ],
+      "aspect": 0.87,
+      "area": 86396,
+      "id": 39
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        852,
+        6782,
+        395,
+        423
+      ],
+      "pivot": [
+        0.498,
+        0.998
+      ],
+      "native_size": [
+        395,
+        423
+      ],
+      "world_size": [
+        1.78,
+        1.9
+      ],
+      "aspect": 0.93,
+      "area": 88461,
+      "id": 40
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1263,
+        6782,
+        394,
+        422
+      ],
+      "pivot": [
+        0.502,
+        0.998
+      ],
+      "native_size": [
+        394,
+        422
+      ],
+      "world_size": [
+        1.77,
+        1.9
+      ],
+      "aspect": 0.93,
+      "area": 94226,
+      "id": 41
+    },
+    {
+      "category": "Bush",
+      "family": "Bush",
+      "atlas": "tree_atlas_single.png",
+      "rect": [
+        1673,
+        6782,
+        385,
+        422
+      ],
+      "pivot": [
+        0.496,
+        0.998
+      ],
+      "native_size": [
+        385,
+        422
+      ],
+      "world_size": [
+        1.73,
+        1.9
+      ],
+      "aspect": 0.91,
+      "area": 105909,
+      "id": 42
+    },
+    {
+      "category": "Trio",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        16,
+        16,
+        856,
+        512
+      ],
+      "pivot": [
+        0.573,
+        0.998
+      ],
+      "native_size": [
+        856,
+        512
+      ],
+      "world_size": [
+        11.56,
+        6.91
+      ],
+      "aspect": 1.67,
+      "area": 275252,
+      "id": 43
+    },
+    {
+      "category": "Trio",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        888,
+        16,
+        735,
+        493
+      ],
+      "pivot": [
+        0.427,
+        0.998
+      ],
+      "native_size": [
+        735,
+        493
+      ],
+      "world_size": [
+        9.92,
+        6.66
+      ],
+      "aspect": 1.49,
+      "area": 246828,
+      "id": 44
+    },
+    {
+      "category": "Trio",
+      "family": "Cypress",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1639,
+        16,
+        668,
+        475
+      ],
+      "pivot": [
+        0.477,
+        0.998
+      ],
+      "native_size": [
+        668,
+        475
+      ],
+      "world_size": [
+        9.02,
+        6.41
+      ],
+      "aspect": 1.41,
+      "area": 217678,
+      "id": 45
+    },
+    {
+      "category": "Trio",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        2323,
+        16,
+        775,
+        468
+      ],
+      "pivot": [
+        0.478,
+        0.998
+      ],
+      "native_size": [
+        775,
+        468
+      ],
+      "world_size": [
+        10.46,
+        6.32
+      ],
+      "aspect": 1.66,
+      "area": 257861,
+      "id": 46
+    },
+    {
+      "category": "Trio",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        3114,
+        16,
+        724,
+        453
+      ],
+      "pivot": [
+        0.503,
+        0.998
+      ],
+      "native_size": [
+        724,
+        453
+      ],
+      "world_size": [
+        9.77,
+        6.12
+      ],
+      "aspect": 1.6,
+      "area": 216072,
+      "id": 47
+    },
+    {
+      "category": "Trio",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        16,
+        544,
+        722,
+        446
+      ],
+      "pivot": [
+        0.581,
+        0.998
+      ],
+      "native_size": [
+        722,
+        446
+      ],
+      "world_size": [
+        9.75,
+        6.02
+      ],
+      "aspect": 1.62,
+      "area": 222906,
+      "id": 48
+    },
+    {
+      "category": "Trio",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        754,
+        544,
+        689,
+        436
+      ],
+      "pivot": [
+        0.499,
+        0.998
+      ],
+      "native_size": [
+        689,
+        436
+      ],
+      "world_size": [
+        9.3,
+        5.89
+      ],
+      "aspect": 1.58,
+      "area": 209895,
+      "id": 49
+    },
+    {
+      "category": "Trio",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1459,
+        544,
+        745,
+        352
+      ],
+      "pivot": [
+        0.418,
+        0.997
+      ],
+      "native_size": [
+        745,
+        352
+      ],
+      "world_size": [
+        10.06,
+        4.75
+      ],
+      "aspect": 2.12,
+      "area": 180846,
+      "id": 50
+    },
+    {
+      "category": "Trio",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        2220,
+        544,
+        927,
+        325
+      ],
+      "pivot": [
+        0.494,
+        0.997
+      ],
+      "native_size": [
+        927,
+        325
+      ],
+      "world_size": [
+        12.51,
+        4.39
+      ],
+      "aspect": 2.85,
+      "area": 204701,
+      "id": 51
+    },
+    {
+      "category": "Trio",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        3163,
+        544,
+        715,
+        322
+      ],
+      "pivot": [
+        0.472,
+        0.997
+      ],
+      "native_size": [
+        715,
+        322
+      ],
+      "world_size": [
+        9.65,
+        4.35
+      ],
+      "aspect": 2.22,
+      "area": 161970,
+      "id": 52
+    },
+    {
+      "category": "Trio",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        16,
+        1006,
+        716,
+        322
+      ],
+      "pivot": [
+        0.501,
+        0.997
+      ],
+      "native_size": [
+        716,
+        322
+      ],
+      "world_size": [
+        9.67,
+        4.35
+      ],
+      "aspect": 2.22,
+      "area": 165855,
+      "id": 53
+    },
+    {
+      "category": "Duo",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        748,
+        1006,
+        364,
+        308
+      ],
+      "pivot": [
+        0.504,
+        0.997
+      ],
+      "native_size": [
+        364,
+        308
+      ],
+      "world_size": [
+        4.91,
+        4.16
+      ],
+      "aspect": 1.18,
+      "area": 71429,
+      "id": 54
+    },
+    {
+      "category": "Trio",
+      "family": "Cypress",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1128,
+        1006,
+        829,
+        300
+      ],
+      "pivot": [
+        0.454,
+        0.997
+      ],
+      "native_size": [
+        829,
+        300
+      ],
+      "world_size": [
+        11.19,
+        4.05
+      ],
+      "aspect": 2.76,
+      "area": 178928,
+      "id": 55
+    },
+    {
+      "category": "Duo",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1973,
+        1006,
+        364,
+        299
+      ],
+      "pivot": [
+        0.475,
+        0.997
+      ],
+      "native_size": [
+        364,
+        299
+      ],
+      "world_size": [
+        4.91,
+        4.04
+      ],
+      "aspect": 1.22,
+      "area": 77126,
+      "id": 56
+    },
+    {
+      "category": "Trio",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        2353,
+        1006,
+        853,
+        298
+      ],
+      "pivot": [
+        0.519,
+        0.997
+      ],
+      "native_size": [
+        853,
+        298
+      ],
+      "world_size": [
+        11.52,
+        4.02
+      ],
+      "aspect": 2.86,
+      "area": 188377,
+      "id": 57
+    },
+    {
+      "category": "Trio",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        16,
+        1344,
+        900,
+        297
+      ],
+      "pivot": [
+        0.532,
+        0.997
+      ],
+      "native_size": [
+        900,
+        297
+      ],
+      "world_size": [
+        12.15,
+        4.01
+      ],
+      "aspect": 3.03,
+      "area": 202197,
+      "id": 58
+    },
+    {
+      "category": "Duo",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        932,
+        1344,
+        408,
+        291
+      ],
+      "pivot": [
+        0.432,
+        0.997
+      ],
+      "native_size": [
+        408,
+        291
+      ],
+      "world_size": [
+        5.51,
+        3.93
+      ],
+      "aspect": 1.4,
+      "area": 81721,
+      "id": 59
+    },
+    {
+      "category": "Trio",
+      "family": "Willow",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1356,
+        1344,
+        804,
+        290
+      ],
+      "pivot": [
+        0.44,
+        0.997
+      ],
+      "native_size": [
+        804,
+        290
+      ],
+      "world_size": [
+        10.85,
+        3.92
+      ],
+      "aspect": 2.77,
+      "area": 170957,
+      "id": 60
+    },
+    {
+      "category": "Trio",
+      "family": "Willow",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        2176,
+        1344,
+        613,
+        286
+      ],
+      "pivot": [
+        0.503,
+        0.997
+      ],
+      "native_size": [
+        613,
+        286
+      ],
+      "world_size": [
+        8.28,
+        3.86
+      ],
+      "aspect": 2.14,
+      "area": 121609,
+      "id": 61
+    },
+    {
+      "category": "Duo",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        2805,
+        1344,
+        604,
+        282
+      ],
+      "pivot": [
+        0.586,
+        0.996
+      ],
+      "native_size": [
+        604,
+        282
+      ],
+      "world_size": [
+        8.15,
+        3.81
+      ],
+      "aspect": 2.14,
+      "area": 105820,
+      "id": 62
+    },
+    {
+      "category": "Duo",
+      "family": "Pine",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        3425,
+        1344,
+        289,
+        273
+      ],
+      "pivot": [
+        0.473,
+        0.996
+      ],
+      "native_size": [
+        289,
+        273
+      ],
+      "world_size": [
+        3.9,
+        3.69
+      ],
+      "aspect": 1.06,
+      "area": 49317,
+      "id": 63
+    },
+    {
+      "category": "Duo",
+      "family": "Mixed",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        3730,
+        1344,
+        348,
+        271
+      ],
+      "pivot": [
+        0.505,
+        0.996
+      ],
+      "native_size": [
+        348,
+        271
+      ],
+      "world_size": [
+        4.7,
+        3.66
+      ],
+      "aspect": 1.28,
+      "area": 59507,
+      "id": 64
+    },
+    {
+      "category": "Duo",
+      "family": "Cypress",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        16,
+        1657,
+        314,
+        270
+      ],
+      "pivot": [
+        0.478,
+        0.996
+      ],
+      "native_size": [
+        314,
+        270
+      ],
+      "world_size": [
+        4.24,
+        3.65
+      ],
+      "aspect": 1.16,
+      "area": 55725,
+      "id": 65
+    },
+    {
+      "category": "Duo",
+      "family": "Cypress",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        346,
+        1657,
+        266,
+        261
+      ],
+      "pivot": [
+        0.443,
+        0.996
+      ],
+      "native_size": [
+        266,
+        261
+      ],
+      "world_size": [
+        3.59,
+        3.52
+      ],
+      "aspect": 1.02,
+      "area": 43215,
+      "id": 66
+    },
+    {
+      "category": "Duo",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        628,
+        1657,
+        342,
+        251
+      ],
+      "pivot": [
+        0.609,
+        0.996
+      ],
+      "native_size": [
+        342,
+        251
+      ],
+      "world_size": [
+        4.62,
+        3.39
+      ],
+      "aspect": 1.36,
+      "area": 55100,
+      "id": 67
+    },
+    {
+      "category": "Duo",
+      "family": "Willow",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        986,
+        1657,
+        334,
+        250
+      ],
+      "pivot": [
+        0.532,
+        0.996
+      ],
+      "native_size": [
+        334,
+        250
+      ],
+      "world_size": [
+        4.51,
+        3.38
+      ],
+      "aspect": 1.34,
+      "area": 58343,
+      "id": 68
+    },
+    {
+      "category": "Duo",
+      "family": "Broadleaf",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1336,
+        1657,
+        640,
+        245
+      ],
+      "pivot": [
+        0.559,
+        0.996
+      ],
+      "native_size": [
+        640,
+        245
+      ],
+      "world_size": [
+        8.64,
+        3.31
+      ],
+      "aspect": 2.61,
+      "area": 109748,
+      "id": 69
+    },
+    {
+      "category": "Duo",
+      "family": "Willow",
+      "atlas": "tree_atlas_cluster.png",
+      "rect": [
+        1992,
+        1657,
+        287,
+        231
+      ],
+      "pivot": [
+        0.485,
+        0.996
+      ],
+      "native_size": [
+        287,
+        231
+      ],
+      "world_size": [
+        3.87,
+        3.12
+      ],
+      "aspect": 1.24,
+      "area": 43235,
+      "id": 70
+    }
+  ]
+}

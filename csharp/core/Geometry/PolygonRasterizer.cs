@@ -213,26 +213,37 @@ public static class PolygonRasterizer
     /// <summary>将每个地块的 RGBA 颜色光栅化为完整的图像字节数组。</summary>
     public static byte[] RasterizeCells(PolygonCellMap cellMap, byte[] cellRgba)
     {
-        var width = cellMap.Width;
-        var height = cellMap.Height;
-        var totalPixels = width * height;
-        var buffer = new byte[totalPixels * 4];
-
-        for (var idx = 0; idx < totalPixels; idx++)
-        {
-            var cell = cellMap.Cells[idx];
-            var src = cell * 4;
-            var dst = idx * 4;
-            if (cell >= 0 && src + 3 < cellRgba.Length)
-            {
-                buffer[dst] = cellRgba[src];
-                buffer[dst + 1] = cellRgba[src + 1];
-                buffer[dst + 2] = cellRgba[src + 2];
-                buffer[dst + 3] = cellRgba[src + 3];
-            }
-        }
-
+        var buffer = new byte[checked(cellMap.Width * cellMap.Height * 4)];
+        FillRgba(cellMap, cellRgba, buffer);
         return buffer;
+    }
+
+    /// <summary>填充调用方提供的缓冲，供旧渲染入口复用，避免额外分配完整地图图像。</summary>
+    public static void FillRgba(PolygonCellMap cellMap, byte[] cellRgba, byte[] buffer)
+    {
+        if (buffer.Length < checked(cellMap.Width * cellMap.Height * 4))
+            throw new ArgumentException("输出缓冲过小。", nameof(buffer));
+        Parallel.For(0, cellMap.Height, row =>
+        {
+            var end = (row + 1) * cellMap.Width;
+            for (var idx = row * cellMap.Width; idx < end; idx++)
+            {
+                var cell = cellMap.Cells[idx];
+                var src = cell * 4;
+                var dst = idx * 4;
+                if (cell >= 0 && src + 3 < cellRgba.Length)
+                {
+                    buffer[dst] = cellRgba[src];
+                    buffer[dst + 1] = cellRgba[src + 1];
+                    buffer[dst + 2] = cellRgba[src + 2];
+                    buffer[dst + 3] = cellRgba[src + 3];
+                }
+                else
+                {
+                    Array.Clear(buffer, dst, 4);
+                }
+            }
+        });
     }
 
     /// <summary>在像素缓冲中绘制地块边界线。</summary>
@@ -284,6 +295,105 @@ public static class PolygonRasterizer
             var e2 = 2 * err;
             if (e2 > -dy) { err -= dy; x0 += sx; }
             if (e2 < dx) { err += dx; y0 += sy; }
+        }
+    }
+
+    /// <summary>
+    /// 在 RGBA 缓冲中描一条像素坐标折线，按 alpha 与已有像素混合。
+    /// xs/ys 为同一顶点的横纵坐标数组，逐段绘制并跳过经度跨缝的跳变段。
+    /// </summary>
+    public static void StrokePolyline(
+        byte[] buffer,
+        int width,
+        int height,
+        double[] xs,
+        double[] ys,
+        int count,
+        byte r,
+        byte g,
+        byte b,
+        float alpha,
+        int thickness)
+    {
+        for (var i = 0; i < count - 1; i++)
+        {
+            if (Math.Abs(xs[i + 1] - xs[i]) > width * 0.5) continue;
+            StrokeSegment(buffer, width, height, xs[i], ys[i], xs[i + 1], ys[i + 1], r, g, b, alpha, thickness);
+        }
+    }
+
+    /// <summary>描单个像素线段，供调用方在顶点上携带逐段颜色时复用同一份坐标数组。</summary>
+    public static void StrokeSegment(
+        byte[] buffer,
+        int width,
+        int height,
+        double x0,
+        double y0,
+        double x1,
+        double y1,
+        byte r,
+        byte g,
+        byte b,
+        float alpha,
+        int thickness)
+    {
+        if (alpha <= 0.001f) return;
+
+        var dx = x1 - x0;
+        var dy = y1 - y0;
+        var steps = (int)Math.Ceiling(Math.Sqrt(dx * dx + dy * dy));
+        if (steps < 1) steps = 1;
+
+        var radius = Math.Max(0, (thickness - 1) / 2);
+        var invOneMinusA = 1f - alpha;
+
+        for (var s = 0; s <= steps; s++)
+        {
+            var t = (double)s / steps;
+            StampDisc(
+                buffer, width, height,
+                (int)Math.Round(x0 + dx * t),
+                (int)Math.Round(y0 + dy * t),
+                radius, r, g, b, alpha, invOneMinusA);
+        }
+    }
+
+    private static void StampDisc(
+        byte[] buffer,
+        int width,
+        int height,
+        int cx,
+        int cy,
+        int radius,
+        byte r,
+        byte g,
+        byte b,
+        float alpha,
+        float oneMinusAlpha)
+    {
+        for (var y = cy - radius; y <= cy + radius; y++)
+        {
+            if (y < 0 || y >= height) continue;
+            var rowOffset = y * width;
+
+            for (var x = cx - radius; x <= cx + radius; x++)
+            {
+                if (x < 0 || x >= width) continue;
+
+                var offset = (rowOffset + x) * 4;
+                var dstA = buffer[offset + 3] / 255f;
+                var outA = alpha + dstA * oneMinusAlpha;
+                if (outA <= 0f)
+                {
+                    buffer[offset + 3] = 0;
+                    continue;
+                }
+
+                buffer[offset] = (byte)((r * alpha + buffer[offset] * dstA * oneMinusAlpha) / outA);
+                buffer[offset + 1] = (byte)((g * alpha + buffer[offset + 1] * dstA * oneMinusAlpha) / outA);
+                buffer[offset + 2] = (byte)((b * alpha + buffer[offset + 2] * dstA * oneMinusAlpha) / outA);
+                buffer[offset + 3] = (byte)(outA * 255f);
+            }
         }
     }
 }

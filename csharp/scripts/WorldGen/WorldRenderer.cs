@@ -118,19 +118,43 @@ public sealed class WorldRenderer
         Hex("#EF6876")  // Metamorphic
     };
 
+    /// <summary>与 BaseThemeColorPalette.OreColors 逐项对齐，两条渲染路径必须同色。</summary>
     private static readonly Color[] OreColors =
     {
-        Colors.Black,   // None
-        Hex("#808080"), // Coal
-        Hex("#F7B946"), // Copper
-        Hex("#298970"), // Tin
-        Hex("#ea4545"), // Iron
-        Hex("#F3F029"), // Gold
-        Hex("#cb5bea"), // Diamond
-        Hex("#5bcd5e"), // Platinum
-        Hex("#34e5f5"), // Aluminum
-        Hex("#E7E7EE"), // Silver
-        Hex("#EAA19A")  // Lead
+        Colors.Black,   // 0: None
+        // ── 基础工业矿产 (1..11) ──
+        Hex("#8E929A"), // 1: Stone 石材 [凡]
+        Hex("#C28B62"), // 2: Clay 黏土 [凡]
+        Hex("#D5CFBE"), // 3: Limestone 石灰石 [凡]
+        Hex("#38393D"), // 4: Coal 煤矿 [凡]
+        Hex("#B74134"), // 5: Iron 铁矿 [凡]
+        Hex("#D97838"), // 6: Copper 铜矿 [凡]
+        Hex("#A8B7C9"), // 7: Aluminum 铝矿 [灵]
+        Hex("#E5D08C"), // 8: Silicon 硅矿 [灵]
+        Hex("#22262E"), // 9: Oil 石油 [地]
+        Hex("#58A4B0"), // 10: NaturalGas 天然气 [地]
+        Hex("#C79F3B"), // 11: RareMetal 稀有金属 [地]
+
+        // ── 超自然矿产 (12..21) ──
+        Hex("#34D399"), // 12: SpiritCrystal 灵晶 [灵]
+        Hex("#F97316"), // 13: SunfireCrystal 炎曜晶 [灵]
+        Hex("#67E8F9"), // 14: FrostSoulCrystal 寒魄晶 [灵]
+        Hex("#A855F7"), // 15: ThunderMarrow 雷髓矿 [灵]
+        Hex("#4ADE80"), // 16: LifePith 生灵髓 [灵]
+        Hex("#4338CA"), // 17: NetherCrystal 幽冥晶 [地]
+        Hex("#818CF8"), // 18: VoidCrystal 空冥晶 [地]
+        Hex("#38BDF8"), // 19: AstralPith 星髓 [地]
+        Hex("#F43F5E"), // 20: LawStone 律纹石 [天]
+        Hex("#FACC15"), // 21: GenesisOre 源质矿 [天]
+
+        // ── 卡牌资源 (22..28) ──
+        Hex("#FBBF24"), // 22: MemorySand 忆晶砂 [灵]
+        Hex("#2DD4BF"), // 23: RuneOre 灵纹矿 [灵]
+        Hex("#E879F9"), // 24: ResonanceCrystal 共鸣晶 [地]
+        Hex("#94A3B8"), // 25: EchoStone 回响石 [地]
+        Hex("#EA580C"), // 26: OrderedGold 定序金 [地]
+        Hex("#C084FC"), // 27: RealmCasketCrystal 界匣晶 [天]
+        Hex("#E11D48"), // 28: KarmaStone 因律石 [天]
     };
 
     public Image Render(
@@ -905,15 +929,22 @@ public sealed class WorldRenderer
 
     private Color DrawOre(OreType ore, float elevation, float seaLevel)
     {
-        if (elevation < seaLevel)
+        if (ore == OreType.None)
         {
-            return DeepOcean;
+            return elevation < seaLevel ? DeepOcean : Hex("#404552");
         }
 
         var oreIndex = (int)ore;
-        return oreIndex >= 0 && oreIndex < OreColors.Length
+        var baseColor = oreIndex >= 0 && oreIndex < OreColors.Length
             ? OreColors[oreIndex]
-            : Colors.Black;
+            : Hex("#EAE6DF");
+
+        if (elevation < seaLevel)
+        {
+            return baseColor.Lerp(ShallowOcean, 0.22f);
+        }
+
+        return baseColor;
     }
 
     private Color DrawBiomeColor(BiomeType biome)

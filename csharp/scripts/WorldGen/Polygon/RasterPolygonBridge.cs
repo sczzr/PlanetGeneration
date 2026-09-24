@@ -1,3 +1,4 @@
+using PolygonCellMap = PlanetGeneration.Core.Geometry.PolygonCellMap;
 using System;
 
 namespace PlanetGeneration.WorldGen.Polygon;

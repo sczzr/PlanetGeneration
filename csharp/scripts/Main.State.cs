@@ -1,16 +1,18 @@
+using PlanetGeneration.Application;
 using Godot;
 using PlanetGeneration.WorldGen;
-using PlanetGeneration.WorldGen.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
+using LandformType = PlanetGeneration.Core.Domain.LandformType;
 using IOPath = System.IO.Path;
 using IOFile = System.IO.File;
 using IODirectory = System.IO.Directory;
 using IOFileInfo = System.IO.FileInfo;
 using CryptoSha256 = System.Security.Cryptography.SHA256;
+using PlanetGeneration.UI.State;
 
 namespace PlanetGeneration;
 
@@ -29,6 +31,7 @@ public partial class Main : Control
 	[Export(PropertyHint.Range, "0.4,2.5,0.01")] public float RiverDensity { get; set; } = 1.0f;
 	[Export(PropertyHint.Range, "0.5,2.5,0.01")] public float WindArrowDensity { get; set; } = 1.0f;
 	[Export(PropertyHint.Range, "0.5,2.0,0.01")] public float BasinSensitivity { get; set; } = 1.0f;
+	public PlanetGeneration.Core.Domain.LandformOptions LandformTuning { get; set; } = PlanetGeneration.Core.Domain.LandformOptions.Default;
 	[Export] public bool EnableRivers { get; set; } = true;
 
 	private TextureRect _mapTexture = null!;
@@ -225,12 +228,13 @@ public partial class Main : Control
 	private const int WorldGenerationCacheCapacity = 6;
 	private const long WorldGenerationCacheMaxCells = 16_777_216;
 
-	/// <summary>
-	/// 世界生成算法版本。多边形地块层引入了新的数据（地块网格 + 像素归属图），
-	/// 旧缓存里没有这些数据，所以必须升版本让旧缓存整体失效，而不是读到半成品。
-	/// 3 → 4：新增多边形地块层。
-	/// </summary>
-	private const int WorldGenerationAlgorithmVersion = 4;
+	/// <summary>磁盘自动缓存最多保留的文件数；超出后按最旧优先删除。</summary>
+	private const int WorldCacheDiskKeepFiles = 24;
+	/// <summary>读取档案 JSON 头部做标签展示时的探测字节数。</summary>
+	private const int ArchiveHeaderProbeBytes = 4096;
+
+	// 世界生成算法版本由 Core.Domain.GenerationOptions.CurrentAlgorithmVersion 统一维护。
+	// Main 不再保留第二份版本号，避免缓存键在 UI 与 Core 之间发生漂移。
 
 	/// <summary>多边形地块数的自动取值上下限：地块边长目标 4 个源像素。</summary>
 	private const int AutoCellsTargetSpacingPixels = 4;
@@ -244,9 +248,11 @@ public partial class Main : Control
 	private const string ArchiveDataDirectoryName = "world_archives";
 	private const string ArchiveFilePrefix = "archive_";
 	private const string ArchiveFileExtension = ".pgarchive.json";
-	private const long ApproxBytesPerCachedCell = 40;
+	// UI 仅显示可计数的几何/字段/风场缓冲，不冒充完整托管堆大小。
 
 	private bool _isGenerating;
+	private long _generationRequestId;
+	private bool _isSavingArchive;
 	private Tween? _generationUiTween;
 	private Tween? _progressTween;
 	private bool _pendingRegenerate;
@@ -312,8 +318,10 @@ public partial class Main : Control
 	private SpinBox? _cellScaleSpin;
 	private Label? _cellCountDisplayLabel;
 
-	private PlanetGeneration.Core.Domain.WorldSnapshot? _primarySnapshot;
-	private PlanetGeneration.Core.Domain.WorldSnapshot? _compareSnapshot;
+	private bool _enableCartographyDesigner;
+	private string? _blueprintName;
+	private PlanetGeneration.Core.Domain.WorldSnapshot? _primarySnapshot => _primaryWorld?.Snapshot;
+	private PlanetGeneration.Core.Domain.WorldSnapshot? _compareSnapshot => _compareWorld?.Snapshot;
 	private readonly PlanetGeneration.Rendering.LayerRenderCoordinator _layerCoordinator = new();
 	private PlanetGeneration.Rendering.MapCanvas _mapCanvas = null!;
 
@@ -324,6 +332,7 @@ public partial class Main : Control
 		Json
 	}
 
+	// 成员顺序与 PlanetGeneration.Core.Domain.TerrainMorphology 逐项对齐，两处按整数值互转。
 	private enum TerrainMorphology
 	{
 		Balanced,
@@ -333,7 +342,11 @@ public partial class Main : Control
 		FracturedIslands,
 		ShallowFragments,
 		ColdContinent,
-		HotWasteland
+		HotWasteland,
+		PolarIcelands,
+		AtollChain,
+		InlandSea,
+		RiftHighlands
 	}
 
 	private enum MountainPresetId
@@ -343,21 +356,6 @@ public partial class Main : Control
 		AncientStable = 2,
 		EdgeArcs = 3,
 		Custom = 99
-	}
-
-	private enum LandformType
-	{
-		DeepOcean,
-		ShallowSea,
-		CoastalPlain,
-		Plain,
-		Basin,
-		DryBasin,
-		Valley,
-		RollingHills,
-		Upland,
-		Plateau,
-		Mountain
 	}
 
 	private readonly struct TimelineHotspotPoint
@@ -374,18 +372,8 @@ public partial class Main : Control
 		}
 	}
 
-	private readonly PlateGenerator _plateGenerator = new();
-	private readonly ElevationGenerator _elevationGenerator = new();
-	private readonly TemperatureGenerator _temperatureGenerator = new();
-	private readonly MoistureGenerator _moistureGenerator = new();
-	private readonly RiverGenerator _riverGenerator = new();
-	private readonly BiomeGenerator _biomeGenerator = new();
-	private readonly ErosionSimulator _erosionSimulator = new();
-	private readonly ResourceGenerator _resourceGenerator = new();
-	private readonly CityGenerator _cityGenerator = new();
 	private readonly EcologySimulator _ecologySimulator = new();
 	private readonly CivilizationSimulator _civilizationSimulator = new();
-	private readonly StatsCalculator _statsCalculator = new();
 	private readonly WorldRenderer _renderer = new();
 
 	private WorldTuning _tuning = WorldTuning.Legacy();
@@ -398,75 +386,13 @@ public partial class Main : Control
 	private Image? _lastRenderedImage;
 	private Image? _lastCompareImage;
 
-	private sealed class LayerRenderCacheEntry
-	{
-		public int Signature { get; init; }
-		public Image Image { get; init; } = null!;
-		public Texture2D Texture { get; init; } = null!;
-		public long LastAccessTick { get; set; }
-	}
-
-	private sealed class GeneratedWorldData
-	{
-		public PlateResult PlateResult { get; init; } = null!;
-		public float[,] Elevation { get; init; } = null!;
-		public float[,] Temperature { get; init; } = null!;
-		public float[,] Moisture { get; init; } = null!;
-		public Vector2[,] Wind { get; init; } = null!;
-		public float[,] River { get; init; } = null!;
-		public BiomeType[,] Biome { get; init; } = null!;
-		public RockType[,] Rock { get; init; } = null!;
-		public OreType[,] Ore { get; init; } = null!;
-		public List<CityInfo> Cities { get; init; } = null!;
-		public WorldStats Stats { get; init; } = null!;
-		public WorldTuning Tuning { get; init; } = null!;
-		public EcologySimulationResult? EcologySimulation { get; set; }
-		public int EcologySignature { get; set; } = int.MinValue;
-		public CivilizationSimulationResult? CivilizationSimulation { get; set; }
-		public int CivilizationSignature { get; set; } = int.MinValue;
-		public Dictionary<MapLayer, LayerRenderCacheEntry> LayerRenderCache { get; } = new();
-
-		/// <summary>
-		/// 多边形地块层。为 null 表示尚未构建（模式为 Raster，或刚从旧缓存恢复）。
-		/// 它只是 (宽, 高, 种子, 目标地块数) 的纯函数，所以随时可以按需重建。
-		/// </summary>
-		public PolygonGrid? PolygonGrid { get; set; }
-
-		/// <summary>像素归属图：栅格与地块之间的唯一接缝。与 <see cref="PolygonGrid"/> 同生同灭。</summary>
-		public PolygonCellMap? PolygonCellMap { get; set; }
-
-		/// <summary>构建多边形层时实际使用的目标地块数，缓存恢复时据此复现同一张地块图。</summary>
-		public int PolygonCellsDesired { get; set; }
-
-		/// <summary>
-		/// 城市 → 地块 的归属（下标为城市在 <see cref="Cities"/> 中的位置，值为地块编号）。
-		/// 地块层未构建时为空数组。反向映射是 <c>PolygonFields.CityId</c>。
-		/// </summary>
-		public int[] CityCell { get; set; } = Array.Empty<int>();
-
-		/// <summary>地块版生态模拟的聚合结果；为 null 表示尚未计算。</summary>
-		public PolygonEcologyResult? PolygonEcology { get; set; }
-
-		/// <summary>地块版生态模拟的参数签名；与当前设置不一致时重算。</summary>
-		public int PolygonEcologySignature { get; set; } = int.MinValue;
-
-		/// <summary>地块版文明模拟的聚合结果；为 null 表示尚未计算。</summary>
-		public PolygonCivilizationResult? PolygonCivilization { get; set; }
-
-		/// <summary>
-		/// 地块版文明模拟的参数签名；与当前设置不一致时重算。
-		/// 注意它必须**覆盖生态参数**（物种多样性/魔法密度）——因为文明模拟吃生态模拟的产出，
-		/// 只比对文明自己的参数会让"只改多样性"时文明层不重算。
-		/// </summary>
-		public int PolygonCivilizationSignature { get; set; } = int.MinValue;
-	}
-
 	private sealed class WorldGenerationCacheEntry
 	{
 		public string Key { get; init; } = string.Empty;
-		public GeneratedWorldData PrimaryWorld { get; init; } = null!;
-		public GeneratedWorldData? CompareWorld { get; init; }
+		public PlanetGeneration.Core.Domain.WorldSnapshot PrimarySnapshot { get; init; } = null!;
+		public PlanetGeneration.Core.Domain.WorldSnapshot? CompareSnapshot { get; init; }
 		public long EstimatedCells { get; init; }
+		public long KnownBufferBytes { get; init; }
 		public long LastAccessTick { get; set; }
 	}
 
@@ -547,6 +473,9 @@ public partial class Main : Control
 		public float OceanicRatio { get; init; }
 		public float ContinentBias { get; init; }
 		public int ContinentCount { get; init; } = 3;
+
+		/// <summary>为 null 时保持玩家当前选择的山脉起伏预设，不随地形模板变动。</summary>
+		public MountainPresetId? Mountain { get; init; }
 	}
 
 	private sealed class MountainPreset
@@ -567,6 +496,15 @@ public partial class Main : Control
 		new TerrainPreset { Name = "经典群岛", Morphology = TerrainMorphology.Archipelago, SeaLevel = 0.62f, PlateCount = 30, WindCellCount = 12, HeatFactor = 0.56f, ErosionIterations = 6, OceanicRatio = 0.56f, ContinentBias = 0.10f, ContinentCount = 3 },
 		new TerrainPreset { Name = "破碎岛链", Morphology = TerrainMorphology.FracturedIslands, SeaLevel = 0.70f, PlateCount = 42, WindCellCount = 14, HeatFactor = 0.58f, ErosionIterations = 7, OceanicRatio = 0.64f, ContinentBias = 0.04f, ContinentCount = 4 },
 		new TerrainPreset { Name = "浅海碎陆", Morphology = TerrainMorphology.ShallowFragments, SeaLevel = 0.57f, PlateCount = 28, WindCellCount = 11, HeatFactor = 0.54f, ErosionIterations = 5, OceanicRatio = 0.52f, ContinentBias = 0.20f, ContinentCount = 3 },
+		new TerrainPreset { Name = "寒冷大陆", Morphology = TerrainMorphology.ColdContinent, SeaLevel = 0.44f, PlateCount = 16, WindCellCount = 8, HeatFactor = 0.24f, ErosionIterations = 4, OceanicRatio = 0.38f, ContinentBias = 0.70f, ContinentCount = 3, Mountain = MountainPresetId.AncientStable },
+		new TerrainPreset { Name = "炎热荒原", Morphology = TerrainMorphology.HotWasteland, SeaLevel = 0.50f, PlateCount = 14, WindCellCount = 9, HeatFactor = 0.84f, ErosionIterations = 8, OceanicRatio = 0.36f, ContinentBias = 0.62f, ContinentCount = 3, Mountain = MountainPresetId.AncientStable },
+		new TerrainPreset { Name = "极地冰陆", Morphology = TerrainMorphology.PolarIcelands, SeaLevel = 0.52f, PlateCount = 18, WindCellCount = 8, HeatFactor = 0.26f, ErosionIterations = 3, OceanicRatio = 0.52f, ContinentBias = 0.66f, ContinentCount = 3, Mountain = MountainPresetId.YoungOrogeny },
+		new TerrainPreset { Name = "环礁链", Morphology = TerrainMorphology.AtollChain, SeaLevel = 0.72f, PlateCount = 38, WindCellCount = 13, HeatFactor = 0.60f, ErosionIterations = 5, OceanicRatio = 0.66f, ContinentBias = 0.60f, ContinentCount = 4, Mountain = MountainPresetId.EarthLike },
+		new TerrainPreset { Name = "内陆海", Morphology = TerrainMorphology.InlandSea, SeaLevel = 0.40f, PlateCount = 12, WindCellCount = 7, HeatFactor = 0.50f, ErosionIterations = 5, OceanicRatio = 0.28f, ContinentBias = 0.88f, ContinentCount = 2, Mountain = MountainPresetId.AncientStable },
+		new TerrainPreset { Name = "裂谷高地", Morphology = TerrainMorphology.RiftHighlands, SeaLevel = 0.34f, PlateCount = 24, WindCellCount = 10, HeatFactor = 0.46f, ErosionIterations = 9, OceanicRatio = 0.30f, ContinentBias = 0.80f, ContinentCount = 2, Mountain = MountainPresetId.YoungOrogeny },
+		new TerrainPreset { Name = "冰洋世界", Morphology = TerrainMorphology.Balanced, SeaLevel = 0.80f, PlateCount = 22, WindCellCount = 12, HeatFactor = 0.18f, ErosionIterations = 5, OceanicRatio = 0.74f, ContinentBias = 0.10f, ContinentCount = 3, Mountain = MountainPresetId.AncientStable },
+		new TerrainPreset { Name = "四极分陆", Morphology = TerrainMorphology.Continents, SeaLevel = 0.38f, PlateCount = 26, WindCellCount = 9, HeatFactor = 0.48f, ErosionIterations = 4, OceanicRatio = 0.36f, ContinentBias = 0.58f, ContinentCount = 4, Mountain = MountainPresetId.EarthLike },
+		new TerrainPreset { Name = "灼热浅滩", Morphology = TerrainMorphology.ShallowFragments, SeaLevel = 0.56f, PlateCount = 30, WindCellCount = 12, HeatFactor = 0.80f, ErosionIterations = 7, OceanicRatio = 0.54f, ContinentBias = 0.24f, ContinentCount = 3, Mountain = MountainPresetId.EdgeArcs },
 	};
 
 	private static readonly MountainPreset[] MountainPresets =
@@ -596,6 +534,85 @@ public partial class Main : Control
 		new Vector2(0.37f, 0.70f),
 		new Vector2(0.63f, 0.30f),
 		new Vector2(0.88f, 0.66f)
+	};
+
+	private static readonly Vector2[] ContinentCenters5 =
+	{
+		new Vector2(0.18f, 0.38f),
+		new Vector2(0.28f, 0.72f),
+		new Vector2(0.55f, 0.60f),
+		new Vector2(0.70f, 0.35f),
+		new Vector2(0.86f, 0.68f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes1 =
+	{
+		(0.50f, 0.50f, 0.26f, 0.22f, 1.00f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes2 =
+	{
+		(0.26f, 0.50f, 0.15f, 0.20f, 1.00f),
+		(0.74f, 0.50f, 0.15f, 0.20f, 1.00f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes3 =
+	{
+		(0.28f, 0.35f, 0.14f, 0.14f, 1.00f),
+		(0.72f, 0.35f, 0.14f, 0.14f, 1.00f),
+		(0.50f, 0.70f, 0.15f, 0.14f, 1.00f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes4 =
+	{
+		(0.27f, 0.32f, 0.13f, 0.12f, 1.00f),
+		(0.27f, 0.68f, 0.13f, 0.12f, 1.00f),
+		(0.73f, 0.32f, 0.13f, 0.12f, 1.00f),
+		(0.73f, 0.68f, 0.13f, 0.12f, 1.00f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes5 =
+	{
+		// 1. 西北大洲 (North-West Continent)
+		(0.22f, 0.30f, 0.13f, 0.12f, 1.00f),
+		(0.25f, 0.39f, 0.07f, 0.07f, 0.94f),
+
+		// 2. 西南大洲 (South-West Continent)
+		(0.22f, 0.70f, 0.12f, 0.13f, 0.98f),
+		(0.25f, 0.61f, 0.06f, 0.07f, 0.92f),
+
+		// 3. 中北大洲 (North-Central Continent)
+		(0.52f, 0.28f, 0.14f, 0.12f, 1.00f),
+		(0.54f, 0.38f, 0.07f, 0.07f, 0.94f),
+
+		// 4. 中南大洲 (South-Central Continent)
+		(0.52f, 0.72f, 0.13f, 0.13f, 0.98f),
+		(0.50f, 0.62f, 0.07f, 0.07f, 0.92f),
+
+		// 5. 东部大洲 (Eastern Continent)
+		(0.84f, 0.50f, 0.13f, 0.15f, 0.98f),
+		(0.88f, 0.40f, 0.06f, 0.08f, 0.92f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes6 =
+	{
+		(0.20f, 0.32f, 0.10f, 0.11f, 1.00f),
+		(0.52f, 0.32f, 0.10f, 0.11f, 1.00f),
+		(0.84f, 0.32f, 0.10f, 0.11f, 1.00f),
+		(0.20f, 0.68f, 0.10f, 0.11f, 0.98f),
+		(0.52f, 0.68f, 0.10f, 0.11f, 0.98f),
+		(0.84f, 0.68f, 0.10f, 0.11f, 0.98f)
+	};
+
+	private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes7 =
+	{
+		(0.18f, 0.30f, 0.09f, 0.10f, 1.00f),
+		(0.50f, 0.30f, 0.09f, 0.10f, 1.00f),
+		(0.82f, 0.30f, 0.09f, 0.10f, 1.00f),
+		(0.34f, 0.50f, 0.09f, 0.09f, 0.96f),
+		(0.18f, 0.70f, 0.09f, 0.10f, 0.98f),
+		(0.56f, 0.70f, 0.09f, 0.10f, 0.98f),
+		(0.88f, 0.70f, 0.09f, 0.10f, 0.98f)
 	};
 
 

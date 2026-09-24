@@ -1,0 +1,133 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/mode_select_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/themes/main_menu.tres" id="2_theme"]
+[ext_resource type="Script" path="res://scripts/container_appear.gd" id="3_appear"]
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_fx_button.gd" id="4_fx_button"]
+[ext_resource type="SystemFont" path="res://assets/fonts/ui_sans_bold.tres" id="5_font_bold"]
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_fx_sound.gd" id="6_fx_sound"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_focus.wav" id="7_sfx_focus"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_click.wav" id="8_sfx_click"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_open.wav" id="9_sfx_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_close.wav" id="10_sfx_close"]
+
+[node name="ModeSelectMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_fx_sound")
+open_sound = ExtResource("9_sfx_open")
+close_sound = ExtResource("10_sfx_close")
+
+[node name="Dim" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 0)
+layout_mode = 2
+theme_override_constants/separation = 32
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 0
+duration = 0.3
+delay_between_elements = 0.08
+
+[node name="Title" type="Label" parent="Center/Panel"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("5_font_bold")
+theme_override_font_sizes/font_size = 36
+text = "MODE_SELECT_TITLE"
+horizontal_alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="Center/Panel"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 56
+
+[node name="AdventureCard" type="VBoxContainer" parent="Center/Panel/Cards"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AdventureButton" type="Button" parent="Center/Panel/Cards/AdventureCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "MODE_ADVENTURE"
+script = ExtResource("4_fx_button")
+hover_release_focus = true
+focus_sound = ExtResource("7_sfx_focus")
+press_sound = ExtResource("8_sfx_click")
+
+[node name="AdventureDesc" type="Label" parent="Center/Panel/Cards/AdventureCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.87, 0.96, 0.85)
+theme_override_font_sizes/font_size = 15
+text = "MODE_ADVENTURE_DESC"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="GuardCard" type="VBoxContainer" parent="Center/Panel/Cards"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GuardButton" type="Button" parent="Center/Panel/Cards/GuardCard"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "MODE_GUARD"
+script = ExtResource("4_fx_button")
+hover_release_focus = true
+focus_sound = ExtResource("7_sfx_focus")
+press_sound = ExtResource("8_sfx_click")
+
+[node name="GuardDesc" type="Label" parent="Center/Panel/Cards/GuardCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.87, 0.96, 0.85)
+theme_override_font_sizes/font_size = 15
+text = "MODE_GUARD_DESC"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BackButton" type="Button" parent="Center/Panel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
+text = "MODE_SELECT_BACK"
+script = ExtResource("4_fx_button")
+hover_release_focus = true
+focus_sound = ExtResource("7_sfx_focus")

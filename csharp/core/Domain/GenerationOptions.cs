@@ -1,8 +1,34 @@
 using System;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace PlanetGeneration.Core.Domain;
+
+/// <summary>
+/// 25 种地球典型地貌分类微调配置（相对基准乘数，默认 1.0f）。
+/// </summary>
+public readonly record struct LandformOptions(
+    float BasinSensitivity = 1.0f,
+    float WetlandAbundance = 1.0f,
+    float CanyonDepth = 1.0f,
+    float DeltaScale = 1.0f,
+    float KarstFrequency = 1.0f,
+    float DesertDuneScale = 1.0f,
+    float BadlandsFrequency = 1.0f,
+    float GlacierExtent = 1.0f,
+    float FjordDepth = 1.0f,
+    float PeakFrequency = 1.0f,
+    float IslandDensity = 1.0f,
+    float VolcanoFrequency = 1.0f,
+    float RiftFrequency = 1.0f,
+    float PlateauExtent = 1.0f,
+    float FloodplainScale = 1.0f
+)
+{
+    public LandformOptions() : this(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f)
+    {
+    }
+
+    public static readonly LandformOptions Default = new(1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+}
 
 /// <summary>世界微调参数快照。</summary>
 public sealed record WorldTuningSnapshot
@@ -36,7 +62,13 @@ public sealed record WorldTuningSnapshot
 /// </summary>
 public sealed record GenerationOptions
 {
-    public const int CurrentAlgorithmVersion = 5;
+    /// <summary>
+    /// 6 → 7：矿产资源体系重构为三大类28种资源（工业11种/超自然10种/卡牌7种）与「天地灵凡」四阶，
+    /// 旧缓存里按旧整数存的 ore 会串成别的矿种，必须整体作废。
+    /// </summary>
+    // 7 → 8：旧多边形入口统一到 Core，修复旧网格接缝与河网顺序，并补全 tuning 映射。
+    // 8 → 9：主界面只生成 Core 快照，旧栅格数据改为单向投影；自动缓存保存完整快照。
+    public const int CurrentAlgorithmVersion = 9;
     public const int DefaultTargetCellCount = 10000;
 
     public int Seed { get; init; } = 123456;
@@ -64,35 +96,32 @@ public sealed record GenerationOptions
     public int WindCellCount { get; init; } = 64;
 
     public float BasinSensitivity { get; init; } = 1.0f;
+    public LandformOptions LandformTuning { get; init; } = LandformOptions.Default;
+
+    public LandformOptions GetEffectiveLandformTuning()
+    {
+        if (LandformTuning.BasinSensitivity == 1.0f && BasinSensitivity != 1.0f)
+        {
+            return LandformTuning with { BasinSensitivity = BasinSensitivity };
+        }
+        return LandformTuning;
+    }
+
     public int SpeciesDiversity { get; init; } = 50;
     public int CivilAggression { get; init; } = 50;
     public int MagicDensity { get; init; } = 50;
     public int Epoch { get; init; } = 100;
     public int AlgorithmVersion { get; init; } = CurrentAlgorithmVersion;
 
+    /// <summary>是否启用地图构图导演层（CartographyDesigner）。</summary>
+    public bool EnableCartographyDesigner { get; init; } = false;
+
+    /// <summary>指定构图蓝图名称（为 null 时走纯程序化自然演化管线）。</summary>
+    public string? BlueprintName { get; init; } = null;
+
     /// <summary>
     /// 计算稳定的世界生成缓存键（仅包含影响世界形态与属性的参数，
     /// 绝不包含显示分辨率、图层透明度或视图开关）。
     /// </summary>
-    public string BuildCacheKey()
-    {
-        var sb = new StringBuilder(256);
-        sb.Append($"v:{AlgorithmVersion}");
-        sb.Append($"|seed:{Seed}");
-        sb.Append($"|cells:{TargetCellCount}");
-        sb.Append($"|ext:{Extent.Width:0}x{Extent.Height:0}");
-        sb.Append($"|sea:{(int)MathF.Round(SeaLevel * 10000f)}");
-        sb.Append($"|heat:{(int)MathF.Round(HeatFactor * 10000f)}");
-        sb.Append($"|moif:{(int)MathF.Round(MoistureFactor * 10000f)}");
-        sb.Append($"|riv:{(EnableRivers ? 1 : 0)}:{(int)MathF.Round(RiverDensity * 10000f)}");
-        sb.Append($"|ero:{ErosionIterations}");
-        sb.Append($"|moi:{MoistureIterations}");
-        sb.Append($"|plt:{PlateCount}:{(int)MathF.Round(OceanicRatio * 10000f)}");
-        sb.Append($"|morph:{(int)Morphology}:{ContinentCount}:{(int)MathF.Round(ContinentBias * 10000f)}");
-        sb.Append($"|rel:{(int)MathF.Round(InteriorRelief * 10000f)}:{(int)MathF.Round(OrogenyStrength * 10000f)}:{(int)MathF.Round(SubductionArcRatio * 10000f)}:{ContinentalAge}");
-        sb.Append($"|tun:{Tuning.Name}");
-        sb.Append($"|eco:{SpeciesDiversity}:{CivilAggression}:{MagicDensity}:{Epoch}");
-        sb.Append($"|basin:{(int)MathF.Round(BasinSensitivity * 10000f)}");
-        return sb.ToString();
-    }
+    public string BuildCacheKey() => WorldGenerationCacheKey.Build(this);
 }

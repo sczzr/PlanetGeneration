@@ -1,15 +1,9 @@
+using PlanetGeneration.Application;
 using Godot;
 using PlanetGeneration.WorldGen;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Threading.Tasks;
-using IOPath = System.IO.Path;
-using IOFile = System.IO.File;
-using IODirectory = System.IO.Directory;
-using IOFileInfo = System.IO.FileInfo;
-using CryptoSha256 = System.Security.Cryptography.SHA256;
 
 namespace PlanetGeneration;
 
@@ -17,11 +11,6 @@ public partial class Main : Control
 {
 	private void GenerateWorld()
 	{
-		if (_worldSetupMenu != null && _worldSetupMenu.Visible)
-		{
-			return;
-		}
-
 		if (_isGenerating)
 		{
 			_pendingRegenerate = true;
@@ -34,6 +23,7 @@ public partial class Main : Control
 	private async Task GenerateWorldAsync()
 	{
 		var generationTimer = Stopwatch.StartNew();
+		var requestId = ++_generationRequestId;
 		_isGenerating = true;
 		SetGenerationUiState(true);
 		_pendingRegenerate = false;
@@ -42,87 +32,61 @@ public partial class Main : Control
 		RandomizeReliefExaggeration();
 		var generationSucceeded = false;
 		var generatedFromScratch = false;
-		var generationCacheKey = BuildWorldGenerationCacheKey();
 
 		try
 		{
+			// 在第一次 await 前捕获完整输入。缓存键和两组生成使用同一份不可变参数。
+			var options = BuildGenerationOptions(_tuning, Seed);
+			var comparisonOptions = _compareMode ? BuildGenerationOptions(GetAlternateTuning(_tuning), Seed + 1) : null;
+			var generationCacheKey = PlanetGeneration.Core.Domain.WorldGenerationCacheKey.BuildSession(options, comparisonOptions);
 			if (TryGetWorldGenerationCache(generationCacheKey, out var cachedPrimary, out var cachedCompare))
 			{
-				LogGenerationTiming("缓存读取", generationTimer.Elapsed);
 				_primaryWorld = cachedPrimary;
-				_compareWorld = _compareMode ? cachedCompare : null;
-				await SetProgressAsync(92f, "读取缓存");
-				await SetProgressAsync(97f, "渲染中");
+				_compareWorld = cachedCompare;
+				await SetProgressAsync(97f, "读取快照缓存并渲染");
 				RedrawCurrentLayer();
-				LogGenerationTiming("缓存渲染", generationTimer.Elapsed);
+				UpdateCellCountDisplay();
 				await SetProgressAsync(100f, "完成（缓存）");
 				generationSucceeded = true;
 				return;
 			}
 
-			if (!_performanceSampleReady)
-			{
-				await SetProgressAsync(1f, "准备中（性能检测）");
-			}
-
 			await EnsurePerformanceSampleAsync();
 			_currentGenerationWorkUnits = EstimateGenerationWorkUnits();
 			_predictedTotalSeconds = Math.Max(_currentGenerationWorkUnits * _secondsPerWorkUnit, 0.1);
-
-			await SetProgressAsync(2f, IsHighInfoPointSelected() ? "准备中（高地图信息）" : "准备中");
-
-			var options = BuildGenerationOptions(_tuning, Seed);
-			var adapter = new PlanetGeneration.Rendering.BaseFieldGeneratorAdapter();
-			var genService = new PlanetGeneration.Core.Application.WorldGenerationService(adapter);
-
-			if (_compareMode)
+			await SetProgressAsync(2f, "准备生成世界快照");
+			var acceptingProgress = true;
+			var progress = new Progress<(float Progress, string Stage)>(p =>
 			{
-				_primarySnapshot = await genService.GenerateAsync(options);
-				_primaryWorld = await BuildWorldAsync(_tuning, "A组", 4f, 48f);
+				if (acceptingProgress && _isGenerating && requestId == _generationRequestId)
+					ReportGenerationProgress(p.Progress * 0.94f, p.Stage);
+			});
+			var controller = new SnapshotGenerationController(new PlanetGeneration.Rendering.BaseFieldGeneratorAdapter());
+			var worlds = await controller.GenerateAsync(options, comparisonOptions, progress);
+			acceptingProgress = false;
 
-				var compareOptions = BuildGenerationOptions(GetAlternateTuning(_tuning), Seed + 1);
-				_compareSnapshot = await genService.GenerateAsync(compareOptions);
-				_compareWorld = await BuildWorldAsync(GetAlternateTuning(_tuning), "B组", 50f, 94f);
-			}
-			else
-			{
-				var progress = new Progress<(float Progress, string Stage)>(async p =>
-				{
-					await SetProgressAsync(p.Progress * 0.9f, p.Stage);
-				});
-				_primarySnapshot = await genService.GenerateAsync(options, progress);
-				_primaryWorld = await BuildWorldAsync(_tuning, "主世界", 4f, 94f);
-				_compareSnapshot = null;
-				_compareWorld = null;
-			}
-
+			// 两组均成功后才发布，避免 B 组失败时留下半更新的会话。
+			_primaryWorld = worlds.Primary;
+			_compareWorld = worlds.Comparison;
 			UpdateCellCountDisplay();
-
-			StoreWorldGenerationCache(generationCacheKey, _primaryWorld, _compareWorld);
+			StoreWorldGenerationCache(generationCacheKey, worlds.Primary, worlds.Comparison);
 			generatedFromScratch = true;
-
 			await SetProgressAsync(97f, "渲染中");
-			var renderTimer = Stopwatch.StartNew();
 			RedrawCurrentLayer();
-			LogGenerationTiming("渲染", renderTimer.Elapsed);
 			await SetProgressAsync(100f, "完成");
 			generationSucceeded = true;
-			LogGenerationTiming("总生成", generationTimer.Elapsed);
+			LogGenerationTiming("快照生成与投影", generationTimer.Elapsed);
+		}
+		catch (Exception ex)
+		{
+			GD.PushError($"[WorldGen] 生成失败: {ex}");
+			_infoLabel.Text = $"世界生成失败：{ex.Message}";
 		}
 		finally
 		{
-			if (!generationSucceeded)
-			{
-				LogGenerationTiming("生成失败/中断", generationTimer.Elapsed);
-			}
-			if (generationSucceeded && generatedFromScratch)
-			{
-				RecordGenerationThroughput();
-			}
-
+			if (generationSucceeded && generatedFromScratch) RecordGenerationThroughput();
 			_isGenerating = false;
 			SetGenerationUiState(false);
-
 			if (_pendingRegenerate)
 			{
 				_pendingRegenerate = false;
@@ -131,9 +95,15 @@ public partial class Main : Control
 			else
 			{
 				_progressOverlay.Visible = false;
+				if (_mainMenu != null && _mainMenu.Visible)
+				{
+					_mainMenu.Call("end_loading");
+					if (generationSucceeded) _mainMenu.Visible = false;
+				}
 				if (generationSucceeded)
 				{
 					SetConsolePanelVisible(true);
+					SetInGameHudVisible(true);
 				}
 			}
 		}
@@ -170,146 +140,29 @@ public partial class Main : Control
 	}
 
 
-	private async Task<GeneratedWorldData> BuildWorldAsync(WorldTuning tuning, string label, float startProgress, float endProgress)
-	{
-		const int totalSteps = 11;
-		var step = 0;
-		var worldTimer = Stopwatch.StartNew();
-		var stageTimer = Stopwatch.StartNew();
-
-		var plateResult = await Task.Run(() => _plateGenerator.Generate(MapWidth, MapHeight, PlateCount, Seed, _terrainOceanicRatio));
-		LogGenerationStage(label, "板块", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "板块", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var resourceTask = Task.Run(() =>
-		{
-			var timer = Stopwatch.StartNew();
-			var result = _resourceGenerator.Generate(MapWidth, MapHeight, Seed, plateResult.BoundaryTypes);
-			return (Result: result, Elapsed: timer.Elapsed);
-		});
-
-		var elevationTimer = Stopwatch.StartNew();
-		var elevation = await Task.Run(() => _elevationGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, plateResult));
-		LogGenerationTiming($"{label}高度生成", elevationTimer.Elapsed);
-		var morphologyTimer = Stopwatch.StartNew();
-		elevation = await Task.Run(() => ApplyTerrainMorphologyMask(elevation, plateResult, MapWidth, MapHeight, SeaLevel, _terrainContinentBias, _interiorRelief, _orogenyStrength, _subductionArcRatio, _continentalAge, _terrainMorphology, Seed, _continentCount));
-		LogGenerationTiming($"{label}地貌掩膜", morphologyTimer.Elapsed);
-		LogGenerationStage(label, "高度与地貌", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "地形", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var waterLayer = Array2D.Create(MapWidth, MapHeight, 1f);
-		var emptyRiverLayer = Array2D.Create(MapWidth, MapHeight, 0f);
-		await Task.Run(() => _erosionSimulator.Run(MapWidth, MapHeight, ErosionIterations, elevation, waterLayer, emptyRiverLayer));
-		var targetOceanRatio = MapSeaLevelToTargetOceanRatio(SeaLevel);
-		elevation = NormalizeElevationForPipeline(elevation, MapWidth, MapHeight, SeaLevel, targetOceanRatio);
-		LogGenerationStage(label, "侵蚀与归一化", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "侵蚀", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var temperatureTask = Task.Run(() => _temperatureGenerator.Generate(MapWidth, MapHeight, Seed, elevation, HeatFactor));
-		var windTask = Task.Run(() => _moistureGenerator.GenerateBaseWind(MapWidth, MapHeight, Seed, WindCellCount));
-		var temperature = await temperatureTask;
-		LogGenerationStage(label, "温度", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "温度", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var baseMoistureTask = Task.Run(() => _moistureGenerator.GenerateBaseMoisture(MapWidth, MapHeight, SeaLevel, elevation, temperature));
-		var wind = await windTask;
-		var baseMoisture = await baseMoistureTask;
-		LogGenerationStage(label, "风场与湿度基础", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "湿度基础", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var moisture = await Task.Run(() => _moistureGenerator.DistributeMoisture(MapWidth, MapHeight, SeaLevel, elevation, baseMoisture, temperature, wind, MoistureIterations, Seed, MoistureFactor));
-		LogGenerationStage(label, "湿度扩散", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "湿度扩散", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var river = EnableRivers
-			? await Task.Run(() => _riverGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, elevation, moisture, tuning, RiverDensity))
-			: Array2D.Create(MapWidth, MapHeight, 0f);
-		LogGenerationStage(label, EnableRivers ? "河流" : "河流关闭", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, EnableRivers ? "河流" : "河流关闭", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var biome = await Task.Run(() => _biomeGenerator.Generate(MapWidth, MapHeight, SeaLevel, elevation, moisture, temperature, river, tuning));
-		LogGenerationStage(label, "生物群系", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "生物群系", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var resourceWork = await resourceTask;
-		var resource = resourceWork.Result;
-		LogGenerationStage(label, "资源", resourceWork.Elapsed, worldTimer);
-		var cities = await Task.Run(() => _cityGenerator.Generate(MapWidth, MapHeight, Seed, SeaLevel, elevation, moisture, river, biome));
-		LogGenerationStage(label, "资源与城市", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "资源与城市", ++step, totalSteps, startProgress, endProgress);
-
-		stageTimer.Restart();
-		var stats = await Task.Run(() => _statsCalculator.Calculate(MapWidth, MapHeight, biome, moisture, temperature, river, cities.Count));
-		LogGenerationStage(label, "统计", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "统计", ++step, totalSteps, startProgress, endProgress);
-
-		var world = new GeneratedWorldData
-		{
-			PlateResult = plateResult,
-			Elevation = elevation,
-			Temperature = temperature,
-			Moisture = moisture,
-			Wind = wind,
-			River = river,
-			Biome = biome,
-			Rock = resource.Rock,
-			Ore = resource.Ore,
-			Cities = cities,
-			Stats = stats,
-			Tuning = tuning
-		};
-
-		// 多边形地块层：在全部栅格生成器之后构建，因为它的属性是从栅格采样来的。
-		// 模式为 Raster 时 BuildPolygonLayer 内部直接返回，等于零开销。
-		stageTimer.Restart();
-		await Task.Run(() => BuildPolygonLayer(world));
-		LogGenerationStage(label, "多边形地块层", stageTimer, worldTimer);
-		await SetBuildProgressAsync(label, "地块层", ++step, totalSteps, startProgress, endProgress);
-
-		LogGenerationTiming($"{label}总计", worldTimer.Elapsed);
-
-		return world;
-	}
-
-	private void LogGenerationStage(string label, string stage, Stopwatch stageTimer, Stopwatch worldTimer)
-	{
-		LogGenerationStage(label, stage, stageTimer.Elapsed, worldTimer);
-	}
-
-	private void LogGenerationStage(string label, string stage, TimeSpan elapsed, Stopwatch worldTimer)
-	{
-		GD.Print($"[WorldGen][{label}][地图 {MapWidth}x{MapHeight}] {stage}: {elapsed.TotalMilliseconds:0} ms | 累计 {worldTimer.Elapsed.TotalSeconds:0.00} s");
-	}
-
 	private void LogGenerationTiming(string stage, TimeSpan elapsed)
 	{
 		GD.Print($"[WorldGen][地图 {MapWidth}x{MapHeight}] {stage}: {elapsed.TotalMilliseconds:0} ms ({elapsed.TotalSeconds:0.00} s)");
 	}
 
-	private async Task SetBuildProgressAsync(string label, string stage, int step, int totalSteps, float startProgress, float endProgress)
-	{
-		var t = totalSteps <= 0 ? 1f : Mathf.Clamp((float)step / totalSteps, 0f, 1f);
-		var value = Mathf.Lerp(startProgress, endProgress, t);
-		await SetProgressAsync(value, $"{label}: {stage}");
-	}
-
 	private async Task SetProgressAsync(float value, string status)
 	{
+		ReportGenerationProgress(value, status);
+		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+	}
+
+	private void ReportGenerationProgress(float value, string status)
+	{
 		var clampedValue = Mathf.Clamp(value, 0f, 100f);
+		if (_mainMenu != null && _mainMenu.Visible)
+		{
+			_mainMenu.Call("set_loading_progress", clampedValue / 100f);
+		}
 		_progressTween?.Kill();
 		_progressTween = CreateTween();
 		_progressTween.SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 		_progressTween.TweenProperty(_generateProgress, "value", clampedValue, 0.16f);
 		_progressStatus.Text = BuildProgressStatus(status, clampedValue);
-		await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
 	}
 
 	private string BuildProgressStatus(string status, float progress)
@@ -483,8 +336,18 @@ public partial class Main : Control
 		return new PlanetGeneration.Core.Domain.GenerationOptions
 		{
 			Seed = seed,
+			Tuning = new PlanetGeneration.Core.Domain.WorldTuningSnapshot
+			{
+				Name = tuning.Name,
+				DeepOceanFactor = tuning.DeepOceanFactor,
+				CoastBand = tuning.CoastBand,
+				MountainThreshold = tuning.MountainThreshold,
+				RiverSourceElevationThreshold = tuning.RiverSourceElevationThreshold,
+				RiverSourceMoistureThreshold = tuning.RiverSourceMoistureThreshold,
+				RiverSourceChance = tuning.RiverSourceChance
+			},
 			TargetCellCount = _targetCellCount,
-			Extent = new PlanetGeneration.Core.Domain.WorldExtent(2048, 1024),
+			Extent = new PlanetGeneration.Core.Domain.WorldExtent(MapWidth, MapHeight),
 			SeaLevel = SeaLevel,
 			HeatFactor = HeatFactor,
 			MoistureFactor = MoistureFactor,
@@ -503,10 +366,13 @@ public partial class Main : Control
 			ContinentCount = _continentCount,
 			WindCellCount = WindCellCount,
 			BasinSensitivity = BasinSensitivity,
+			LandformTuning = LandformTuning with { BasinSensitivity = BasinSensitivity },
 			SpeciesDiversity = _speciesDiversity,
 			CivilAggression = _civilAggression,
 			MagicDensity = _magicDensity,
-			Epoch = _currentEpoch
+			Epoch = _currentEpoch,
+			EnableCartographyDesigner = _enableCartographyDesigner,
+			BlueprintName = _blueprintName
 		};
 	}
 }

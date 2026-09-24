@@ -18,9 +18,14 @@ public sealed class LayerRenderCoordinator
 
     // 缓存归属图以加速同分辨率下的换色
     private PolygonCellMap? _cachedCellMap;
-    private int _cachedCellMapTargetCells;
+    private CellGeometry? _cachedCellMapGeometry;
     private int _cachedCellMapWidth;
     private int _cachedCellMapHeight;
+
+    // 板块边界折线只依赖几何与板块场，逐次重生成会把每次换色拖成秒级
+    private PlateBoundarySegment[]? _cachedPlateSegments;
+    private CellGeometry? _cachedPlateSegmentsGeometry;
+    private CellFields? _cachedPlateSegmentsFields;
 
     public LayerRenderCoordinator()
     {
@@ -32,7 +37,7 @@ public sealed class LayerRenderCoordinator
     public PolygonCellMap GetOrCreateCellMap(CellGeometry geometry, int targetWidth, int targetHeight)
     {
         if (_cachedCellMap != null &&
-            _cachedCellMapTargetCells == geometry.Count &&
+            ReferenceEquals(_cachedCellMapGeometry, geometry) &&
             _cachedCellMapWidth == targetWidth &&
             _cachedCellMapHeight == targetHeight)
         {
@@ -41,7 +46,7 @@ public sealed class LayerRenderCoordinator
 
         var cellMap = PolygonRasterizer.BuildCellMap(geometry, targetWidth, targetHeight);
         _cachedCellMap = cellMap;
-        _cachedCellMapTargetCells = geometry.Count;
+        _cachedCellMapGeometry = geometry;
         _cachedCellMapWidth = targetWidth;
         _cachedCellMapHeight = targetHeight;
         return cellMap;
@@ -81,7 +86,119 @@ public sealed class LayerRenderCoordinator
             }
         }
 
+        DrawPlateBoundaryLines(snapshot, rawBytes, width, height);
+
         return Image.CreateFromData(width, height, false, Image.Format.Rgba8, rawBytes);
+    }
+
+    /// <summary>
+    /// 光栅路径（小地图底图与 PNG 导出）没有矢量绘制层，
+    /// 板块交界在这里按屏幕上同一套折线几何逐像素描出，否则导出的图只剩平涂色块。
+    /// </summary>
+    private void DrawPlateBoundaryLines(WorldSnapshot snapshot, byte[] buffer, int width, int height)
+    {
+        var overlayActive = StackState.IsOverlayActive(LayerRegistry.LayerPlateBorders);
+        if (!overlayActive && StackState.ActiveBaseThemeId != LayerRegistry.LayerPlates)
+        {
+            return;
+        }
+
+        var opacity = overlayActive ? StackState.GetOpacity(LayerRegistry.LayerPlateBorders) : 0.95f;
+        if (opacity <= 0.001f)
+        {
+            return;
+        }
+
+        var segments = GetOrCreatePlateSegments(snapshot);
+        if (segments.Length == 0)
+        {
+            return;
+        }
+
+        var geom = snapshot.Geometry;
+        var scaleX = width / (double)Math.Max(geom.Width, 1);
+        var scaleY = height / (double)Math.Max(geom.Height, 1);
+
+        // 屏幕上的线宽按物理像素恒定，这里以 1K 出图为基准换算，避免小地图被线条糊成一团。
+        var unit = Math.Max(1.0, width / 1024.0);
+        var coreThickness = Math.Max(1, (int)Math.Round(unit));
+        var glowThickness = Math.Max(coreThickness, (int)Math.Round(unit * 2.2));
+
+        var xs = new double[256];
+        var ys = new double[256];
+
+        foreach (var seg in segments)
+        {
+            var pts = seg.Points;
+            if (pts.Length < 2) continue;
+
+            if (xs.Length < pts.Length)
+            {
+                xs = new double[pts.Length];
+                ys = new double[pts.Length];
+            }
+
+            for (var i = 0; i < pts.Length; i++)
+            {
+                xs[i] = pts[i].X * scaleX;
+                ys[i] = pts[i].Y * scaleY;
+            }
+
+            if (seg.IsUniformColor)
+            {
+                StrokePolylineBoth(buffer, width, height, xs, ys, pts.Length, seg.Colors[0], opacity, coreThickness, glowThickness);
+                continue;
+            }
+
+            // 渐变段按屏幕上 DrawPolylineColors 的语义逐子段取色
+            for (var i = 0; i < pts.Length - 1; i++)
+            {
+                if (Math.Abs(xs[i + 1] - xs[i]) > width * 0.5) continue;
+
+                var c = seg.Colors[i];
+                var cr = ToChannelByte(c.R);
+                var cg = ToChannelByte(c.G);
+                var cb = ToChannelByte(c.B);
+                PolygonRasterizer.StrokeSegment(buffer, width, height, xs[i], ys[i], xs[i + 1], ys[i + 1], cr, cg, cb, opacity * 0.32f, glowThickness);
+                PolygonRasterizer.StrokeSegment(buffer, width, height, xs[i], ys[i], xs[i + 1], ys[i + 1], cr, cg, cb, opacity * 0.95f, coreThickness);
+            }
+        }
+    }
+
+    private static void StrokePolylineBoth(
+        byte[] buffer,
+        int width,
+        int height,
+        double[] xs,
+        double[] ys,
+        int count,
+        Color color,
+        float opacity,
+        int coreThickness,
+        int glowThickness)
+    {
+        var r = ToChannelByte(color.R);
+        var g = ToChannelByte(color.G);
+        var b = ToChannelByte(color.B);
+        PolygonRasterizer.StrokePolyline(buffer, width, height, xs, ys, count, r, g, b, opacity * 0.32f, glowThickness);
+        PolygonRasterizer.StrokePolyline(buffer, width, height, xs, ys, count, r, g, b, opacity * 0.95f, coreThickness);
+    }
+
+    private static byte ToChannelByte(float channel)
+        => (byte)Math.Clamp(Math.Round(channel * 255f), 0, 255);
+
+    private PlateBoundarySegment[] GetOrCreatePlateSegments(WorldSnapshot snapshot)
+    {
+        if (_cachedPlateSegments != null && ReferenceEquals(_cachedPlateSegmentsGeometry, snapshot.Geometry)
+            && ReferenceEquals(_cachedPlateSegmentsFields, snapshot.Fields))
+        {
+            return _cachedPlateSegments;
+        }
+
+        _cachedPlateSegments = OverlayVectorRenderer.BuildPlateBoundaries(snapshot, null);
+        _cachedPlateSegmentsGeometry = snapshot.Geometry;
+        _cachedPlateSegmentsFields = snapshot.Fields;
+        return _cachedPlateSegments;
     }
 
     /// <summary>

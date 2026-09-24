@@ -1,0 +1,178 @@
+[gd_scene format=3 uid="uid://bufpnvtccdu7e"]
+
+[ext_resource type="Script" uid="uid://lig73gryvtv" path="res://scripts/main_menu.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://bhumop7o703m8" path="res://assets/themes/main_menu.tres" id="2_theme"]
+[ext_resource type="Texture2D" uid="uid://st0ydv6yo24p" path="res://assets/textures/ui/main_background.jpg" id="3_background"]
+[ext_resource type="Shader" uid="uid://caji8o8gsf1wj" path="res://assets/shaders/menu_background.gdshader" id="4_shader"]
+[ext_resource type="SystemFont" path="res://assets/fonts/ui_sans_bold.tres" id="5_font_bold"]
+[ext_resource type="PackedScene" path="res://scenes/settings_menu.tscn" id="6_settings"]
+[ext_resource type="PackedScene" path="res://scenes/mode_select_menu.tscn" id="7_mode_select"]
+[ext_resource type="Script" uid="uid://mmqbaqnnfcej" path="res://scripts/container_appear.gd" id="8_container_appear"]
+[ext_resource type="Script" uid="uid://c37dvq5rp4skb" path="res://scripts/auto_tween.gd" id="9_auto_tween"]
+[ext_resource type="Script" uid="uid://db62jfpn4r15g" path="res://addons/menu_fx/scripts/menu_list.gd" id="10_menu_list"]
+[ext_resource type="Script" uid="uid://b70d373j00kxc" path="res://addons/menu_fx/scripts/menu_list_item.gd" id="11_menu_item"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_focus.wav" id="12_sfx_focus"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_click.wav" id="13_sfx_click"]
+[ext_resource type="AudioStream" path="res://assets/audio/music/menu_theme.ogg" id="14_menu_music"]
+[ext_resource type="PackedScene" path="res://scenes/world_config_menu.tscn" id="15_world_config"]
+[ext_resource type="PackedScene" path="res://scenes/loading_overlay.tscn" id="16_loading"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu_icon_start.png" id="17_icon_start"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu_icon_load.png" id="18_icon_load"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu_icon_settings.png" id="19_icon_settings"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu_icon_mods.png" id="20_icon_mods"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/menu_icon_quit.png" id="21_icon_quit"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_background"]
+shader = ExtResource("4_shader")
+shader_parameter/blur_level = 4.9
+shader_parameter/brightness = 0.38
+shader_parameter/saturation = 0.7
+shader_parameter/tint = Color(0.58, 0.68, 0.92, 1)
+shader_parameter/tint_amount = 0.35
+shader_parameter/vignette_start = 0.2
+shader_parameter/vignette_strength = 0.7
+shader_parameter/light_speed = 0.06
+shader_parameter/light_strength = 0.13
+shader_parameter/grain_strength = 0.02
+
+[sub_resource type="Resource" id="MenuItem_start"]
+script = ExtResource("11_menu_item")
+id = &"StartButton"
+text_key = "MENU_START_GAME"
+icon = ExtResource("17_icon_start")
+
+[sub_resource type="Resource" id="MenuItem_load"]
+script = ExtResource("11_menu_item")
+id = &"LoadButton"
+text_key = "MENU_LOAD_GAME"
+icon = ExtResource("18_icon_load")
+
+[sub_resource type="Resource" id="MenuItem_settings"]
+script = ExtResource("11_menu_item")
+id = &"SettingsButton"
+text_key = "MENU_SETTINGS"
+icon = ExtResource("19_icon_settings")
+
+[sub_resource type="Resource" id="MenuItem_mods"]
+script = ExtResource("11_menu_item")
+id = &"ModsButton"
+text_key = "MENU_MODS"
+icon = ExtResource("20_icon_mods")
+
+[sub_resource type="Resource" id="MenuItem_quit"]
+script = ExtResource("11_menu_item")
+id = &"QuitButton"
+text_key = "MENU_QUIT_GAME"
+icon = ExtResource("21_icon_quit")
+
+[node name="MainMenu" type="Control" unique_id=1051497249]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="." unique_id=890001771]
+texture_filter = 4
+material = SubResource("ShaderMaterial_background")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3_background")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+process_mode = 3
+stream = ExtResource("14_menu_music")
+bus = &"Music"
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1240783972]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Column" type="VBoxContainer" parent="Center" unique_id=1491869614]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_constants/separation = 24
+script = ExtResource("8_container_appear")
+anim_type = 0
+duration = 0.35
+delay_between_elements = 0.08
+
+[node name="TitleBlock" type="VBoxContainer" parent="Center/Column" unique_id=1958907105]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Center/Column/TitleBlock" unique_id=1977282487]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.6)
+theme_override_constants/outline_size = 6
+theme_override_fonts/font = ExtResource("5_font_bold")
+theme_override_font_sizes/font_size = 54
+text = "GAME_TITLE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Column/TitleBlock" unique_id=1872694733]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.79, 0.92, 0.85)
+theme_override_font_sizes/font_size = 16
+text = "WORLDGUARD"
+horizontal_alignment = 1
+
+[node name="Buttons" type="VBoxContainer" parent="Center/Column" unique_id=1050685058]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("10_menu_list")
+items = Array[ExtResource("11_menu_item")]([SubResource("MenuItem_start"), SubResource("MenuItem_load"), SubResource("MenuItem_settings"), SubResource("MenuItem_mods"), SubResource("MenuItem_quit")])
+pop_strength = 0.2
+pop_duration = 0.15
+focus_sound = ExtResource("12_sfx_focus")
+press_sound = ExtResource("13_sfx_click")
+
+[node name="Notice" type="Label" parent="Center/Column" unique_id=2078997220]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.87, 0.96, 0.9)
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+
+[node name="NoticeFx" type="Node" parent="Center/Column/Notice" unique_id=1455097876]
+unique_name_in_owner = true
+script = ExtResource("9_auto_tween")
+pop_ease = 0
+
+[node name="SettingsMenu" parent="." unique_id=957510490 instance=ExtResource("6_settings")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="ModeSelectMenu" parent="." instance=ExtResource("7_mode_select")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="WorldConfigMenu" parent="." instance=ExtResource("15_world_config")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="LoadingOverlay" parent="." instance=ExtResource("16_loading")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1

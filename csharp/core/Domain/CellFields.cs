@@ -21,6 +21,10 @@ public sealed class CellFields
     public byte[] Biome { get; private init; } = Array.Empty<byte>();
     public byte[] Rock { get; private init; } = Array.Empty<byte>();
     public byte[] Ore { get; private init; } = Array.Empty<byte>();
+    public byte[] IndustrialOre { get; private init; } = Array.Empty<byte>();
+    public byte[] SupernaturalOre { get; private init; } = Array.Empty<byte>();
+    public byte[] CardOre { get; private init; } = Array.Empty<byte>();
+    public byte[] Leyline { get; private init; } = Array.Empty<byte>();
     public int[] PlateId { get; private init; } = Array.Empty<int>();
     public byte[] PlateBoundary { get; private init; } = Array.Empty<byte>();
     public byte[] Landform { get; private init; } = Array.Empty<byte>();
@@ -66,6 +70,10 @@ public sealed class CellFields
             Biome = new byte[count],
             Rock = new byte[count],
             Ore = new byte[count],
+            IndustrialOre = new byte[count],
+            SupernaturalOre = new byte[count],
+            CardOre = new byte[count],
+            Leyline = new byte[count],
             PlateId = new int[count],
             PlateBoundary = new byte[count],
             Landform = new byte[count],
@@ -95,6 +103,10 @@ public sealed class CellFields
         Array.Copy(Biome, copy.Biome, Count);
         Array.Copy(Rock, copy.Rock, Count);
         Array.Copy(Ore, copy.Ore, Count);
+        Array.Copy(IndustrialOre, copy.IndustrialOre, Count);
+        Array.Copy(SupernaturalOre, copy.SupernaturalOre, Count);
+        Array.Copy(CardOre, copy.CardOre, Count);
+        Array.Copy(Leyline, copy.Leyline, Count);
         Array.Copy(PlateId, copy.PlateId, Count);
         Array.Copy(PlateBoundary, copy.PlateBoundary, Count);
         Array.Copy(Landform, copy.Landform, Count);

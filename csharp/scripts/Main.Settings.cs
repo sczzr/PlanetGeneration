@@ -1,6 +1,5 @@
 using Godot;
 using PlanetGeneration.WorldGen;
-using PlanetGeneration.WorldGen.Polygon;
 using PlanetGeneration.UI.Services;
 using System;
 using System.Collections.Generic;
@@ -12,6 +11,7 @@ using IOFile = System.IO.File;
 using IODirectory = System.IO.Directory;
 using IOFileInfo = System.IO.FileInfo;
 using CryptoSha256 = System.Security.Cryptography.SHA256;
+using PlanetGeneration.UI.State;
 
 namespace PlanetGeneration;
 
@@ -70,6 +70,60 @@ public partial class Main : Control
 		UpdateRiverDensityControlState();
 		UpdateRiverLayerAvailability();
 		UpdateLorePanel();
+	}
+
+	private void ApplySnapshotOptions(PlanetGeneration.Application.GeneratedWorldData world)
+	{
+		var options = world.Snapshot!.Options;
+		Seed = options.Seed;
+		MapWidth = world.Stats.Width;
+		MapHeight = world.Stats.Height;
+		_targetCellCount = options.TargetCellCount;
+		_cellsDesired = options.TargetCellCount;
+		PlateCount = options.PlateCount;
+		WindCellCount = options.WindCellCount;
+		SeaLevel = options.SeaLevel;
+		HeatFactor = options.HeatFactor;
+		MoistureFactor = options.MoistureFactor;
+		MoistureIterations = options.MoistureIterations;
+		ErosionIterations = options.ErosionIterations;
+		EnableRivers = options.EnableRivers;
+		RiverDensity = options.RiverDensity;
+		BasinSensitivity = options.BasinSensitivity;
+		LandformTuning = options.LandformTuning;
+		_terrainOceanicRatio = options.OceanicRatio;
+		_terrainContinentBias = options.ContinentBias;
+		_interiorRelief = options.InteriorRelief;
+		_orogenyStrength = options.OrogenyStrength;
+		_subductionArcRatio = options.SubductionArcRatio;
+		_continentalAge = options.ContinentalAge;
+		_terrainMorphology = (TerrainMorphology)options.Morphology;
+		_continentCount = options.ContinentCount;
+		_tuning = world.Tuning;
+		_enableCartographyDesigner = options.EnableCartographyDesigner;
+		_blueprintName = options.BlueprintName;
+		_currentEpoch = options.Epoch;
+		_selectedTimelineEventEpoch = options.Epoch;
+		_speciesDiversity = options.SpeciesDiversity;
+		_civilAggression = options.CivilAggression;
+		_magicDensity = options.MagicDensity;
+		// 不触发值变更事件，避免载入过程中重算或立即覆盖刚读入的数据。
+		_seedSpin?.SetValueNoSignal(Seed);
+		_seaLevelSlider?.SetValueNoSignal(SeaLevel);
+		_heatSlider?.SetValueNoSignal(HeatFactor);
+		_moistureSlider?.SetValueNoSignal(MoistureFactor);
+		_erosionSlider?.SetValueNoSignal(ErosionIterations);
+		_riverDensitySlider?.SetValueNoSignal(RiverDensity);
+		_riverToggle?.SetPressedNoSignal(EnableRivers);
+		_basinSensitivitySlider?.SetValueNoSignal(BasinSensitivity);
+		_interiorReliefSlider?.SetValueNoSignal(_interiorRelief);
+		_orogenyStrengthSlider?.SetValueNoSignal(_orogenyStrength);
+		_subductionArcRatioSlider?.SetValueNoSignal(_subductionArcRatio);
+		_continentalAgeSlider?.SetValueNoSignal(_continentalAge);
+		_magicSlider?.SetValueNoSignal(_magicDensity);
+		_aggressionSlider?.SetValueNoSignal(_civilAggression);
+		_diversitySlider?.SetValueNoSignal(_speciesDiversity);
+		_timelineSlider?.SetValueNoSignal(_currentEpoch);
 	}
 
 	private void LoadAdvancedSettings()

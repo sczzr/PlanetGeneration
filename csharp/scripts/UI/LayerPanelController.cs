@@ -37,10 +37,12 @@ public partial class LayerPanelController : ScrollContainer
 		(LayerRegistry.LayerPlateBorders, "板块边界 (Plate Borders)")
 	};
 
-	// 13 种基础底图主题定义
+	// 14 种基础底图主题定义
 	private static readonly (string Id, string Name)[] BaseThemeCatalog = new[]
 	{
+		(LayerRegistry.LayerGuohuaHanddrawn, "国风手绘舆图 (中国古画)"),
 		(LayerRegistry.LayerTerrainOverview, "地形总览 (自然卫星)"),
+		(LayerRegistry.LayerInkWashLandscape, "山水舆图 (水墨青绿)"),
 		(LayerRegistry.LayerBiomes, "生物群系 (Biomes)"),
 		(LayerRegistry.LayerElevation, "高程分层 (Elevation)"),
 		(LayerRegistry.LayerTemperature, "地表气温 (Temperature)"),
@@ -51,14 +53,14 @@ public partial class LayerPanelController : ScrollContainer
 		(LayerRegistry.LayerOres, "矿产分布 (Ores)"),
 		(LayerRegistry.LayerEcology, "生态状态 (Ecology)"),
 		(LayerRegistry.LayerCivilization, "文明疆域 (Civilization)"),
-		(LayerRegistry.LayerTradeFlow, "贸易走廊强度 (Trade Flow)"),
 		(LayerRegistry.LayerCellGrid, "地块网格调试 (Cell Grid)")
 	};
 
-	// 7 种内置预设
+	// 8 种内置预设
 	private static readonly (string Id, string Name)[] PresetCatalog = new[]
 	{
 		(LayerPresetCatalog.PresetPhysical, "自然地理 (默认)"),
+		(LayerPresetCatalog.PresetGuohua, "国风手绘 (青绿山水)"),
 		(LayerPresetCatalog.PresetPolitical, "政治文明"),
 		(LayerPresetCatalog.PresetTrade, "贸易网络"),
 		(LayerPresetCatalog.PresetWindPrecipitation, "风场降水 (气象水文)"),

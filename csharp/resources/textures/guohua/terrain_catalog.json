@@ -1,0 +1,3223 @@
+{
+  "version": 3,
+  "atlases": [
+    "mountain_atlas_single.png",
+    "mountain_atlas_cluster.png"
+  ],
+  "total_sprites": 119,
+  "sprites": [
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        16,
+        357,
+        420
+      ],
+      "pivot": [
+        0.48,
+        0.993
+      ],
+      "native_size": [
+        357,
+        420
+      ],
+      "world_size": [
+        30.97,
+        36.4
+      ],
+      "aspect": 0.85,
+      "area": 56190,
+      "name": "plateau_cliff_pillar_2_03",
+      "id": 0
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        389,
+        16,
+        357,
+        420
+      ],
+      "pivot": [
+        0.52,
+        0.993
+      ],
+      "native_size": [
+        357,
+        420
+      ],
+      "world_size": [
+        30.97,
+        36.4
+      ],
+      "aspect": 0.85,
+      "area": 56190,
+      "name": "plateau_cliff_pillar_2_03_flip",
+      "id": 1
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        762,
+        16,
+        484,
+        401
+      ],
+      "pivot": [
+        0.478,
+        0.993
+      ],
+      "native_size": [
+        484,
+        401
+      ],
+      "world_size": [
+        48.45,
+        40.14
+      ],
+      "aspect": 1.21,
+      "area": 89479,
+      "name": "snow_glacier_peak_2_02",
+      "id": 2
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1262,
+        16,
+        484,
+        401
+      ],
+      "pivot": [
+        0.522,
+        0.993
+      ],
+      "native_size": [
+        484,
+        401
+      ],
+      "world_size": [
+        48.45,
+        40.14
+      ],
+      "aspect": 1.21,
+      "area": 89479,
+      "name": "snow_glacier_peak_2_02_flip",
+      "id": 3
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1762,
+        16,
+        401,
+        360
+      ],
+      "pivot": [
+        0.502,
+        0.992
+      ],
+      "native_size": [
+        401,
+        360
+      ],
+      "world_size": [
+        34.74,
+        31.2
+      ],
+      "aspect": 1.11,
+      "area": 72672,
+      "name": "plateau_cliff_pillar_1_03",
+      "id": 4
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2179,
+        16,
+        401,
+        360
+      ],
+      "pivot": [
+        0.498,
+        0.992
+      ],
+      "native_size": [
+        401,
+        360
+      ],
+      "world_size": [
+        34.74,
+        31.2
+      ],
+      "aspect": 1.11,
+      "area": 72672,
+      "name": "plateau_cliff_pillar_1_03_flip",
+      "id": 5
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCrater",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2596,
+        16,
+        376,
+        360
+      ],
+      "pivot": [
+        0.433,
+        0.992
+      ],
+      "native_size": [
+        376,
+        360
+      ],
+      "world_size": [
+        32.58,
+        31.2
+      ],
+      "aspect": 1.04,
+      "area": 65382,
+      "name": "volcano_crater_2_02",
+      "id": 6
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCrater",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2988,
+        16,
+        376,
+        360
+      ],
+      "pivot": [
+        0.567,
+        0.992
+      ],
+      "native_size": [
+        376,
+        360
+      ],
+      "world_size": [
+        32.58,
+        31.2
+      ],
+      "aspect": 1.04,
+      "area": 65382,
+      "name": "volcano_crater_2_02_flip",
+      "id": 7
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCone",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3380,
+        16,
+        443,
+        351
+      ],
+      "pivot": [
+        0.486,
+        0.991
+      ],
+      "native_size": [
+        443,
+        351
+      ],
+      "world_size": [
+        38.38,
+        30.45
+      ],
+      "aspect": 1.26,
+      "area": 76822,
+      "name": "volcano_cone_2_00",
+      "id": 8
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCone",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        452,
+        443,
+        351
+      ],
+      "pivot": [
+        0.514,
+        0.991
+      ],
+      "native_size": [
+        443,
+        351
+      ],
+      "world_size": [
+        38.38,
+        30.45
+      ],
+      "aspect": 1.26,
+      "area": 76822,
+      "name": "volcano_cone_2_00_flip",
+      "id": 9
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        475,
+        452,
+        555,
+        340
+      ],
+      "pivot": [
+        0.502,
+        0.988
+      ],
+      "native_size": [
+        555,
+        340
+      ],
+      "world_size": [
+        48.07,
+        29.51
+      ],
+      "aspect": 1.63,
+      "area": 123050,
+      "name": "plateau_table_mesa_2_05",
+      "id": 10
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1046,
+        452,
+        555,
+        340
+      ],
+      "pivot": [
+        0.498,
+        0.988
+      ],
+      "native_size": [
+        555,
+        340
+      ],
+      "world_size": [
+        48.07,
+        29.51
+      ],
+      "aspect": 1.63,
+      "area": 123050,
+      "name": "plateau_table_mesa_2_05_flip",
+      "id": 11
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1617,
+        452,
+        505,
+        333
+      ],
+      "pivot": [
+        0.352,
+        0.991
+      ],
+      "native_size": [
+        505,
+        333
+      ],
+      "world_size": [
+        50.52,
+        33.27
+      ],
+      "aspect": 1.52,
+      "area": 88196,
+      "name": "snow_glacier_peak_2_01",
+      "id": 12
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2138,
+        452,
+        505,
+        333
+      ],
+      "pivot": [
+        0.648,
+        0.991
+      ],
+      "native_size": [
+        505,
+        333
+      ],
+      "world_size": [
+        50.52,
+        33.27
+      ],
+      "aspect": 1.52,
+      "area": 88196,
+      "name": "snow_glacier_peak_2_01_flip",
+      "id": 13
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2659,
+        452,
+        529,
+        320
+      ],
+      "pivot": [
+        0.453,
+        0.991
+      ],
+      "native_size": [
+        529,
+        320
+      ],
+      "world_size": [
+        52.86,
+        32.01
+      ],
+      "aspect": 1.65,
+      "area": 93837,
+      "name": "mountain_main_peak_04",
+      "id": 14
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3204,
+        452,
+        529,
+        320
+      ],
+      "pivot": [
+        0.547,
+        0.991
+      ],
+      "native_size": [
+        529,
+        320
+      ],
+      "world_size": [
+        52.86,
+        32.01
+      ],
+      "aspect": 1.65,
+      "area": 93837,
+      "name": "mountain_main_peak_04_flip",
+      "id": 15
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        819,
+        522,
+        318
+      ],
+      "pivot": [
+        0.491,
+        0.991
+      ],
+      "native_size": [
+        522,
+        318
+      ],
+      "world_size": [
+        52.17,
+        31.8
+      ],
+      "aspect": 1.64,
+      "area": 102218,
+      "name": "snow_glacier_peak_2_05",
+      "id": 16
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        554,
+        819,
+        522,
+        318
+      ],
+      "pivot": [
+        0.509,
+        0.991
+      ],
+      "native_size": [
+        522,
+        318
+      ],
+      "world_size": [
+        52.17,
+        31.8
+      ],
+      "aspect": 1.64,
+      "area": 102218,
+      "name": "snow_glacier_peak_2_05_flip",
+      "id": 17
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1092,
+        819,
+        525,
+        316
+      ],
+      "pivot": [
+        0.51,
+        0.991
+      ],
+      "native_size": [
+        525,
+        316
+      ],
+      "world_size": [
+        52.47,
+        31.59
+      ],
+      "aspect": 1.66,
+      "area": 90508,
+      "name": "snow_glacier_peak_2_00",
+      "id": 18
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1633,
+        819,
+        525,
+        316
+      ],
+      "pivot": [
+        0.49,
+        0.991
+      ],
+      "native_size": [
+        525,
+        316
+      ],
+      "world_size": [
+        52.47,
+        31.59
+      ],
+      "aspect": 1.66,
+      "area": 90508,
+      "name": "snow_glacier_peak_2_00_flip",
+      "id": 19
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2174,
+        819,
+        510,
+        311
+      ],
+      "pivot": [
+        0.525,
+        0.987
+      ],
+      "native_size": [
+        510,
+        311
+      ],
+      "world_size": [
+        51.03,
+        31.11
+      ],
+      "aspect": 1.64,
+      "area": 84566,
+      "name": "mountain_main_peak_00",
+      "id": 20
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2700,
+        819,
+        510,
+        311
+      ],
+      "pivot": [
+        0.475,
+        0.987
+      ],
+      "native_size": [
+        510,
+        311
+      ],
+      "world_size": [
+        51.03,
+        31.11
+      ],
+      "aspect": 1.64,
+      "area": 84566,
+      "name": "mountain_main_peak_00_flip",
+      "id": 21
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3226,
+        819,
+        469,
+        308
+      ],
+      "pivot": [
+        0.255,
+        0.987
+      ],
+      "native_size": [
+        469,
+        308
+      ],
+      "world_size": [
+        46.86,
+        30.78
+      ],
+      "aspect": 1.52,
+      "area": 64720,
+      "name": "mountain_main_peak_05",
+      "id": 22
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        1153,
+        469,
+        308
+      ],
+      "pivot": [
+        0.745,
+        0.987
+      ],
+      "native_size": [
+        469,
+        308
+      ],
+      "world_size": [
+        46.86,
+        30.78
+      ],
+      "aspect": 1.52,
+      "area": 64720,
+      "name": "mountain_main_peak_05_flip",
+      "id": 23
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        501,
+        1153,
+        449,
+        300
+      ],
+      "pivot": [
+        0.488,
+        0.99
+      ],
+      "native_size": [
+        449,
+        300
+      ],
+      "world_size": [
+        44.88,
+        30.0
+      ],
+      "aspect": 1.5,
+      "area": 73766,
+      "name": "snow_glacier_peak_1_00",
+      "id": 24
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        966,
+        1153,
+        449,
+        300
+      ],
+      "pivot": [
+        0.512,
+        0.99
+      ],
+      "native_size": [
+        449,
+        300
+      ],
+      "world_size": [
+        44.88,
+        30.0
+      ],
+      "aspect": 1.5,
+      "area": 73766,
+      "name": "snow_glacier_peak_1_00_flip",
+      "id": 25
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1431,
+        1153,
+        398,
+        300
+      ],
+      "pivot": [
+        0.46,
+        0.99
+      ],
+      "native_size": [
+        398,
+        300
+      ],
+      "world_size": [
+        39.84,
+        29.97
+      ],
+      "aspect": 1.33,
+      "area": 68763,
+      "name": "snow_glacier_peak_1_01",
+      "id": 26
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1845,
+        1153,
+        398,
+        300
+      ],
+      "pivot": [
+        0.54,
+        0.99
+      ],
+      "native_size": [
+        398,
+        300
+      ],
+      "world_size": [
+        39.84,
+        29.97
+      ],
+      "aspect": 1.33,
+      "area": 68763,
+      "name": "snow_glacier_peak_1_01_flip",
+      "id": 27
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2259,
+        1153,
+        371,
+        300
+      ],
+      "pivot": [
+        0.523,
+        0.99
+      ],
+      "native_size": [
+        371,
+        300
+      ],
+      "world_size": [
+        37.08,
+        29.97
+      ],
+      "aspect": 1.24,
+      "area": 60087,
+      "name": "snow_companion_peak_1_02",
+      "id": 28
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2646,
+        1153,
+        371,
+        300
+      ],
+      "pivot": [
+        0.477,
+        0.99
+      ],
+      "native_size": [
+        371,
+        300
+      ],
+      "world_size": [
+        37.08,
+        29.97
+      ],
+      "aspect": 1.24,
+      "area": 60087,
+      "name": "snow_companion_peak_1_02_flip",
+      "id": 29
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowRidge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3033,
+        1153,
+        489,
+        300
+      ],
+      "pivot": [
+        0.508,
+        0.99
+      ],
+      "native_size": [
+        489,
+        300
+      ],
+      "world_size": [
+        48.93,
+        30.0
+      ],
+      "aspect": 1.63,
+      "area": 78147,
+      "name": "snow_ridge_1_04",
+      "id": 30
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowRidge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3538,
+        1153,
+        489,
+        300
+      ],
+      "pivot": [
+        0.492,
+        0.99
+      ],
+      "native_size": [
+        489,
+        300
+      ],
+      "world_size": [
+        48.93,
+        30.0
+      ],
+      "aspect": 1.63,
+      "area": 78147,
+      "name": "snow_ridge_1_04_flip",
+      "id": 31
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCone",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        1477,
+        494,
+        300
+      ],
+      "pivot": [
+        0.464,
+        0.99
+      ],
+      "native_size": [
+        494,
+        300
+      ],
+      "world_size": [
+        42.85,
+        26.0
+      ],
+      "aspect": 1.65,
+      "area": 86052,
+      "name": "volcano_cone_2_04",
+      "id": 32
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCone",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        526,
+        1477,
+        494,
+        300
+      ],
+      "pivot": [
+        0.536,
+        0.99
+      ],
+      "native_size": [
+        494,
+        300
+      ],
+      "world_size": [
+        42.85,
+        26.0
+      ],
+      "aspect": 1.65,
+      "area": 86052,
+      "name": "volcano_cone_2_04_flip",
+      "id": 33
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1036,
+        1477,
+        398,
+        299
+      ],
+      "pivot": [
+        0.441,
+        0.99
+      ],
+      "native_size": [
+        398,
+        299
+      ],
+      "world_size": [
+        39.75,
+        29.94
+      ],
+      "aspect": 1.33,
+      "area": 63886,
+      "name": "snow_companion_peak_1_03",
+      "id": 34
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1450,
+        1477,
+        398,
+        299
+      ],
+      "pivot": [
+        0.559,
+        0.99
+      ],
+      "native_size": [
+        398,
+        299
+      ],
+      "world_size": [
+        39.75,
+        29.94
+      ],
+      "aspect": 1.33,
+      "area": 63886,
+      "name": "snow_companion_peak_1_03_flip",
+      "id": 35
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1864,
+        1477,
+        467,
+        299
+      ],
+      "pivot": [
+        0.274,
+        0.99
+      ],
+      "native_size": [
+        467,
+        299
+      ],
+      "world_size": [
+        46.71,
+        29.94
+      ],
+      "aspect": 1.56,
+      "area": 71360,
+      "name": "snow_glacier_peak_1_05",
+      "id": 36
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "GlacierPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2347,
+        1477,
+        467,
+        299
+      ],
+      "pivot": [
+        0.726,
+        0.99
+      ],
+      "native_size": [
+        467,
+        299
+      ],
+      "world_size": [
+        46.71,
+        29.94
+      ],
+      "aspect": 1.56,
+      "area": 71360,
+      "name": "snow_glacier_peak_1_05_flip",
+      "id": 37
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2830,
+        1477,
+        435,
+        299
+      ],
+      "pivot": [
+        0.484,
+        0.99
+      ],
+      "native_size": [
+        435,
+        299
+      ],
+      "world_size": [
+        37.7,
+        25.92
+      ],
+      "aspect": 1.45,
+      "area": 81038,
+      "name": "basin_encircling_arm_1_04",
+      "id": 38
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3281,
+        1477,
+        435,
+        299
+      ],
+      "pivot": [
+        0.516,
+        0.99
+      ],
+      "native_size": [
+        435,
+        299
+      ],
+      "world_size": [
+        37.7,
+        25.92
+      ],
+      "aspect": 1.45,
+      "area": 81038,
+      "name": "basin_encircling_arm_1_04_flip",
+      "id": 39
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        1793,
+        445,
+        298
+      ],
+      "pivot": [
+        0.451,
+        0.99
+      ],
+      "native_size": [
+        445,
+        298
+      ],
+      "world_size": [
+        38.58,
+        25.84
+      ],
+      "aspect": 1.49,
+      "area": 74898,
+      "name": "plateau_table_mesa_1_00",
+      "id": 40
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        477,
+        1793,
+        445,
+        298
+      ],
+      "pivot": [
+        0.549,
+        0.99
+      ],
+      "native_size": [
+        445,
+        298
+      ],
+      "world_size": [
+        38.58,
+        25.84
+      ],
+      "aspect": 1.49,
+      "area": 74898,
+      "name": "plateau_table_mesa_1_00_flip",
+      "id": 41
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowRidge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        938,
+        1793,
+        500,
+        292
+      ],
+      "pivot": [
+        0.413,
+        0.99
+      ],
+      "native_size": [
+        500,
+        292
+      ],
+      "world_size": [
+        49.98,
+        29.25
+      ],
+      "aspect": 1.71,
+      "area": 76665,
+      "name": "snow_ridge_2_04",
+      "id": 42
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowRidge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1454,
+        1793,
+        500,
+        292
+      ],
+      "pivot": [
+        0.587,
+        0.99
+      ],
+      "native_size": [
+        500,
+        292
+      ],
+      "world_size": [
+        49.98,
+        29.25
+      ],
+      "aspect": 1.71,
+      "area": 76665,
+      "name": "snow_ridge_2_04_flip",
+      "id": 43
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1970,
+        1793,
+        496,
+        285
+      ],
+      "pivot": [
+        0.627,
+        0.989
+      ],
+      "native_size": [
+        496,
+        285
+      ],
+      "world_size": [
+        36.39,
+        20.9
+      ],
+      "aspect": 1.74,
+      "area": 99359,
+      "name": "hill_knoll_08",
+      "id": 44
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2482,
+        1793,
+        496,
+        285
+      ],
+      "pivot": [
+        0.373,
+        0.989
+      ],
+      "native_size": [
+        496,
+        285
+      ],
+      "world_size": [
+        36.39,
+        20.9
+      ],
+      "aspect": 1.74,
+      "area": 99359,
+      "name": "hill_knoll_08_flip",
+      "id": 45
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2994,
+        1793,
+        482,
+        283
+      ],
+      "pivot": [
+        0.403,
+        0.989
+      ],
+      "native_size": [
+        482,
+        283
+      ],
+      "world_size": [
+        48.18,
+        28.29
+      ],
+      "aspect": 1.7,
+      "area": 72027,
+      "name": "mountain_main_peak_01",
+      "id": 46
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MainPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3492,
+        1793,
+        482,
+        283
+      ],
+      "pivot": [
+        0.597,
+        0.989
+      ],
+      "native_size": [
+        482,
+        283
+      ],
+      "world_size": [
+        48.18,
+        28.29
+      ],
+      "aspect": 1.7,
+      "area": 72027,
+      "name": "mountain_main_peak_01_flip",
+      "id": 47
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        2107,
+        450,
+        283
+      ],
+      "pivot": [
+        0.464,
+        0.989
+      ],
+      "native_size": [
+        450,
+        283
+      ],
+      "world_size": [
+        45.0,
+        28.26
+      ],
+      "aspect": 1.59,
+      "area": 58720,
+      "name": "mountain_companion_peak_06",
+      "id": 48
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        482,
+        2107,
+        450,
+        283
+      ],
+      "pivot": [
+        0.536,
+        0.989
+      ],
+      "native_size": [
+        450,
+        283
+      ],
+      "world_size": [
+        45.0,
+        28.26
+      ],
+      "aspect": 1.59,
+      "area": 58720,
+      "name": "mountain_companion_peak_06_flip",
+      "id": 49
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        948,
+        2107,
+        451,
+        270
+      ],
+      "pivot": [
+        0.504,
+        0.989
+      ],
+      "native_size": [
+        451,
+        270
+      ],
+      "world_size": [
+        39.05,
+        23.4
+      ],
+      "aspect": 1.67,
+      "area": 88276,
+      "name": "plateau_table_mesa_1_05",
+      "id": 50
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1415,
+        2107,
+        451,
+        270
+      ],
+      "pivot": [
+        0.496,
+        0.989
+      ],
+      "native_size": [
+        451,
+        270
+      ],
+      "world_size": [
+        39.05,
+        23.4
+      ],
+      "aspect": 1.67,
+      "area": 88276,
+      "name": "plateau_table_mesa_1_05_flip",
+      "id": 51
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1882,
+        2107,
+        394,
+        269
+      ],
+      "pivot": [
+        0.337,
+        0.985
+      ],
+      "native_size": [
+        394,
+        269
+      ],
+      "world_size": [
+        39.39,
+        26.88
+      ],
+      "aspect": 1.47,
+      "area": 57234,
+      "name": "mountain_companion_peak_03",
+      "id": 52
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2292,
+        2107,
+        394,
+        269
+      ],
+      "pivot": [
+        0.663,
+        0.985
+      ],
+      "native_size": [
+        394,
+        269
+      ],
+      "world_size": [
+        39.39,
+        26.88
+      ],
+      "aspect": 1.47,
+      "area": 57234,
+      "name": "mountain_companion_peak_03_flip",
+      "id": 53
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2702,
+        2107,
+        483,
+        268
+      ],
+      "pivot": [
+        0.504,
+        0.989
+      ],
+      "native_size": [
+        483,
+        268
+      ],
+      "world_size": [
+        41.86,
+        23.24
+      ],
+      "aspect": 1.8,
+      "area": 76502,
+      "name": "plateau_table_mesa_1_01",
+      "id": 54
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3201,
+        2107,
+        483,
+        268
+      ],
+      "pivot": [
+        0.496,
+        0.989
+      ],
+      "native_size": [
+        483,
+        268
+      ],
+      "world_size": [
+        41.86,
+        23.24
+      ],
+      "aspect": 1.8,
+      "area": 76502,
+      "name": "plateau_table_mesa_1_01_flip",
+      "id": 55
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        2406,
+        446,
+        261
+      ],
+      "pivot": [
+        0.507,
+        0.989
+      ],
+      "native_size": [
+        446,
+        261
+      ],
+      "world_size": [
+        38.64,
+        22.65
+      ],
+      "aspect": 1.71,
+      "area": 70862,
+      "name": "plateau_table_mesa_1_02",
+      "id": 56
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        478,
+        2406,
+        446,
+        261
+      ],
+      "pivot": [
+        0.493,
+        0.989
+      ],
+      "native_size": [
+        446,
+        261
+      ],
+      "world_size": [
+        38.64,
+        22.65
+      ],
+      "aspect": 1.71,
+      "area": 70862,
+      "name": "plateau_table_mesa_1_02_flip",
+      "id": 57
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "Ridge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        940,
+        2406,
+        535,
+        254
+      ],
+      "pivot": [
+        0.252,
+        0.984
+      ],
+      "native_size": [
+        535,
+        254
+      ],
+      "world_size": [
+        53.46,
+        25.44
+      ],
+      "aspect": 2.1,
+      "area": 73621,
+      "name": "mountain_ridge_08",
+      "id": 58
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "Ridge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1491,
+        2406,
+        535,
+        254
+      ],
+      "pivot": [
+        0.748,
+        0.984
+      ],
+      "native_size": [
+        535,
+        254
+      ],
+      "world_size": [
+        53.46,
+        25.44
+      ],
+      "aspect": 2.1,
+      "area": 73621,
+      "name": "mountain_ridge_08_flip",
+      "id": 59
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2042,
+        2406,
+        385,
+        240
+      ],
+      "pivot": [
+        0.436,
+        0.988
+      ],
+      "native_size": [
+        385,
+        240
+      ],
+      "world_size": [
+        28.23,
+        17.58
+      ],
+      "aspect": 1.61,
+      "area": 65090,
+      "name": "hill_knoll_00",
+      "id": 60
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2443,
+        2406,
+        385,
+        240
+      ],
+      "pivot": [
+        0.564,
+        0.988
+      ],
+      "native_size": [
+        385,
+        240
+      ],
+      "world_size": [
+        28.23,
+        17.58
+      ],
+      "aspect": 1.61,
+      "area": 65090,
+      "name": "hill_knoll_00_flip",
+      "id": 61
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2844,
+        2406,
+        533,
+        240
+      ],
+      "pivot": [
+        0.445,
+        0.988
+      ],
+      "native_size": [
+        533,
+        240
+      ],
+      "world_size": [
+        39.09,
+        17.58
+      ],
+      "aspect": 2.22,
+      "area": 70801,
+      "name": "hill_knoll_01",
+      "id": 62
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3393,
+        2406,
+        533,
+        240
+      ],
+      "pivot": [
+        0.555,
+        0.988
+      ],
+      "native_size": [
+        533,
+        240
+      ],
+      "world_size": [
+        39.09,
+        17.58
+      ],
+      "aspect": 2.22,
+      "area": 70801,
+      "name": "hill_knoll_01_flip",
+      "id": 63
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        2683,
+        461,
+        240
+      ],
+      "pivot": [
+        0.716,
+        0.988
+      ],
+      "native_size": [
+        461,
+        240
+      ],
+      "world_size": [
+        33.84,
+        17.58
+      ],
+      "aspect": 1.92,
+      "area": 73461,
+      "name": "hill_knoll_06",
+      "id": 64
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        493,
+        2683,
+        461,
+        240
+      ],
+      "pivot": [
+        0.284,
+        0.988
+      ],
+      "native_size": [
+        461,
+        240
+      ],
+      "world_size": [
+        33.84,
+        17.58
+      ],
+      "aspect": 1.92,
+      "area": 73461,
+      "name": "hill_knoll_06_flip",
+      "id": 65
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        970,
+        2683,
+        560,
+        240
+      ],
+      "pivot": [
+        0.455,
+        0.988
+      ],
+      "native_size": [
+        560,
+        240
+      ],
+      "world_size": [
+        41.07,
+        17.6
+      ],
+      "aspect": 2.33,
+      "area": 79959,
+      "name": "hill_knoll_07",
+      "id": 66
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1546,
+        2683,
+        560,
+        240
+      ],
+      "pivot": [
+        0.545,
+        0.988
+      ],
+      "native_size": [
+        560,
+        240
+      ],
+      "world_size": [
+        41.07,
+        17.6
+      ],
+      "aspect": 2.33,
+      "area": 79959,
+      "name": "hill_knoll_07_flip",
+      "id": 67
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2122,
+        2683,
+        375,
+        240
+      ],
+      "pivot": [
+        0.516,
+        0.988
+      ],
+      "native_size": [
+        375,
+        240
+      ],
+      "world_size": [
+        32.5,
+        20.77
+      ],
+      "aspect": 1.56,
+      "area": 57758,
+      "name": "plateau_cliff_pillar_1_06",
+      "id": 68
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2513,
+        2683,
+        375,
+        240
+      ],
+      "pivot": [
+        0.484,
+        0.988
+      ],
+      "native_size": [
+        375,
+        240
+      ],
+      "world_size": [
+        32.5,
+        20.77
+      ],
+      "aspect": 1.56,
+      "area": 57758,
+      "name": "plateau_cliff_pillar_1_06_flip",
+      "id": 69
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2904,
+        2683,
+        411,
+        240
+      ],
+      "pivot": [
+        0.453,
+        0.988
+      ],
+      "native_size": [
+        411,
+        240
+      ],
+      "world_size": [
+        35.65,
+        20.8
+      ],
+      "aspect": 1.71,
+      "area": 64555,
+      "name": "plateau_table_mesa_1_07",
+      "id": 70
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "TableMesa",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3331,
+        2683,
+        411,
+        240
+      ],
+      "pivot": [
+        0.547,
+        0.988
+      ],
+      "native_size": [
+        411,
+        240
+      ],
+      "world_size": [
+        35.65,
+        20.8
+      ],
+      "aspect": 1.71,
+      "area": 64555,
+      "name": "plateau_table_mesa_1_07_flip",
+      "id": 71
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        2939,
+        582,
+        240
+      ],
+      "pivot": [
+        0.507,
+        0.988
+      ],
+      "native_size": [
+        582,
+        240
+      ],
+      "world_size": [
+        50.41,
+        20.77
+      ],
+      "aspect": 2.43,
+      "area": 92562,
+      "name": "basin_encircling_arm_2_01",
+      "id": 72
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        614,
+        2939,
+        582,
+        240
+      ],
+      "pivot": [
+        0.493,
+        0.988
+      ],
+      "native_size": [
+        582,
+        240
+      ],
+      "world_size": [
+        50.41,
+        20.77
+      ],
+      "aspect": 2.43,
+      "area": 92562,
+      "name": "basin_encircling_arm_2_01_flip",
+      "id": 73
+    },
+    {
+      "category": "Desert",
+      "sub_category": "CrescentDune",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1212,
+        2939,
+        385,
+        240
+      ],
+      "pivot": [
+        0.436,
+        0.988
+      ],
+      "native_size": [
+        385,
+        240
+      ],
+      "world_size": [
+        28.23,
+        17.58
+      ],
+      "aspect": 1.61,
+      "area": 65090,
+      "name": "desert_crescentdune_0",
+      "id": 74
+    },
+    {
+      "category": "Desert",
+      "sub_category": "SandRipple",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1613,
+        2939,
+        533,
+        240
+      ],
+      "pivot": [
+        0.445,
+        0.988
+      ],
+      "native_size": [
+        533,
+        240
+      ],
+      "world_size": [
+        39.09,
+        17.58
+      ],
+      "aspect": 2.22,
+      "area": 70801,
+      "name": "desert_sandripple_1",
+      "id": 75
+    },
+    {
+      "category": "Wetland",
+      "sub_category": "Islet",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2162,
+        2939,
+        461,
+        240
+      ],
+      "pivot": [
+        0.716,
+        0.988
+      ],
+      "native_size": [
+        461,
+        240
+      ],
+      "world_size": [
+        23.69,
+        12.31
+      ],
+      "aspect": 1.92,
+      "area": 73461,
+      "name": "wetland_islet_0",
+      "id": 76
+    },
+    {
+      "category": "Wetland",
+      "sub_category": "Reeds",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2639,
+        2939,
+        560,
+        240
+      ],
+      "pivot": [
+        0.455,
+        0.988
+      ],
+      "native_size": [
+        560,
+        240
+      ],
+      "world_size": [
+        28.75,
+        12.32
+      ],
+      "aspect": 2.33,
+      "area": 79959,
+      "name": "wetland_reeds_1",
+      "id": 77
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3215,
+        2939,
+        566,
+        239
+      ],
+      "pivot": [
+        0.509,
+        0.983
+      ],
+      "native_size": [
+        566,
+        239
+      ],
+      "world_size": [
+        41.49,
+        17.53
+      ],
+      "aspect": 2.37,
+      "area": 82313,
+      "name": "hill_knoll_03",
+      "id": 78
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        3195,
+        566,
+        239
+      ],
+      "pivot": [
+        0.491,
+        0.983
+      ],
+      "native_size": [
+        566,
+        239
+      ],
+      "world_size": [
+        41.49,
+        17.53
+      ],
+      "aspect": 2.37,
+      "area": 82313,
+      "name": "hill_knoll_03_flip",
+      "id": 79
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        598,
+        3195,
+        416,
+        239
+      ],
+      "pivot": [
+        0.496,
+        0.987
+      ],
+      "native_size": [
+        416,
+        239
+      ],
+      "world_size": [
+        30.51,
+        17.53
+      ],
+      "aspect": 1.74,
+      "area": 65826,
+      "name": "hill_knoll_04",
+      "id": 80
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1030,
+        3195,
+        416,
+        239
+      ],
+      "pivot": [
+        0.504,
+        0.987
+      ],
+      "native_size": [
+        416,
+        239
+      ],
+      "world_size": [
+        30.51,
+        17.53
+      ],
+      "aspect": 1.74,
+      "area": 65826,
+      "name": "hill_knoll_04_flip",
+      "id": 81
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1462,
+        3195,
+        438,
+        239
+      ],
+      "pivot": [
+        0.435,
+        0.987
+      ],
+      "native_size": [
+        438,
+        239
+      ],
+      "world_size": [
+        37.99,
+        20.72
+      ],
+      "aspect": 1.83,
+      "area": 68244,
+      "name": "basin_encircling_arm_1_08",
+      "id": 82
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1916,
+        3195,
+        438,
+        239
+      ],
+      "pivot": [
+        0.565,
+        0.987
+      ],
+      "native_size": [
+        438,
+        239
+      ],
+      "world_size": [
+        37.99,
+        20.72
+      ],
+      "aspect": 1.83,
+      "area": 68244,
+      "name": "basin_encircling_arm_1_08_flip",
+      "id": 83
+    },
+    {
+      "category": "Grassland",
+      "sub_category": "Tussock",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2370,
+        3195,
+        566,
+        239
+      ],
+      "pivot": [
+        0.509,
+        0.983
+      ],
+      "native_size": [
+        566,
+        239
+      ],
+      "world_size": [
+        26.97,
+        11.39
+      ],
+      "aspect": 2.37,
+      "area": 82313,
+      "name": "grassland_tussock_0",
+      "id": 84
+    },
+    {
+      "category": "Grassland",
+      "sub_category": "Shrub",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2952,
+        3195,
+        416,
+        239
+      ],
+      "pivot": [
+        0.496,
+        0.987
+      ],
+      "native_size": [
+        416,
+        239
+      ],
+      "world_size": [
+        19.83,
+        11.39
+      ],
+      "aspect": 1.74,
+      "area": 65826,
+      "name": "grassland_shrub_1",
+      "id": 85
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "Ridge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3384,
+        3195,
+        390,
+        211
+      ],
+      "pivot": [
+        0.504,
+        0.981
+      ],
+      "native_size": [
+        390,
+        211
+      ],
+      "world_size": [
+        39.03,
+        21.12
+      ],
+      "aspect": 1.85,
+      "area": 48630,
+      "name": "mountain_ridge_07",
+      "id": 86
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "Ridge",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        3450,
+        390,
+        211
+      ],
+      "pivot": [
+        0.496,
+        0.981
+      ],
+      "native_size": [
+        390,
+        211
+      ],
+      "world_size": [
+        39.03,
+        21.12
+      ],
+      "aspect": 1.85,
+      "area": 48630,
+      "name": "mountain_ridge_07_flip",
+      "id": 87
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        422,
+        3450,
+        373,
+        200
+      ],
+      "pivot": [
+        0.503,
+        0.985
+      ],
+      "native_size": [
+        373,
+        200
+      ],
+      "world_size": [
+        37.26,
+        19.95
+      ],
+      "aspect": 1.87,
+      "area": 42318,
+      "name": "snow_companion_peak_2_03",
+      "id": 88
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowCompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        811,
+        3450,
+        373,
+        200
+      ],
+      "pivot": [
+        0.497,
+        0.985
+      ],
+      "native_size": [
+        373,
+        200
+      ],
+      "world_size": [
+        37.26,
+        19.95
+      ],
+      "aspect": 1.87,
+      "area": 42318,
+      "name": "snow_companion_peak_2_03_flip",
+      "id": 89
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1200,
+        3450,
+        334,
+        193
+      ],
+      "pivot": [
+        0.459,
+        0.979
+      ],
+      "native_size": [
+        334,
+        193
+      ],
+      "world_size": [
+        33.36,
+        19.32
+      ],
+      "aspect": 1.73,
+      "area": 34517,
+      "name": "mountain_companion_peak_02",
+      "id": 90
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "CompanionPeak",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1550,
+        3450,
+        334,
+        193
+      ],
+      "pivot": [
+        0.541,
+        0.979
+      ],
+      "native_size": [
+        334,
+        193
+      ],
+      "world_size": [
+        33.36,
+        19.32
+      ],
+      "aspect": 1.73,
+      "area": 34517,
+      "name": "mountain_companion_peak_02_flip",
+      "id": 91
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        1900,
+        3450,
+        470,
+        177
+      ],
+      "pivot": [
+        0.406,
+        0.983
+      ],
+      "native_size": [
+        470,
+        177
+      ],
+      "world_size": [
+        34.47,
+        12.96
+      ],
+      "aspect": 2.66,
+      "area": 52314,
+      "name": "hill_knoll_05",
+      "id": 92
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2386,
+        3450,
+        470,
+        177
+      ],
+      "pivot": [
+        0.594,
+        0.983
+      ],
+      "native_size": [
+        470,
+        177
+      ],
+      "world_size": [
+        34.47,
+        12.96
+      ],
+      "aspect": 2.66,
+      "area": 52314,
+      "name": "hill_knoll_05_flip",
+      "id": 93
+    },
+    {
+      "category": "Grassland",
+      "sub_category": "MeadowPlain",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        2872,
+        3450,
+        470,
+        177
+      ],
+      "pivot": [
+        0.406,
+        0.983
+      ],
+      "native_size": [
+        470,
+        177
+      ],
+      "world_size": [
+        22.41,
+        8.42
+      ],
+      "aspect": 2.66,
+      "area": 52314,
+      "name": "grassland_meadowplain_2",
+      "id": 94
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        3358,
+        3450,
+        472,
+        150
+      ],
+      "pivot": [
+        0.395,
+        0.98
+      ],
+      "native_size": [
+        472,
+        150
+      ],
+      "world_size": [
+        34.65,
+        11.0
+      ],
+      "aspect": 3.15,
+      "area": 41548,
+      "name": "hill_knoll_02",
+      "id": 95
+    },
+    {
+      "category": "Hills",
+      "sub_category": "Knoll",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        16,
+        3677,
+        472,
+        150
+      ],
+      "pivot": [
+        0.605,
+        0.98
+      ],
+      "native_size": [
+        472,
+        150
+      ],
+      "world_size": [
+        34.65,
+        11.0
+      ],
+      "aspect": 3.15,
+      "area": 41548,
+      "name": "hill_knoll_02_flip",
+      "id": 96
+    },
+    {
+      "category": "Desert",
+      "sub_category": "Oasis",
+      "atlas": "mountain_atlas_single.png",
+      "rect": [
+        504,
+        3677,
+        472,
+        150
+      ],
+      "pivot": [
+        0.395,
+        0.98
+      ],
+      "native_size": [
+        472,
+        150
+      ],
+      "world_size": [
+        34.65,
+        11.0
+      ],
+      "aspect": 3.15,
+      "area": 41548,
+      "name": "desert_oasis_2",
+      "id": 97
+    },
+    {
+      "category": "Volcano",
+      "sub_category": "VolcanoCrater",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1360,
+        1853,
+        668,
+        395
+      ],
+      "pivot": [
+        0.515,
+        0.99
+      ],
+      "native_size": [
+        668,
+        395
+      ],
+      "world_size": [
+        53.51,
+        31.66
+      ],
+      "aspect": 1.69,
+      "area": 263860,
+      "name": "volcano_cluster_01",
+      "id": 98
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "GrandRange",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        2480,
+        1418,
+        1526,
+        423
+      ],
+      "pivot": [
+        0.542,
+        0.99
+      ],
+      "native_size": [
+        1526,
+        423
+      ],
+      "world_size": [
+        92.66,
+        25.71
+      ],
+      "aspect": 3.61,
+      "area": 645498,
+      "name": "mountain_grand_range_02",
+      "id": 99
+    },
+    {
+      "category": "Basin",
+      "sub_category": "CalderaRing",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        2480,
+        977,
+        959,
+        425
+      ],
+      "pivot": [
+        0.499,
+        0.99
+      ],
+      "native_size": [
+        959,
+        425
+      ],
+      "world_size": [
+        64.46,
+        28.6
+      ],
+      "aspect": 2.26,
+      "area": 407575,
+      "name": "caldera_ring_01",
+      "id": 100
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowGrandRange",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1240,
+        2661,
+        1205,
+        350
+      ],
+      "pivot": [
+        0.526,
+        0.99
+      ],
+      "native_size": [
+        1205,
+        350
+      ],
+      "world_size": [
+        84.93,
+        24.64
+      ],
+      "aspect": 3.44,
+      "area": 421750,
+      "name": "snow_grand_range_02",
+      "id": 101
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MassifCluster",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        3224,
+        2250,
+        738,
+        369
+      ],
+      "pivot": [
+        0.548,
+        0.989
+      ],
+      "native_size": [
+        738,
+        369
+      ],
+      "world_size": [
+        60.56,
+        30.32
+      ],
+      "aspect": 2.0,
+      "area": 272322,
+      "name": "mountain_massif_cluster_02",
+      "id": 102
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "GrandRange",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1336,
+        8,
+        1699,
+        469
+      ],
+      "pivot": [
+        0.481,
+        0.989
+      ],
+      "native_size": [
+        1699,
+        469
+      ],
+      "world_size": [
+        90.47,
+        25.0
+      ],
+      "aspect": 3.62,
+      "area": 796831,
+      "name": "mountain_grand_range_01",
+      "id": 103
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowGrandRange",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        1853,
+        1330,
+        397
+      ],
+      "pivot": [
+        0.478,
+        0.989
+      ],
+      "native_size": [
+        1330,
+        397
+      ],
+      "world_size": [
+        83.27,
+        24.87
+      ],
+      "aspect": 3.35,
+      "area": 528010,
+      "name": "snow_grand_range_01",
+      "id": 104
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MassifCluster",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        513,
+        1031,
+        440
+      ],
+      "pivot": [
+        0.475,
+        0.989
+      ],
+      "native_size": [
+        1031,
+        440
+      ],
+      "world_size": [
+        63.8,
+        27.21
+      ],
+      "aspect": 2.34,
+      "area": 453640,
+      "name": "mountain_massif_flanked_01",
+      "id": 105
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "MassifCluster",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        3224,
+        1857,
+        673,
+        377
+      ],
+      "pivot": [
+        0.527,
+        0.989
+      ],
+      "native_size": [
+        673,
+        377
+      ],
+      "world_size": [
+        55.08,
+        30.83
+      ],
+      "aspect": 1.79,
+      "area": 253721,
+      "name": "mountain_massif_triad_01",
+      "id": 106
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowMassif",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        2671,
+        666,
+        316
+      ],
+      "pivot": [
+        0.459,
+        0.989
+      ],
+      "native_size": [
+        666,
+        316
+      ],
+      "world_size": [
+        62.0,
+        29.44
+      ],
+      "aspect": 2.11,
+      "area": 210456,
+      "name": "snow_massif_cluster_02",
+      "id": 107
+    },
+    {
+      "category": "Basin",
+      "sub_category": "EncirclingArm",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1224,
+        977,
+        1236,
+        428
+      ],
+      "pivot": [
+        0.437,
+        0.989
+      ],
+      "native_size": [
+        1236,
+        428
+      ],
+      "world_size": [
+        72.17,
+        24.99
+      ],
+      "aspect": 2.89,
+      "area": 529008,
+      "name": "basin_encircling_arm_01",
+      "id": 108
+    },
+    {
+      "category": "SnowMountain",
+      "sub_category": "SnowMassif",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        8,
+        1308,
+        489
+      ],
+      "pivot": [
+        0.444,
+        0.989
+      ],
+      "native_size": [
+        1308,
+        489
+      ],
+      "world_size": [
+        69.89,
+        26.11
+      ],
+      "aspect": 2.67,
+      "area": 639612,
+      "name": "snow_massif_cluster_01",
+      "id": 109
+    },
+    {
+      "category": "Mountain",
+      "sub_category": "GrandRange",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        2048,
+        1857,
+        1160,
+        393
+      ],
+      "pivot": [
+        0.519,
+        0.989
+      ],
+      "native_size": [
+        1160,
+        393
+      ],
+      "world_size": [
+        73.36,
+        24.85
+      ],
+      "aspect": 2.95,
+      "area": 455880,
+      "name": "mountain_grand_range_03",
+      "id": 110
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "CliffPillar",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        3003,
+        660,
+        294
+      ],
+      "pivot": [
+        0.527,
+        0.988
+      ],
+      "native_size": [
+        660,
+        294
+      ],
+      "world_size": [
+        55.73,
+        24.79
+      ],
+      "aspect": 2.24,
+      "area": 194040,
+      "name": "karst_pillar_forest_01",
+      "id": 111
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "PlateauMassif",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        2464,
+        3005,
+        868,
+        292
+      ],
+      "pivot": [
+        0.49,
+        0.987
+      ],
+      "native_size": [
+        868,
+        292
+      ],
+      "world_size": [
+        65.49,
+        22.0
+      ],
+      "aspect": 2.97,
+      "area": 253456,
+      "name": "plateau_massif_01",
+      "id": 112
+    },
+    {
+      "category": "Plateau",
+      "sub_category": "PlateauMassif",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        2752,
+        2635,
+        883,
+        354
+      ],
+      "pivot": [
+        0.655,
+        0.986
+      ],
+      "native_size": [
+        883,
+        354
+      ],
+      "world_size": [
+        58.24,
+        23.36
+      ],
+      "aspect": 2.49,
+      "area": 312582,
+      "name": "plateau_massif_02",
+      "id": 113
+    },
+    {
+      "category": "Hills",
+      "sub_category": "HillChain",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        1422,
+        1873,
+        415
+      ],
+      "pivot": [
+        0.464,
+        0.986
+      ],
+      "native_size": [
+        1873,
+        415
+      ],
+      "world_size": [
+        79.42,
+        17.61
+      ],
+      "aspect": 4.51,
+      "area": 777295,
+      "name": "hill_chain_02",
+      "id": 114
+    },
+    {
+      "category": "Hills",
+      "sub_category": "HillChain",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1336,
+        493,
+        1845,
+        468
+      ],
+      "pivot": [
+        0.475,
+        0.985
+      ],
+      "native_size": [
+        1845,
+        468
+      ],
+      "world_size": [
+        69.33,
+        17.6
+      ],
+      "aspect": 3.94,
+      "area": 863460,
+      "name": "hill_chain_01",
+      "id": 115
+    },
+    {
+      "category": "Desert",
+      "sub_category": "SandRidge",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        1240,
+        2266,
+        1492,
+        379
+      ],
+      "pivot": [
+        0.475,
+        0.985
+      ],
+      "native_size": [
+        1492,
+        379
+      ],
+      "world_size": [
+        69.33,
+        17.6
+      ],
+      "aspect": 3.94,
+      "area": 565468,
+      "name": "desert_sand_ridge_01",
+      "id": 116
+    },
+    {
+      "category": "Hills",
+      "sub_category": "HillCopse",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        969,
+        1198,
+        437
+      ],
+      "pivot": [
+        0.457,
+        0.984
+      ],
+      "native_size": [
+        1198,
+        437
+      ],
+      "world_size": [
+        51.63,
+        18.85
+      ],
+      "aspect": 2.74,
+      "area": 523526,
+      "name": "hill_copse_01",
+      "id": 117
+    },
+    {
+      "category": "Hills",
+      "sub_category": "HillCopse",
+      "atlas": "mountain_atlas_cluster.png",
+      "rect": [
+        8,
+        2266,
+        1213,
+        389
+      ],
+      "pivot": [
+        0.478,
+        0.984
+      ],
+      "native_size": [
+        1213,
+        389
+      ],
+      "world_size": [
+        54.18,
+        17.36
+      ],
+      "aspect": 3.12,
+      "area": 471857,
+      "name": "hill_copse_02",
+      "id": 118
+    }
+  ]
+}

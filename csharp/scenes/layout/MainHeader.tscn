@@ -234,6 +234,17 @@ theme_override_styles/pressed = SubResource("PillBtnPressed")
 text = "JSON"
 tooltip_text = "导出世界数据报告"
 
+[node name="GuohuaMapButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=1002]
+custom_minimum_size = Vector2(76, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.98, 0.92, 0.78, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("PillBtnNormal")
+theme_override_styles/hover = SubResource("PillBtnHover")
+theme_override_styles/pressed = SubResource("PillBtnPressed")
+text = "📜 国风舆图"
+tooltip_text = "将当前世界地图转化为中国传统手绘青绿水墨舆图"
+
 [node name="ThemeToggleButton" type="Button" parent="HeaderVBox/HeaderHBox/HeaderButtons" unique_id=1001]
 custom_minimum_size = Vector2(34, 30)
 layout_mode = 2

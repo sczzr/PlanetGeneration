@@ -1,3 +1,4 @@
+using PlanetGeneration.Application;
 using Godot;
 using PlanetGeneration.WorldGen;
 using System;
@@ -46,6 +47,30 @@ public partial class Main : Control
 		{
 			themeManager.ToggleTheme();
 		}
+	}
+
+	private string _preGuohuaBaseThemeId = PlanetGeneration.Core.Layers.LayerRegistry.LayerTerrainOverview;
+
+	private void OnGuohuaMapTogglePressed()
+	{
+		var curTheme = _layerCoordinator.StackState.ActiveBaseThemeId;
+		if (string.Equals(curTheme, PlanetGeneration.Core.Layers.LayerRegistry.LayerGuohuaHanddrawn, StringComparison.OrdinalIgnoreCase))
+		{
+			// 切回转化前的底图主题
+			var restoreTheme = string.IsNullOrEmpty(_preGuohuaBaseThemeId) || string.Equals(_preGuohuaBaseThemeId, PlanetGeneration.Core.Layers.LayerRegistry.LayerGuohuaHanddrawn, StringComparison.OrdinalIgnoreCase)
+				? PlanetGeneration.Core.Layers.LayerRegistry.LayerTerrainOverview
+				: _preGuohuaBaseThemeId;
+			_layerCoordinator.StackState.SetBaseTheme(restoreTheme);
+		}
+		else
+		{
+			// 记住当前底图主题，一键切换至国风手绘舆图
+			_preGuohuaBaseThemeId = curTheme;
+			_layerCoordinator.StackState.SetBaseTheme(PlanetGeneration.Core.Layers.LayerRegistry.LayerGuohuaHanddrawn);
+		}
+
+		_layerPanelController?.RefreshUi();
+		RedrawCurrentLayer();
 	}
 
 	private string BuildDefaultExportName(string prefix, string extension)

@@ -1,4 +1,5 @@
 using Godot;
+using PlanetGeneration.Core.Domain;
 using System.Collections.Generic;
 
 namespace PlanetGeneration.WorldGen;
@@ -43,19 +44,65 @@ public enum RockType
     Metamorphic
 }
 
-public enum OreType
+/// <summary>
+/// 成员顺序与 PlanetGeneration.Core.Domain.OreType 逐项对齐，
+/// 两者经 BaseFieldGeneratorAdapter 以 byte 互转，任何一侧插队都会串色。
+/// </summary>
+public enum OreType : byte
 {
-    None,
-    Coal,
-    Copper,
-    Tin,
-    Iron,
-    Gold,
-    Diamond,
-    Platinum,
-    Aluminum,
-    Silver,
-    Lead
+    None = 0,
+
+    // 基础工业矿产 (1..11)
+    Stone = 1,          // 石材
+    Clay = 2,           // 黏土
+    Limestone = 3,      // 石灰石
+    Coal = 4,           // 煤矿
+    Iron = 5,           // 铁矿
+    Copper = 6,         // 铜矿
+    Aluminum = 7,       // 铝矿
+    Silicon = 8,        // 硅矿
+    Oil = 9,            // 石油
+    NaturalGas = 10,    // 天然气
+    RareMetal = 11,     // 稀有金属
+
+    // 超自然矿产 (12..21)
+    SpiritCrystal = 12,     // 灵晶
+    SunfireCrystal = 13,    // 炎曜晶
+    FrostSoulCrystal = 14,  // 寒魄晶
+    ThunderMarrow = 15,     // 雷髓矿
+    LifePith = 16,          // 生灵髓
+    NetherCrystal = 17,     // 幽冥晶
+    VoidCrystal = 18,       // 空冥晶
+    AstralPith = 19,        // 星髓
+    LawStone = 20,          // 律纹石
+    GenesisOre = 21,        // 源质矿
+
+    // 卡牌资源 (22..28)
+    MemorySand = 22,        // 忆晶砂
+    RuneOre = 23,           // 灵纹矿
+    ResonanceCrystal = 24,  // 共鸣晶
+    EchoStone = 25,         // 回响石
+    OrderedGold = 26,       // 定序金
+    RealmCasketCrystal = 27,// 界匣晶
+    KarmaStone = 28         // 因律石
+}
+
+public static class WorldGenOreTypeExtensions
+{
+    public static PlanetGeneration.Core.Domain.ResourceCategory GetCategory(this OreType ore)
+        => ((PlanetGeneration.Core.Domain.OreType)ore).GetCategory();
+
+    public static PlanetGeneration.Core.Domain.ResourceTier GetTier(this OreType ore)
+        => ((PlanetGeneration.Core.Domain.OreType)ore).GetTier();
+
+    public static string GetTierName(this OreType ore)
+        => ((PlanetGeneration.Core.Domain.OreType)ore).GetTierName();
+
+    public static string GetDisplayName(this OreType ore)
+        => ((PlanetGeneration.Core.Domain.OreType)ore).GetDisplayName();
+
+    public static string GetCategoryName(this OreType ore)
+        => ((PlanetGeneration.Core.Domain.OreType)ore).GetCategoryName();
 }
 
 

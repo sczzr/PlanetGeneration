@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://param_var_test_uid"]
+
+[ext_resource type="Script" path="res://scripts/Tests/WorldParamVariationVerification.cs" id="1_test"]
+
+[node name="WorldParamVariationVerification" type="Node"]
+script = ExtResource("1_test")

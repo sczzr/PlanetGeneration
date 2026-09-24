@@ -27,7 +27,7 @@ public partial class Main : Control
 	{
 		SetRandomSeed();
 		_seedSpin.Value = Seed;
-		if (_worldSetupMenu == null || !_worldSetupMenu.Visible)
+		if ((_mainMenu == null || !_mainMenu.Visible) && (_worldSetupMenu == null || !_worldSetupMenu.IsOpen))
 		{
 			GenerateWorld();
 		}
@@ -277,37 +277,14 @@ public partial class Main : Control
 
 	private void InvalidateEcologyCaches()
 	{
-		if (_primaryWorld != null)
-		{
-			_primaryWorld.EcologySimulation = null;
-			_primaryWorld.EcologySignature = int.MinValue;
-			_primaryWorld.CivilizationSimulation = null;
-			_primaryWorld.CivilizationSignature = int.MinValue;
-			// 地块版生态也要一并失效，否则多边形渲染的生态图层会停在旧参数上。
-			_primaryWorld.PolygonEcology = null;
-			_primaryWorld.PolygonEcologySignature = int.MinValue;
-			// 地块版文明同理：它吃地块生态的产出，两者必须一起失效，
-			// 否则会出现"生态已按新参数重算、文明还是旧归属"的错配。
-			_primaryWorld.PolygonCivilization = null;
-			_primaryWorld.PolygonCivilizationSignature = int.MinValue;
-			_primaryWorld.LayerRenderCache.Remove(MapLayer.Ecology);
-			_primaryWorld.LayerRenderCache.Remove(MapLayer.Civilization);
-			_primaryWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
-		}
+		_primaryWorld?.InvalidateSimulationCaches();
+		_compareWorld?.InvalidateSimulationCaches();
 
-		if (_compareWorld != null)
+		if (_primarySnapshot != null)
 		{
-			_compareWorld.EcologySimulation = null;
-			_compareWorld.EcologySignature = int.MinValue;
-			_compareWorld.CivilizationSimulation = null;
-			_compareWorld.CivilizationSignature = int.MinValue;
-			_compareWorld.PolygonEcology = null;
-			_compareWorld.PolygonEcologySignature = int.MinValue;
-			_compareWorld.PolygonCivilization = null;
-			_compareWorld.PolygonCivilizationSignature = int.MinValue;
-			_compareWorld.LayerRenderCache.Remove(MapLayer.Ecology);
-			_compareWorld.LayerRenderCache.Remove(MapLayer.Civilization);
-			_compareWorld.LayerRenderCache.Remove(MapLayer.TradeRoutes);
+			// 新图层栈可能在任意底图上叠加文明信息，不能只检查旧 MapLayer。
+			RedrawCurrentLayer();
+			return;
 		}
 
 		var layer = GetCurrentLayer();

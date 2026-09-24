@@ -27,6 +27,7 @@ public readonly struct PolyVec2 : IEquatable<PolyVec2>
 
     public static PolyVec2 operator +(PolyVec2 a, PolyVec2 b) => new(a.X + b.X, a.Y + b.Y);
     public static PolyVec2 operator -(PolyVec2 a, PolyVec2 b) => new(a.X - b.X, a.Y - b.Y);
+    public static PolyVec2 operator -(PolyVec2 a) => new(-a.X, -a.Y);
     public static PolyVec2 operator *(PolyVec2 a, double scale) => new(a.X * scale, a.Y * scale);
     public static PolyVec2 operator /(PolyVec2 a, double scale) => new(a.X / scale, a.Y / scale);
 

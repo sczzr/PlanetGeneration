@@ -1,6 +1,6 @@
+using PlanetGeneration.Application;
 using Godot;
 using PlanetGeneration.WorldGen;
-using PlanetGeneration.WorldGen.Polygon;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -121,6 +121,8 @@ public partial class Main : Control
 
 	private void RedrawCurrentLayer()
 	{
+		if (_primaryWorld?.Snapshot != null) EnsureCivilizationSimulation(_primaryWorld);
+		if (_compareWorld?.Snapshot != null) EnsureCivilizationSimulation(_compareWorld);
 		if (_primarySnapshot != null)
 		{
 			var primaryImage = _layerCoordinator.RenderBaseThemeImage(_primarySnapshot, _resolutionWidth, _resolutionHeight);
@@ -316,6 +318,24 @@ public partial class Main : Control
 
 	private void UpdateLegendForTheme(string themeId)
 	{
+		if (themeId == PlanetGeneration.Core.Layers.LayerRegistry.LayerGuohuaHanddrawn || themeId == "guohua_handdrawn")
+		{
+			SetGuohuaLegend();
+			return;
+		}
+
+		if (themeId == "inkwash_landscape")
+		{
+			SetInkWashLegend();
+			return;
+		}
+
+		if (themeId == "ores")
+		{
+			SetOreLegend();
+			return;
+		}
+
 		var layer = themeId switch
 		{
 			"elevation" => MapLayer.Elevation,
@@ -328,7 +348,6 @@ public partial class Main : Control
 			"ores" => MapLayer.Ores,
 			"ecology" => MapLayer.Ecology,
 			"civilization" => MapLayer.Civilization,
-			"trade_flow" or "trade_routes" => MapLayer.TradeRoutes,
 			_ => MapLayer.Satellite
 		};
 		UpdateLegend(layer);
@@ -346,6 +365,10 @@ public partial class Main : Control
 			TerrainMorphology.ShallowFragments => "浅海碎陆",
 			TerrainMorphology.ColdContinent => "寒冷大陆",
 			TerrainMorphology.HotWasteland => "炎热荒原",
+			TerrainMorphology.PolarIcelands => "极地冰陆",
+			TerrainMorphology.AtollChain => "环礁链",
+			TerrainMorphology.InlandSea => "内陆海",
+			TerrainMorphology.RiftHighlands => "裂谷高地",
 			_ => morphology.ToString()
 		};
 	}
@@ -633,6 +656,12 @@ public partial class Main : Control
 
 	private void EnsureEcologySimulation(GeneratedWorldData world)
 	{
+		if (world.Snapshot != null)
+		{
+			SnapshotWorldProjection.EnsureSimulation(world, _currentEpoch, _speciesDiversity, _civilAggression, _magicDensity);
+			return;
+		}
+
 		var signature = BuildEcologySignature();
 		if (world.EcologySimulation != null && world.EcologySignature == signature)
 		{
@@ -658,6 +687,12 @@ public partial class Main : Control
 
 	private void EnsureCivilizationSimulation(GeneratedWorldData world)
 	{
+		if (world.Snapshot != null)
+		{
+			SnapshotWorldProjection.EnsureSimulation(world, _currentEpoch, _speciesDiversity, _civilAggression, _magicDensity);
+			return;
+		}
+
 		EnsureEcologySimulation(world);
 
 		var signature = BuildCivilizationSignature();

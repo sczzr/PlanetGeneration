@@ -1,6 +1,6 @@
 using Godot;
 using System;
-using PlanetGeneration.WorldGen.Polygon;
+using PlanetGeneration.UI.State;
 
 namespace PlanetGeneration.UI;
 
@@ -22,9 +22,11 @@ public partial class WorldSetupController : Control
 	public Button? ToggleAdvancedButton { get; private set; }
 	public Control? AdvancedContainer { get; private set; }
 	public ScrollContainer? BodyScroll { get; private set; }
+	public bool IsOpen { get; private set; }
 
 	public override void _Ready()
 	{
+		IsOpen = Visible;
 		ConfirmGenerateButton = FindChild("ConfirmGenerateButton", true, false) as Button
 			?? throw new InvalidOperationException("ConfirmGenerateButton not found in WorldSetupMenu.");
 		BackToMenuButton = FindChild("BackToMenuButton", true, false) as Button
@@ -52,16 +54,176 @@ public partial class WorldSetupController : Control
 
 		SetupPolygonTileModeOptions();
 		HookSliderValueUpdates();
+		SetupSeedSpinStyle();
+		SetupD20Button();
+		SetupTerrainDrawer();
+		SetupButtonAnimations();
+	}
+
+	private void SetupSeedSpinStyle()
+	{
+		if (FindChild("SeedSpin", true, false) is SpinBox seedSpin)
+		{
+			var le = seedSpin.GetLineEdit();
+			if (le != null)
+			{
+				var styleNormal = new StyleBoxFlat
+				{
+					BgColor = new Color("382618"),
+					BorderColor = new Color("7d5836"),
+					BorderWidthLeft = 1,
+					BorderWidthTop = 1,
+					BorderWidthRight = 1,
+					BorderWidthBottom = 1,
+					CornerRadiusTopLeft = 4,
+					CornerRadiusTopRight = 4,
+					CornerRadiusBottomRight = 4,
+					CornerRadiusBottomLeft = 4,
+					ContentMarginLeft = 8,
+					ContentMarginRight = 8,
+					ContentMarginTop = 3,
+					ContentMarginBottom = 3
+				};
+				var styleFocus = (StyleBoxFlat)styleNormal.Duplicate();
+				styleFocus.BorderColor = new Color("e6a845");
+
+				le.AddThemeStyleboxOverride("normal", styleNormal);
+				le.AddThemeStyleboxOverride("focus", styleFocus);
+				le.AddThemeColorOverride("font_color", new Color("fff0c8"));
+				le.AddThemeColorOverride("font_selected_color", Colors.White);
+				le.Alignment = HorizontalAlignment.Center;
+			}
+		}
 	}
 
 	public void Open()
 	{
+		IsOpen = true;
 		Visible = true;
+		MouseFilter = MouseFilterEnum.Stop;
+		Modulate = new Color(1, 1, 1, 0);
+		var tween = CreateTween();
+		tween.TweenProperty(this, "modulate:a", 1.0f, 0.25)
+			.SetTrans(Tween.TransitionType.Cubic)
+			.SetEase(Tween.EaseType.Out);
 	}
 
 	public void Close()
 	{
-		Visible = false;
+		IsOpen = false;
+		MouseFilter = MouseFilterEnum.Ignore;
+		var tween = CreateTween();
+		tween.TweenProperty(this, "modulate:a", 0.0f, 0.2)
+			.SetTrans(Tween.TransitionType.Cubic)
+			.SetEase(Tween.EaseType.In);
+		tween.TweenCallback(Callable.From(() => Visible = false));
+	}
+
+	private void SetupD20Button()
+	{
+		if (FindChild("RandomButton", true, false) is Button d20)
+		{
+			d20.Pressed += () =>
+			{
+				AnimateD20Roll(d20);
+				RandomRequested?.Invoke();
+			};
+		}
+	}
+
+	private void AnimateD20Roll(Button button)
+	{
+		button.PivotOffset = button.Size / 2f;
+		var tween = CreateTween().SetParallel(true);
+		tween.TweenProperty(button, "rotation", button.Rotation + Mathf.Pi * 2f, 0.45)
+			.SetTrans(Tween.TransitionType.Back)
+			.SetEase(Tween.EaseType.Out);
+
+		var scaleTween = CreateTween();
+		scaleTween.TweenProperty(button, "scale", new Vector2(1.28f, 1.28f), 0.15)
+			.SetTrans(Tween.TransitionType.Cubic)
+			.SetEase(Tween.EaseType.Out);
+		scaleTween.TweenProperty(button, "scale", Vector2.One, 0.3)
+			.SetTrans(Tween.TransitionType.Bounce)
+			.SetEase(Tween.EaseType.Out);
+	}
+
+	private void SetupTerrainDrawer()
+	{
+		if (FindChild("MapThumbIslands", true, false) is BaseButton thumbIslands)
+		{
+			thumbIslands.Pressed += () => SelectTerrainPreset(3);
+		}
+		if (FindChild("MapThumbContinents", true, false) is BaseButton thumbContinents)
+		{
+			thumbContinents.Pressed += () => SelectTerrainPreset(2);
+		}
+		if (FindChild("TerrainPresetOption", true, false) is OptionButton option)
+		{
+			option.ItemSelected += id => UpdateDrawerHighlight((int)id);
+			UpdateDrawerHighlight(option.Selected);
+		}
+	}
+
+	private void SelectTerrainPreset(int index)
+	{
+		if (FindChild("TerrainPresetOption", true, false) is OptionButton option)
+		{
+			if (index >= 0 && index < option.ItemCount)
+			{
+				option.Select(index);
+				option.EmitSignal(OptionButton.SignalName.ItemSelected, index);
+				UpdateDrawerHighlight(index);
+			}
+		}
+	}
+
+	private void UpdateDrawerHighlight(int selectedIndex)
+	{
+		var thumbIslands = FindChild("MapThumbIslands", true, false) as CanvasItem;
+		var thumbContinents = FindChild("MapThumbContinents", true, false) as CanvasItem;
+		if (thumbIslands != null)
+		{
+			var isIsland = (selectedIndex == 3 || selectedIndex == 4);
+			var targetModulate = isIsland ? Colors.White : new Color(0.72f, 0.72f, 0.72f, 0.78f);
+			var tween = CreateTween();
+			tween.TweenProperty(thumbIslands, "modulate", targetModulate, 0.2);
+		}
+		if (thumbContinents != null)
+		{
+			var isContinent = (selectedIndex == 0 || selectedIndex == 1 || selectedIndex == 2);
+			var targetModulate = isContinent ? Colors.White : new Color(0.72f, 0.72f, 0.72f, 0.78f);
+			var tween = CreateTween();
+			tween.TweenProperty(thumbContinents, "modulate", targetModulate, 0.2);
+		}
+	}
+
+	private void SetupButtonAnimations()
+	{
+		AddButtonHoverAnimation(ConfirmGenerateButton);
+		AddButtonHoverAnimation(BackToMenuButton);
+		if (RandomAllButton != null) AddButtonHoverAnimation(RandomAllButton);
+		if (CloseCornerButton != null) AddButtonHoverAnimation(CloseCornerButton);
+	}
+
+	private void AddButtonHoverAnimation(Button button)
+	{
+		button.PivotOffset = button.Size / 2f;
+		button.MouseEntered += () =>
+		{
+			button.PivotOffset = button.Size / 2f;
+			var tween = CreateTween();
+			tween.TweenProperty(button, "scale", new Vector2(1.03f, 1.03f), 0.15)
+				.SetTrans(Tween.TransitionType.Cubic)
+				.SetEase(Tween.EaseType.Out);
+		};
+		button.MouseExited += () =>
+		{
+			var tween = CreateTween();
+			tween.TweenProperty(button, "scale", Vector2.One, 0.15)
+				.SetTrans(Tween.TransitionType.Cubic)
+				.SetEase(Tween.EaseType.Out);
+		};
 	}
 
 	private void OnToggleAdvancedPressed()
@@ -176,7 +338,18 @@ public partial class WorldSetupController : Control
 		int civilAggression,
 		int speciesDiversity,
 		int currentEpoch,
-		PolygonTileMode tileMode)
+		PolygonTileMode tileMode,
+		float seaLevel = 0.5f,
+		float heatFactor = 0.5f,
+		float moistureFactor = 1.0f,
+		int erosionIterations = 5,
+		float riverDensity = 1.0f,
+		bool riversEnabled = true,
+		float interiorRelief = 1.0f,
+		float orogenyStrength = 1.0f,
+		float subductionArcRatio = 0.72f,
+		int continentalAge = 58,
+		int seed = 0)
 	{
 		SetSliderValue("PlateCountSlider", plateCount);
 		SetSliderValue("OceanicRatioSlider", oceanicRatio);
@@ -189,6 +362,26 @@ public partial class WorldSetupController : Control
 		SetSliderValue("SetupDiversitySlider", speciesDiversity);
 		SetSliderValue("SetupEpochSlider", currentEpoch);
 
+		SetSliderValue("SeaLevelSlider", seaLevel);
+		SetSliderValue("HeatSlider", heatFactor);
+		SetSliderValue("MoistureSlider", moistureFactor);
+		SetSliderValue("ErosionSlider", erosionIterations);
+		SetSliderValue("RiverDensitySlider", riverDensity);
+		if (FindChild("RiversSwitch", true, false) is CheckButton riversSwitch)
+		{
+			riversSwitch.ButtonPressed = riversEnabled;
+		}
+
+		SetSliderValue("InteriorReliefSlider", interiorRelief);
+		SetSliderValue("OrogenyStrengthSlider", orogenyStrength);
+		SetSliderValue("SubductionArcRatioSlider", subductionArcRatio);
+		SetSliderValue("ContinentalAgeSlider", continentalAge);
+
+		if (FindChild("SeedSpin", true, false) is SpinBox seedSpin)
+		{
+			seedSpin.Value = seed;
+		}
+
 		if (FindChild("PolygonTileModeOption", true, false) is OptionButton modeOption)
 		{
 			var idx = tileMode switch
@@ -200,6 +393,18 @@ public partial class WorldSetupController : Control
 				_ => 0
 			};
 			modeOption.Select(idx);
+		}
+	}
+
+	/// <summary>
+	/// 将主程序刚随机出的种子写回构建界面的种子输入框，
+	/// 保证界面显示、存档命名与实际参与生成的种子一致。
+	/// </summary>
+	public void SetSeed(int seed)
+	{
+		if (FindChild("SeedSpin", true, false) is SpinBox seedSpin)
+		{
+			seedSpin.SetValueNoSignal(seed);
 		}
 	}
 
@@ -218,6 +423,27 @@ public partial class WorldSetupController : Control
 		var civilAggression = (int)GetSliderValue("SetupAggressionSlider", 42);
 		var speciesDiversity = (int)GetSliderValue("SetupDiversitySlider", 68);
 		var initialEpoch = (int)GetSliderValue("SetupEpochSlider", 450);
+
+		var seaLevel = (float)GetSliderValue("SeaLevelSlider", 0.50);
+		var heat = (float)GetSliderValue("HeatSlider", 0.50);
+		var moisture = (float)GetSliderValue("MoistureSlider", 0.50);
+		var erosion = (int)GetSliderValue("ErosionSlider", 5);
+		var riverDensity = (float)GetSliderValue("RiverDensitySlider", 0.50);
+		var riversEnabled = true;
+		if (FindChild("RiversSwitch", true, false) is CheckButton riversSwitch)
+		{
+			riversEnabled = riversSwitch.ButtonPressed;
+		}
+
+		var interiorRelief = (float)GetSliderValue("InteriorReliefSlider", 1.00);
+		var orogenyStrength = (float)GetSliderValue("OrogenyStrengthSlider", 1.00);
+		var subductionArcRatio = (float)GetSliderValue("SubductionArcRatioSlider", 0.72);
+		var continentalAge = (int)GetSliderValue("ContinentalAgeSlider", 58);
+
+		if (FindChild("SeedSpin", true, false) is SpinBox seedSpin)
+		{
+			main.Seed = (int)seedSpin.Value;
+		}
 
 		var tileMode = PolygonTileMode.Cells;
 		if (FindChild("PolygonTileModeOption", true, false) is OptionButton modeOption)
@@ -243,7 +469,17 @@ public partial class WorldSetupController : Control
 			civilAggression,
 			speciesDiversity,
 			initialEpoch,
-			tileMode);
+			tileMode,
+			seaLevel,
+			heat,
+			moisture,
+			erosion,
+			riverDensity,
+			riversEnabled,
+			interiorRelief,
+			orogenyStrength,
+			subductionArcRatio,
+			continentalAge);
 	}
 
 	private void SetSliderValue(string sliderName, double value)

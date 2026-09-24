@@ -14,12 +14,14 @@ public partial class MainHeaderController : PanelContainer
 	public event Action? ExportPngRequested;
 	public event Action? ExportJsonRequested;
 	public event Action? ThemeToggleRequested;
+	public event Action? GuohuaMapToggleRequested;
 
 	public Button AdvancedSettingsButton { get; private set; } = null!;
 	public Button GenerateButton { get; private set; } = null!;
 	public Button ExportPngButton { get; private set; } = null!;
 	public Button ExportJsonButton { get; private set; } = null!;
 	public Button ThemeToggleButton { get; private set; } = null!;
+	public Button? GuohuaMapButton { get; private set; }
 
 	public override void _Ready()
 	{
@@ -43,10 +45,17 @@ public partial class MainHeaderController : PanelContainer
 			?? FindChild("ThemeToggleButton", true, false) as Button
 			?? throw new InvalidOperationException("ThemeToggleButton not found.");
 
+		GuohuaMapButton = GetNodeOrNull<Button>("HeaderHBox/HeaderButtons/GuohuaMapButton")
+			?? FindChild("GuohuaMapButton", true, false) as Button;
+
 		AdvancedSettingsButton.Pressed += () => AdvancedSettingsRequested?.Invoke();
 		GenerateButton.Pressed += () => GenerateRequested?.Invoke();
 		ExportPngButton.Pressed += () => ExportPngRequested?.Invoke();
 		ExportJsonButton.Pressed += () => ExportJsonRequested?.Invoke();
 		ThemeToggleButton.Pressed += () => ThemeToggleRequested?.Invoke();
+		if (GuohuaMapButton != null)
+		{
+			GuohuaMapButton.Pressed += () => GuohuaMapToggleRequested?.Invoke();
+		}
 	}
 }

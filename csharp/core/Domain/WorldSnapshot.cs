@@ -4,7 +4,8 @@ using System.Collections.Generic;
 namespace PlanetGeneration.Core.Domain;
 
 /// <summary>
-/// 一次完整生成或模拟发布的权威只读快照。
+/// 一次完整生成或模拟发布的权威快照，发布后应按只读契约消费。
+/// 当前底层数组尚未封装为只读视图：模拟和制图必须克隆工作字段，不能原地改写。
 ///
 /// 地图渲染、悬停交互、小地图、统计、时间轴回放以及 AI 叙事
 /// 均消费同一个 WorldSnapshot，消除生产与消费路径上的数据双源分歧。
@@ -24,6 +25,8 @@ public sealed class WorldSnapshot
     public EcologyResult? Ecology { get; init; }
     public CivilizationResult? Civilization { get; init; }
     public (float X, float Y)[,]? ContinuousWind { get; init; }
+    public IReadOnlyList<MegaTerrainRegion> MegaRegions { get; init; } = Array.Empty<MegaTerrainRegion>();
+    public Cartography.CartographySnapshot? Cartography { get; init; }
 
     public int CellCount => Geometry.Count;
     public WorldExtent Extent => Geometry.Extent;
@@ -38,7 +41,9 @@ public sealed class WorldSnapshot
         EcologyResult? ecology = null,
         CivilizationResult? civilization = null,
         long? snapshotId = null,
-        DateTime? createdAt = null)
+        DateTime? createdAt = null,
+        IReadOnlyList<MegaTerrainRegion>? megaRegions = null,
+        Cartography.CartographySnapshot? cartography = null)
     {
         SnapshotId = snapshotId ?? System.Threading.Interlocked.Increment(ref _nextSnapshotId);
         CreatedAt = createdAt ?? DateTime.UtcNow;
@@ -50,6 +55,8 @@ public sealed class WorldSnapshot
         Stats = stats;
         Ecology = ecology;
         Civilization = civilization;
+        Cartography = cartography;
+        if (megaRegions != null) MegaRegions = megaRegions;
     }
 
     /// <summary>
@@ -69,7 +76,9 @@ public sealed class WorldSnapshot
             PlateSummary,
             Stats,
             newEcology,
-            newCivilization)
+            newCivilization,
+            megaRegions: MegaRegions,
+            cartography: Cartography)
         {
             ContinuousWind = ContinuousWind
         };

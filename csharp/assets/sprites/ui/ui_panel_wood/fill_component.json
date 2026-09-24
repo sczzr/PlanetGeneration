@@ -1,0 +1,13 @@
+{
+  "task": "ui_panel_wood_fill",
+  "part": "fill_component",
+  "style": "ui",
+  "split": "tile",
+  "size": [
+    996,
+    677
+  ],
+  "tile": "fill_component.png",
+  "tile_size": 192,
+  "repeat": "both"
+}

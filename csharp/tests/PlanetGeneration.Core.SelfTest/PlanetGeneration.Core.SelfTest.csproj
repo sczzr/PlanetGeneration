@@ -10,4 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\core\PlanetGeneration.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- 只链接不依赖 Godot 的应用边界，使档案兼容性可在纯 .NET 下验证。 -->
+    <Compile Include="../../scripts/Application/WorldArchiveHeader.cs" Link="Application/WorldArchiveHeader.cs" />
+    <Compile Include="../../scripts/WorldGen/Polygon/*.cs" Link="Compatibility/%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

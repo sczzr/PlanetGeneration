@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using PlanetGeneration.Core.Cartography;
 using PlanetGeneration.Core.Domain;
 using PlanetGeneration.Core.Generation;
 using PlanetGeneration.Core.Geometry;
@@ -85,7 +86,7 @@ public sealed class WorldGenerationService
 
         await Task.Run(() =>
         {
-            PolygonLandformClassifier.ClassifyAll(geometry, fields, options.SeaLevel, options.BasinSensitivity, fields.Landform);
+            PolygonLandformClassifier.ClassifyAll(geometry, fields, options.SeaLevel, options.GetEffectiveLandformTuning(), fields.Landform);
             CellBiomeClassifier.ClassifyAll(geometry, fields, options.SeaLevel, options.Tuning);
         }, cancellationToken);
 
@@ -129,11 +130,29 @@ public sealed class WorldGenerationService
 
         // 8. 面积占比统计
         cancellationToken.ThrowIfCancellationRequested();
-        progress?.Report((98f, "计算地理统计与装配快照"));
+        progress?.Report((96f, "计算地理统计与装配快照"));
 
         var stats = await Task.Run(() =>
         {
             return ComputeWorldStats(geometry, fields, options.SeaLevel, settlements.Count);
+        }, cancellationToken);
+
+        // 9. 提取与裁决世界级大型宏观生态地貌
+        cancellationToken.ThrowIfCancellationRequested();
+        progress?.Report((98f, "裁决世界级大型宏观地貌"));
+
+        var megaRegions = await Task.Run(() =>
+        {
+            return MegaTerrainAnalyzer.Analyze(geometry, fields, options);
+        }, cancellationToken);
+
+        // 10. 生成幻想制图表现层 (Fantasy Cartography)
+        cancellationToken.ThrowIfCancellationRequested();
+        progress?.Report((99f, "生成幻想制图层"));
+
+        var cartography = await Task.Run(() =>
+        {
+            return CartographyGenerator.Generate(geometry, fields, options, megaRegions, settlements);
         }, cancellationToken);
 
         var plateSummary = new PlateSystemSummary
@@ -151,7 +170,9 @@ public sealed class WorldGenerationService
             plateSummary,
             stats,
             ecologyResult,
-            civilizationResult)
+            civilizationResult,
+            megaRegions: megaRegions,
+            cartography: cartography)
         {
             ContinuousWind = baseFields.Wind
         };

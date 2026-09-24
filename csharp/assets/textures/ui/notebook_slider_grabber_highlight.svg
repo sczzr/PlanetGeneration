@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+  <!-- 悬停态滑块：墨珠外加一圈淡墨 -->
+  <circle cx="10" cy="10" r="5.2" fill="#3e2c18"/>
+  <circle cx="10" cy="10" r="7.6" fill="none" stroke="#3e2c18" stroke-width="1.4" opacity="0.5"/>
+</svg>

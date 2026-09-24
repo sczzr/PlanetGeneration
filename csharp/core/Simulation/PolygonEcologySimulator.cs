@@ -152,7 +152,7 @@ public static class PolygonEcologySimulator
         return Clamp01((diffSum / neighborCount) / RuggednessScale);
     }
 
-    private static float GetBiomeProductivity(byte biome)
+    public static float GetBiomeProductivity(byte biome)
     {
         return biome < BiomeProductivity.Length ? BiomeProductivity[biome] : DefaultBiomeProductivity;
     }

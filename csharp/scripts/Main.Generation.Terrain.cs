@@ -101,15 +101,20 @@ public partial class Main : Control
 		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 山脉掩膜: {maskTimer.Elapsed.TotalMilliseconds:0} ms");
 		var noiseTimer = Stopwatch.StartNew();
 
+		// 归一化阶段按分位数重排高程，所以掩膜幅度需盖过板块高程本身的动态范围，模板拓扑才会真正成型。
 		var (shapePower, upliftMax, edgeDropMax, contourAmp, fragmentAmp) = morphology switch
 		{
 			TerrainMorphology.Supercontinent => (0.82f, 0.40f, 0.22f, 0.14f, 0.04f),
-			TerrainMorphology.Continents => (1.12f, 0.30f, 0.20f, 0.18f, 0.12f),
+			TerrainMorphology.Continents => (1.10f, 0.38f, 0.28f, 0.14f, 0.08f),
 			TerrainMorphology.Archipelago => (1.48f, 0.14f, 0.24f, 0.24f, 0.22f),
 			TerrainMorphology.FracturedIslands => (1.65f, 0.11f, 0.27f, 0.28f, 0.30f),
 			TerrainMorphology.ShallowFragments => (1.32f, 0.16f, 0.20f, 0.20f, 0.16f),
 			TerrainMorphology.ColdContinent => (1.00f, 0.29f, 0.19f, 0.17f, 0.10f),
 			TerrainMorphology.HotWasteland => (1.08f, 0.27f, 0.17f, 0.15f, 0.09f),
+			TerrainMorphology.PolarIcelands => (1.05f, 0.62f, 0.50f, 0.20f, 0.16f),
+			TerrainMorphology.AtollChain => (1.90f, 0.80f, 0.60f, 0.30f, 0.34f),
+			TerrainMorphology.InlandSea => (0.90f, 0.85f, 0.70f, 0.06f, 0.03f),
+			TerrainMorphology.RiftHighlands => (1.02f, 0.58f, 0.34f, 0.30f, 0.24f),
 			_ => (1.20f, 0.24f, 0.16f, 0.16f, 0.08f)
 		};
 		GD.Print($"[WorldGen][地图 {width}x{height}][地形与地貌] 噪声与参数初始化: {noiseTimer.Elapsed.TotalMilliseconds:0} ms");
@@ -157,6 +162,16 @@ public partial class Main : Control
 					TerrainMorphology.HotWasteland => Mathf.Max(
 						Mathf.Clamp(1f - 1.62f * radial, 0f, 1f),
 						Mathf.Clamp(1f - 2.10f * lobeC, 0f, 1f) * 0.45f),
+					TerrainMorphology.PolarIcelands => Mathf.Max(
+						Mathf.Clamp(1f - 2.55f * py, 0f, 1f),
+						Mathf.Clamp(1f - 2.55f * (1f - py), 0f, 1f)),
+					TerrainMorphology.AtollChain => Mathf.Clamp(0.46f - 1.90f * Mathf.Abs(py - 0.5f), 0f, 1f),
+					TerrainMorphology.InlandSea => Mathf.Clamp(
+						Mathf.Clamp(1f - 1.05f * radial, 0f, 1f)
+						- 1.15f * Mathf.Clamp(1f - 3.40f * radial, 0f, 1f),
+						0f,
+						1f),
+					TerrainMorphology.RiftHighlands => Mathf.Clamp(1f - 1.18f * radial, 0f, 1f),
 					_ => Mathf.Clamp(1f - 1.45f * radial, 0f, 1f)
 				};
 
@@ -164,8 +179,22 @@ public partial class Main : Control
 				var fragments = fragmentNoise.GetNoise3D(6.2f * nx, 6.2f * ny, 6.2f * nz);
 
 				var falloff = morphologyBase;
-				falloff += contour * contourAmp * (0.55f + 0.45f * bias);
-				falloff += fragments * fragmentAmp;
+				if (morphology == TerrainMorphology.Continents)
+				{
+					if (morphologyBase > 0.001f)
+					{
+						falloff += (contour * contourAmp * (0.55f + 0.45f * bias) + fragments * fragmentAmp) * Mathf.Sqrt(morphologyBase);
+					}
+					else
+					{
+						falloff = 0f;
+					}
+				}
+				else
+				{
+					falloff += contour * contourAmp * (0.55f + 0.45f * bias);
+					falloff += fragments * fragmentAmp;
+				}
 				falloff = Mathf.Clamp(falloff, 0f, 1f);
 				falloff = Mathf.Pow(falloff, shapePower);
 
@@ -204,6 +233,9 @@ public partial class Main : Control
 						TerrainMorphology.Supercontinent => 0.58f,
 						TerrainMorphology.Continents => 0.50f,
 						TerrainMorphology.ColdContinent => 0.54f,
+						TerrainMorphology.PolarIcelands => 0.52f,
+						TerrainMorphology.InlandSea => 0.56f,
+						TerrainMorphology.RiftHighlands => 0.34f,
 						_ => 0.46f
 					};
 
@@ -274,50 +306,65 @@ public partial class Main : Control
 
 	private static float BuildContinentsBase(float radial, FastNoiseLite fragmentNoise, float nx, float ny, float nz, float px, float py, int continentCount, int seed)
 	{
-		var normalizedCount = Mathf.Clamp(continentCount, 2, 4);
-		var centers = normalizedCount switch
+		var normalizedCount = Mathf.Clamp(continentCount, 1, 7);
+		var lobes = normalizedCount switch
 		{
-			2 => ContinentCenters2,
-			4 => ContinentCenters4,
-			_ => ContinentCenters3
+			1 => ContinentLobes1,
+			2 => ContinentLobes2,
+			3 => ContinentLobes3,
+			4 => ContinentLobes4,
+			6 => ContinentLobes6,
+			7 => ContinentLobes7,
+			_ => ContinentLobes5
 		};
 
-		var lobeScale = normalizedCount switch
-		{
-			2 => 1.70f,
-			4 => 1.78f,
-			_ => 1.84f
-		};
+		// 球面域扭曲：使各大洲形态摆脱机械椭圆感，形成自然弧形山系与海湾走势
+		var warpX = fragmentNoise.GetNoise3D(2.4f * nx + 13.7f, 2.4f * ny - 9.2f, 2.4f * nz + seed * 0.0001f) * 0.032f;
+		var warpY = fragmentNoise.GetNoise3D(2.4f * nx - 8.1f, 2.4f * ny + 11.4f, 2.4f * nz - seed * 0.0001f) * 0.032f;
+		var warpedPx = px + warpX;
+		var warpedPy = Mathf.Clamp(py + warpY, 0.02f, 0.98f);
+
+		// 2 级球面分形噪声，丰富大陆边缘的岬角、半岛与海湾，消除机械几何感
+		var coastNoise = fragmentNoise.GetNoise3D(4.2f * nx + seed * 0.0003f, 4.2f * ny, 4.2f * nz - seed * 0.0002f);
+		var fineNoise = fragmentNoise.GetNoise3D(9.6f * nx, 9.6f * ny, 9.6f * nz) * 0.5f;
+		var fractalDistort = coastNoise * 0.16f + fineNoise * 0.08f;
 
 		var baseShape = 0f;
-		for (var index = 0; index < centers.Length; index++)
+		for (var index = 0; index < lobes.Length; index++)
 		{
-			var center = centers[index];
-			var lobe = ComputeWrappedRadial(px, py, center.X, center.Y);
-			var continent = Mathf.Clamp(1f - lobeScale * lobe, 0f, 1f);
-
-			if (normalizedCount == 4)
+			var (cx, cy, rx, ry, height) = lobes[index];
+			var dx = Mathf.Abs(warpedPx - cx);
+			if (dx > 0.5f)
 			{
-				var core = Mathf.Clamp(1f - 2.30f * lobe, 0f, 1f);
-				continent = Mathf.Max(continent, 0.92f * core);
+				dx = 1f - dx;
 			}
+			var dy = Mathf.Abs(warpedPy - cy);
 
-			baseShape = Mathf.Max(baseShape, continent);
+			// 各向异性椭圆尺度归一化
+			var nxDist = dx / rx;
+			var nyDist = dy / ry;
+			var dist = Mathf.Sqrt(nxDist * nxDist + nyDist * nyDist);
+
+			// 分形海岸扰动
+			var effectiveDist = dist + fractalDistort;
+
+			if (effectiveDist < 1.02f)
+			{
+				float continentVal;
+				if (effectiveDist <= 0.60f)
+				{
+					continentVal = height;
+				}
+				else
+				{
+					// 从 0.60 到 1.02 平滑三次 Hermite 阶跃，形成自然平缓的大陆架与海岸坡降
+					var t = (effectiveDist - 0.60f) / 0.42f;
+					var smooth = 1f - (t * t * (3f - 2f * t));
+					continentVal = smooth * height;
+				}
+				baseShape = Mathf.Max(baseShape, continentVal);
+			}
 		}
-
-		var centerBridge = Mathf.Clamp(1f - (radial / 0.20f), 0f, 1f);
-		var centerSuppression = normalizedCount switch
-		{
-			2 => 0.24f,
-			4 => 0.26f,
-			_ => 0.36f
-		};
-		var centerNoise = 0.5f + 0.5f * fragmentNoise.GetNoise3D(3.1f * nx + seed * 0.0003f, 3.1f * ny, 3.1f * nz - seed * 0.0002f);
-		var centerSuppressionScale = Mathf.Lerp(0.70f, 1.20f, centerNoise);
-		baseShape -= centerBridge * centerSuppression * centerSuppressionScale;
-
-		var split = fragmentNoise.GetNoise3D(5.8f * nx, 5.8f * ny, 5.8f * nz);
-		baseShape += split * (normalizedCount == 4 ? 0.08f : 0.10f);
 
 		return Mathf.Clamp(baseShape, 0f, 1f);
 	}
@@ -408,6 +455,10 @@ public partial class Main : Control
 					TerrainMorphology.Archipelago => 0.82f,
 					TerrainMorphology.FracturedIslands => 0.78f,
 					TerrainMorphology.ShallowFragments => 0.84f,
+					TerrainMorphology.AtollChain => 0.62f,
+					TerrainMorphology.PolarIcelands => 1.05f,
+					TerrainMorphology.InlandSea => 1.08f,
+					TerrainMorphology.RiftHighlands => 1.15f,
 					_ => 1f
 				};
 

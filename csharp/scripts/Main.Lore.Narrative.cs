@@ -1,6 +1,10 @@
+using PlanetGeneration.Application;
 using Godot;
+using LandformType = PlanetGeneration.Core.Domain.LandformType;
+using LandformCategory = PlanetGeneration.Core.Domain.LandformCategory;
+using LandformTypeExtensions = PlanetGeneration.Core.Domain.LandformTypeExtensions;
 using PlanetGeneration.WorldGen;
-using PlanetGeneration.WorldGen.Polygon;
+using CivilizationEvent = PlanetGeneration.Core.Domain.CivilizationEvent;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,7 +57,8 @@ public partial class Main : Control
 			threat += 1;
 		}
 
-		if (sample.Landform == LandformType.Mountain || sample.Landform == LandformType.DeepOcean)
+		if (sample.Landform is LandformType.Mountain or LandformType.Peak or LandformType.Volcano
+			or LandformType.DeepOcean or LandformType.Trench or LandformType.Glacier or LandformType.Badlands)
 		{
 			threat += 1;
 		}
@@ -232,11 +237,11 @@ public partial class Main : Control
 	/// 地块版文明事件的同名重载。
 	///
 	/// 两份事件类型字段完全同构，之所以不合并成一个类型：
-	/// <see cref="PolygonCivilizationEvent"/> 在**不引用 Godot 的核心层**，
+	/// <see cref="CivilizationEvent"/> 在**不引用 Godot 的核心层**，
 	/// 而 <see cref="CivilizationEpochEvent"/> 在 Godot 侧——合并会把 Godot 依赖带进核心层。
 	/// 这里只做一次转发，逻辑仍然是同一套（见上面的栅格版实现）。
 	/// </summary>
-	private static int ResolveTimelineEventIndex(PolygonCivilizationEvent[] events, int targetEpoch)
+	private static int ResolveTimelineEventIndex(CivilizationEvent[] events, int targetEpoch)
 	{
 		if (events.Length == 0)
 		{
@@ -299,11 +304,11 @@ public partial class Main : Control
 	}
 
 	/// <summary>
-	/// 地块版文明事件的同名重载；返回类型是 <see cref="PolygonCivilizationEvent"/>。
-	/// 索引逻辑与栅格版共用同一套（<see cref="ResolveTimelineEventIndex(PolygonCivilizationEvent[], int)"/>），
+	/// 地块版文明事件的同名重载；返回类型是 <see cref="CivilizationEvent"/>。
+	/// 索引逻辑与栅格版共用同一套（<see cref="ResolveTimelineEventIndex(CivilizationEvent[], int)"/>），
 	/// 因此两条路径的"回放焦点"永远指向同一个纪元的同一类事件。
 	/// </summary>
-	private PolygonCivilizationEvent? GetFocusedTimelineEvent(PolygonCivilizationEvent[] events)
+	private CivilizationEvent? GetFocusedTimelineEvent(CivilizationEvent[] events)
 	{
 		if (events.Length == 0)
 		{
@@ -514,10 +519,28 @@ public partial class Main : Control
 		{
 			LandformType.Basin => "地势封闭促使水汽滞留，形成稳定内陆聚落带",
 			LandformType.DryBasin => "封闭低地蒸发强于补给，形成季节性水系与盐沼盆地",
-			LandformType.Valley => "河流下切与侧蚀塑造狭长谷地，交通与农业沿谷串联",
-			LandformType.CoastalPlain => "海陆热力差驱动贸易港与潮汐农业并行发展",
+			LandformType.Canyon => "河流下切与侧蚀塑造狭长险谷，交通险阻而水力充沛",
+			LandformType.Coast => "海陆热力差驱动贸易港与潮汐渔业并行发展",
 			LandformType.Mountain => "垂直高差切割交通，形成堡垒化山口城邦",
 			LandformType.DeepOcean => "深水地形阻隔大陆接触，远洋文明长期隔离演化",
+			LandformType.Trench => "板块俯冲剧烈断陷，深海极渊蕴藏地幔能量与古老沉降",
+			LandformType.MidOceanRidge => "海底扩张裂缝热液喷涌，形成深海热液喷口与新洋壳",
+			LandformType.ShallowOcean => "平缓大陆架阳光透射，浮游生物繁盛，构筑天然海洋渔场",
+			LandformType.Island => "大洋孤岛阻断大陆掠食者，孕育独立而奇异的群岛演化生态",
+			LandformType.Floodplain => "季候性大河漫溢沉积深厚腐殖沃土，孕育人口密集的核心农耕文明",
+			LandformType.Delta => "江河入海口泥沙受顶托分流堆积的扇状水网低湿地，水运枢纽与商贸港口林立",
+			LandformType.Peak => "万仞极峰终年极寒冰雪封冻，成为神明信仰图腾与修真禁区",
+			LandformType.Volcano => "炽热岩浆喷发塑造锥体，地热温泉与金属矿脉促成特色工坊聚集",
+			LandformType.RiftValley => "板块拉张断陷成阶梯裂谷，串联内陆深水湖泊与地堑通道",
+			LandformType.Karst => "溶蚀石林暗河密布，奇峰突兀隐匿古修洞府与天坑秘境",
+			LandformType.DesertDune => "强劲风力吹拂黄沙连绵如浪，水源断绝制约商队通行与绿洲据点",
+			LandformType.Badlands => "暴雨风蚀刻蚀出千沟万壑绝壁，道路崎岖不生草木",
+			LandformType.Glacier => "万年冰川如白龙沿山谷蠕动刨蚀，阻绝生息却蕴藏纯净极寒灵气",
+			LandformType.Fjord => "古冰川U形深槽通连大洋，两侧峭壁千仞避风良港",
+			LandformType.Wetland => "平缓低洼滞水孕育广袤沼泽，水草丛生阻碍大军推进却庇护珍稀物种",
+			LandformType.Plateau => "隆升台地天高地阔，日光充裕但气压稀薄，适于耐寒游牧聚居",
+			LandformType.Hill => "和缓冈峦绵延起伏，梯田茶山与散落山村依山傍水",
+			LandformType.Plain => "沃野千里坦荡无垠，交通四通八达成为帝国争霸主战场",
 			_ => "地势缓变塑造了扩张可达性与资源分布边界"
 		};
 
@@ -636,61 +659,10 @@ public partial class Main : Control
 		};
 	}
 
-	private static string GetLandformDisplayName(LandformType landform)
-	{
-		return landform switch
-		{
-			LandformType.DeepOcean => "深海盆地",
-			LandformType.ShallowSea => "大陆架浅海",
-			LandformType.CoastalPlain => "滨海平原",
-			LandformType.Plain => "内陆平原",
-			LandformType.Basin => "内陆盆地",
-			LandformType.DryBasin => "干旱盆地",
-			LandformType.Valley => "河谷地带",
-			LandformType.RollingHills => "丘陵",
-			LandformType.Upland => "高地",
-			LandformType.Plateau => "高原台地",
-			LandformType.Mountain => "山地",
-			_ => "—"
-		};
-	}
+	private static string GetLandformDisplayName(LandformType landform) => LandformTypeExtensions.GetDisplayName(landform);
 
-	private static string GetLandformDetailText(LandformType landform)
-	{
-		return landform switch
-		{
-			LandformType.DeepOcean => "海底较深，地势封闭度高，水压大",
-			LandformType.ShallowSea => "靠近大陆架的浅海区域，受陆源影响明显",
-			LandformType.CoastalPlain => "近海低地，地势平缓，沉积作用明显",
-			LandformType.Plain => "低起伏广阔地表，坡度小，连通性高",
-			LandformType.Basin => "周边略高、中心偏低的汇水低地",
-			LandformType.DryBasin => "封闭低地且蒸发偏强，水系短促，常见盐碱与冲积扇",
-			LandformType.Valley => "沿河道下切形成的线性低地，坡降与水源梯度明显",
-			LandformType.RollingHills => "中低起伏地形，坡度温和",
-			LandformType.Upland => "高于平原的稳定地表，起伏中等",
-			LandformType.Plateau => "高海拔且相对平坦的抬升地面",
-			LandformType.Mountain => "高差大、坡陡、地形破碎度高",
-			_ => "—"
-		};
-	}
+	private static string GetLandformDetailText(LandformType landform) => LandformTypeExtensions.GetDescription(landform);
 
-	private static Color GetLandformColor(LandformType landform)
-	{
-		return landform switch
-		{
-			LandformType.DeepOcean => new Color(0.039f, 0.122f, 0.302f, 1f),
-			LandformType.ShallowSea => new Color(0.184f, 0.373f, 0.533f, 1f),
-			LandformType.CoastalPlain => new Color(0.788f, 0.847f, 0.682f, 1f),
-			LandformType.Plain => new Color(0.596f, 0.769f, 0.478f, 1f),
-			LandformType.Basin => new Color(0.525f, 0.706f, 0.447f, 1f),
-			LandformType.DryBasin => new Color(0.741f, 0.667f, 0.447f, 1f),
-			LandformType.Valley => new Color(0.455f, 0.651f, 0.408f, 1f),
-			LandformType.RollingHills => new Color(0.690f, 0.745f, 0.467f, 1f),
-			LandformType.Upland => new Color(0.718f, 0.624f, 0.451f, 1f),
-			LandformType.Plateau => new Color(0.620f, 0.553f, 0.388f, 1f),
-			LandformType.Mountain => new Color(0.494f, 0.420f, 0.341f, 1f),
-			_ => Colors.Black
-		};
-	}
+	private static Color GetLandformColor(LandformType landform) => PlanetGeneration.Rendering.BaseThemeColorPalette.GetLandformColor(landform);
 
 }

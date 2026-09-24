@@ -230,6 +230,9 @@ public sealed class SiteIndex
     /// <param name="distance">返回的是**真实距离**，不是平方距离。</param>
     public int FindNearest(double x, double y, int excludeId, out double distance)
     {
+        // 距离计算使用单周期坐标；拖动地图数个周期后也应命中同一地块。
+        x %= _width;
+        if (x < 0d) x += _width;
         var centerColumn = WrapColumn((int)Math.Floor(x / _bucketWidth));
         var centerRow = ClampRow((int)Math.Floor(y / _bucketHeight));
         var bestId = -1;

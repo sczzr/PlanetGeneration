@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_list.gd" id="1_list"]
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_list_item.gd" id="2_item"]
+
+[sub_resource type="Resource" id="item_default"]
+script = ExtResource("2_item")
+id = &"DefaultDemo"
+text_key = "MENU_START_GAME"
+
+[sub_resource type="Resource" id="item_marker"]
+script = ExtResource("2_item")
+id = &"MarkerDemo"
+text_key = "MENU_SETTINGS"
+emphasis = 12
+
+[sub_resource type="Resource" id="item_glow"]
+script = ExtResource("2_item")
+id = &"GlowDemo"
+text_key = "MENU_MODS"
+emphasis = 16
+
+[sub_resource type="Resource" id="item_all"]
+script = ExtResource("2_item")
+id = &"AllDemo"
+text_key = "MENU_QUIT_GAME"
+emphasis = 31
+
+[node name="MenuList" type="VBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+script = ExtResource("1_list")
+items = Array[ExtResource("2_item")]([SubResource("item_default"), SubResource("item_marker"), SubResource("item_glow"), SubResource("item_all")])

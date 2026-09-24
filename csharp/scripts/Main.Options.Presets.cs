@@ -415,15 +415,14 @@ public partial class Main : Control
 
 	private string BuildArchiveOptionLabel(string archivePath)
 	{
-		var fileName = IOPath.GetFileName(archivePath);
 		var timestampText = IOFile.GetLastWriteTime(archivePath).ToString("MM-dd HH:mm");
-		if (!TryReadPersistedCacheEntryFromFile(archivePath, out var payload))
+		if (!TryReadPersistedCacheHeaderFromFile(archivePath, out var seed, out var mapWidth, out var mapHeight, out var compareMode))
 		{
-			return $"{timestampText} | {fileName}";
+			return $"{timestampText} | {IOPath.GetFileName(archivePath)}";
 		}
 
-		var modeText = payload.CompareMode && payload.Compare != null ? "对比" : "单图";
-		return $"{timestampText} | seed:{payload.Seed} | {payload.MapWidth}x{payload.MapHeight} | {modeText}";
+		var modeText = compareMode ? "对比" : "单图";
+		return $"{timestampText} | seed:{seed} | {mapWidth}x{mapHeight} | {modeText}";
 	}
 
 	private void SelectElevationStyleOption(ElevationStyle style)
@@ -445,14 +444,17 @@ public partial class Main : Control
 	private void SetupContinentCountOptions()
 	{
 		_continentCountOption.Clear();
-		_continentCountOption.AddItem("2 块", 2);
-		_continentCountOption.AddItem("3 块", 3);
-		_continentCountOption.AddItem("4 块", 4);
+		_continentCountOption.AddItem("2 块大陆", 2);
+		_continentCountOption.AddItem("3 块大陆", 3);
+		_continentCountOption.AddItem("4 块大陆", 4);
+		_continentCountOption.AddItem("5 块大陆", 5);
+		_continentCountOption.AddItem("6 块大陆", 6);
+		_continentCountOption.AddItem("7 块大陆", 7);
 		SelectContinentCountOption(_continentCount);
 
 		_continentCountOption.ItemSelected += index =>
 		{
-			_continentCount = Mathf.Clamp(_continentCountOption.GetItemId((int)index), 2, 4);
+			_continentCount = Mathf.Clamp(_continentCountOption.GetItemId((int)index), 1, 7);
 			UpdateContinentCountVisibility();
 
 			if (_terrainMorphology == TerrainMorphology.Continents)
@@ -498,7 +500,12 @@ public partial class Main : Control
 		_terrainOceanicRatio = Mathf.Clamp(preset.OceanicRatio, 0.05f, 0.95f);
 		_terrainContinentBias = Mathf.Clamp(preset.ContinentBias, 0f, 1f);
 		_terrainMorphology = preset.Morphology;
-		_continentCount = Mathf.Clamp(preset.ContinentCount, 2, 4);
+		_continentCount = Mathf.Clamp(preset.ContinentCount, 1, 7);
+
+		if (preset.Mountain.HasValue)
+		{
+			ApplyMountainPreset(preset.Mountain.Value, regenerate: false, persist: regenerate);
+		}
 
 		_seaLevelSlider.SetValueNoSignal(SeaLevel);
 		_heatSlider.SetValueNoSignal(HeatFactor);
@@ -519,7 +526,18 @@ public partial class Main : Control
 			_civilAggression,
 			_speciesDiversity,
 			_currentEpoch,
-			_polygonTileMode);
+			_polygonTileMode,
+			SeaLevel,
+			HeatFactor,
+			MoistureFactor,
+			ErosionIterations,
+			RiverDensity,
+			EnableRivers,
+			_interiorRelief,
+			_orogenyStrength,
+			_subductionArcRatio,
+			_continentalAge,
+			Seed);
 
 		if (regenerate)
 		{

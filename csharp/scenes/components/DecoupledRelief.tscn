@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://decoupled_relief_component_uid"]
+
+[ext_resource type="Script" path="res://scripts/Rendering/DecoupledRelief.cs" id="1_relief"]
+
+[node name="DecoupledRelief" type="Node2D"]
+script = ExtResource("1_relief")

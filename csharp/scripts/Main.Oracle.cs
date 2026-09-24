@@ -1,3 +1,4 @@
+using PlanetGeneration.Application;
 using Godot;
 using PlanetGeneration.LLM;
 using PlanetGeneration.WorldGen;
@@ -89,6 +90,20 @@ public partial class Main
                 ? "LoreTabs not found, using legacy node lookup."
                 : "Found LoreTabs, using tabbed layout.",
             verbose: true);
+
+        // 场景里把中文标题存放在子节点的 _tab_title 元数据中（与主控制台同一约定），
+        // 不套用的话 TabContainer 会直接显示内部节点名 LoreTab / OracleTab。
+        if (_loreTabs != null)
+        {
+            for (var i = 0; i < _loreTabs.GetTabCount(); i++)
+            {
+                var tabControl = _loreTabs.GetTabControl(i);
+                if (tabControl != null && tabControl.HasMeta("_tab_title"))
+                {
+                    _loreTabs.SetTabTitle(i, tabControl.GetMeta("_tab_title").AsString());
+                }
+            }
+        }
 
         ResolveOracleNodes();
 

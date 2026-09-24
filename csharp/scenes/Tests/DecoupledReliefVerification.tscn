@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://decoupled_relief_test_uid"]
+
+[ext_resource type="Script" path="res://scripts/Tests/DecoupledReliefVerification.cs" id="1_test"]
+
+[node name="DecoupledReliefVerification" type="Node"]
+script = ExtResource("1_test")

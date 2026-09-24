@@ -19,38 +19,44 @@ public sealed class WorldSimulationService
         int? civilAggression = null,
         int? magicDensity = null)
     {
-        return Task.Run(() =>
+        return Task.Run(() => ReSimulateEpoch(baseSnapshot, newEpoch, speciesDiversity, civilAggression, magicDensity));
+    }
+
+    /// <summary>同步领域运算；调用方需要后台执行时使用 ReSimulateEpochAsync。</summary>
+    public WorldSnapshot ReSimulateEpoch(
+        WorldSnapshot baseSnapshot, int newEpoch, int? speciesDiversity = null,
+        int? civilAggression = null, int? magicDensity = null)
+    {
+        ArgumentNullException.ThrowIfNull(baseSnapshot);
+        var options = baseSnapshot.Options with
         {
-            var options = baseSnapshot.Options with
-            {
-                Epoch = newEpoch,
-                SpeciesDiversity = speciesDiversity ?? baseSnapshot.Options.SpeciesDiversity,
-                CivilAggression = civilAggression ?? baseSnapshot.Options.CivilAggression,
-                MagicDensity = magicDensity ?? baseSnapshot.Options.MagicDensity,
-            };
+            Epoch = newEpoch,
+            SpeciesDiversity = speciesDiversity ?? baseSnapshot.Options.SpeciesDiversity,
+            CivilAggression = civilAggression ?? baseSnapshot.Options.CivilAggression,
+            MagicDensity = magicDensity ?? baseSnapshot.Options.MagicDensity,
+        };
 
-            var fields = baseSnapshot.Fields.Clone();
+        var fields = baseSnapshot.Fields.Clone();
 
-            var ecology = PolygonEcologySimulator.Simulate(
-                baseSnapshot.Geometry,
-                fields,
-                options.Seed,
-                options.Epoch,
-                options.SpeciesDiversity,
-                options.CivilAggression,
-                options.MagicDensity,
-                options.SeaLevel);
+        var ecology = PolygonEcologySimulator.Simulate(
+            baseSnapshot.Geometry,
+            fields,
+            options.Seed,
+            options.Epoch,
+            options.SpeciesDiversity,
+            options.CivilAggression,
+            options.MagicDensity,
+            options.SeaLevel);
 
-            var civilization = PolygonCivilizationSimulator.Simulate(
-                baseSnapshot.Geometry,
-                fields,
-                options.Seed,
-                options.Epoch,
-                options.CivilAggression,
-                options.SpeciesDiversity,
-                options.SeaLevel);
+        var civilization = PolygonCivilizationSimulator.Simulate(
+            baseSnapshot.Geometry,
+            fields,
+            options.Seed,
+            options.Epoch,
+            options.CivilAggression,
+            options.SpeciesDiversity,
+            options.SeaLevel);
 
-            return baseSnapshot.WithSimulation(options, fields, ecology, civilization);
-        });
+        return baseSnapshot.WithSimulation(options, fields, ecology, civilization);
     }
 }

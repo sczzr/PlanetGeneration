@@ -20,6 +20,7 @@ public partial class Main : Control
 
 	public override void _Ready()
 	{
+		ConnectMainMenu();
 		var headerController = GetNodeOrNull<MainHeaderController>("MainLayout/ConsolePanel/ConsoleVBox/HeaderPanel");
 		var controlsController = GetNodeOrNull<GeneratorControlsController>("MainLayout/ConsolePanel/ConsoleVBox/ConsoleTabs");
 		_controlsController = controlsController;
@@ -182,6 +183,7 @@ public partial class Main : Control
 			headerController.ExportPngRequested += OnExportPngPressed;
 			headerController.ExportJsonRequested += OnExportJsonPressed;
 			headerController.ThemeToggleRequested += OnThemeTogglePressed;
+			headerController.GuohuaMapToggleRequested += OnGuohuaMapTogglePressed;
 		}
 		else
 		{
@@ -198,7 +200,7 @@ public partial class Main : Control
 		_persistCacheGroupButton.Pressed += OnSaveArchivePressed;
 		_clearCacheButton.Pressed += OnClearCachePressed;
 
-		if (controlsController != null)
+		if (controlsController != null && controlsController.HasParamControls)
 		{
 			controlsController.ApplyRequested += OnGeneratePressed;
 			controlsController.RandomRequested += OnRandomPressed;
@@ -212,7 +214,6 @@ public partial class Main : Control
 			controlsController.ContinentalAgeChanged += OnContinentalAgeChanged;
 			controlsController.RiversToggled += OnRiversToggled;
 			controlsController.RiverDensityChanged += OnRiverDensityChanged;
-			SetupLeftPanelSwitches();
 		}
 		else
 		{
@@ -228,6 +229,7 @@ public partial class Main : Control
 			_subductionArcRatioSlider.ValueChanged += OnSubductionArcRatioChanged;
 			_continentalAgeSlider.ValueChanged += OnContinentalAgeChanged;
 		}
+		SetupLeftPanelSwitches();
 		_magicSlider.ValueChanged += OnMagicDensityChanged;
 		_aggressionSlider.ValueChanged += OnCivilAggressionChanged;
 		_diversitySlider.ValueChanged += OnSpeciesDiversityChanged;
@@ -253,23 +255,23 @@ public partial class Main : Control
 		};
 
 		SetRandomSeed();
-		_seedSpin.Value = Seed;
-		_seaLevelSlider.Value = SeaLevel;
-		_heatSlider.Value = HeatFactor;
-		_moistureSlider.Value = MoistureFactor;
-		_erosionSlider.Value = ErosionIterations;
-		_riverDensitySlider.Value = RiverDensity;
-		_windArrowDensitySlider.Value = WindArrowDensity;
-		_basinSensitivitySlider.Value = BasinSensitivity;
-		_interiorReliefSlider.Value = _interiorRelief;
-		_orogenyStrengthSlider.Value = _orogenyStrength;
-		_subductionArcRatioSlider.Value = _subductionArcRatio;
-		_continentalAgeSlider.Value = _continentalAge;
-		_magicSlider.Value = _magicDensity;
-		_aggressionSlider.Value = _civilAggression;
-		_diversitySlider.Value = _speciesDiversity;
+		_seedSpin.SetValueNoSignal(Seed);
+		_seaLevelSlider.SetValueNoSignal(SeaLevel);
+		_heatSlider.SetValueNoSignal(HeatFactor);
+		_moistureSlider.SetValueNoSignal(MoistureFactor);
+		_erosionSlider.SetValueNoSignal(ErosionIterations);
+		_riverDensitySlider.SetValueNoSignal(RiverDensity);
+		_windArrowDensitySlider.SetValueNoSignal(WindArrowDensity);
+		_basinSensitivitySlider.SetValueNoSignal(BasinSensitivity);
+		_interiorReliefSlider.SetValueNoSignal(_interiorRelief);
+		_orogenyStrengthSlider.SetValueNoSignal(_orogenyStrength);
+		_subductionArcRatioSlider.SetValueNoSignal(_subductionArcRatio);
+		_continentalAgeSlider.SetValueNoSignal(_continentalAge);
+		_magicSlider.SetValueNoSignal(_magicDensity);
+		_aggressionSlider.SetValueNoSignal(_civilAggression);
+		_diversitySlider.SetValueNoSignal(_speciesDiversity);
 		_uiFontScaleSlider.SetValueNoSignal(_uiFontScale * 100f);
-		_timelineSlider.Value = _currentEpoch;
+		_timelineSlider.SetValueNoSignal(_currentEpoch);
 		UpdateTimelineReplayCursor(Array.Empty<CivilizationEpochEvent>());
 		_riverToggle.SetPressedNoSignal(EnableRivers);
 		UpdateRiverDensityControlState();
@@ -287,7 +289,6 @@ public partial class Main : Control
 		_mapTexture.GuiInput += OnMapTextureGuiInput;
 		_mapTexture.MouseExited += OnMapTextureMouseExited;
 
-		ConnectMainMenu();
 		ThemeManager.Instance?.RefreshTheme();
 		UpdateLabels();
 		UpdateLorePanel();
@@ -306,6 +307,12 @@ public partial class Main : Control
 			_nextEpochButton.Disabled = !value;
 			SaveAdvancedSettings();
 		};
+
+		if (_mainMenu != null && _mainMenu.Visible)
+		{
+			SetConsolePanelVisible(false);
+			SetInGameHudVisible(false);
+		}
 	}
 
 	private void ShowAdvancedSettingsPage()
@@ -425,7 +432,7 @@ public partial class Main : Control
 		}
 
 		var sample = PlanetGeneration.Core.Application.WorldQueryService.GetCellSample(_primarySnapshot, cellId);
-		var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
+		var detailText = $"地块 #{cellId} · {sample.Biome} | 地貌:{sample.Landform} | 矿:{FormatCellOreDetail(sample)}\n高度:{sample.Height:0.00} | 气温:{sample.Temperature:0.00} | 湿度:{sample.Moisture:0.00}\n生态健康:{sample.EcologyHealth * 100f:0.0}% | 势力:{(sample.PolityId >= 0 ? $"政体 #{sample.PolityId}" : "中立荒野")}";
 		if (sample.Settlement != null)
 		{
 			detailText += $"\n聚落:{sample.Settlement.Name} ({sample.Settlement.Rank})";

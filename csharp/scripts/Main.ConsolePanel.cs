@@ -23,6 +23,14 @@ public partial class Main : Control
 
 		_consoleTween?.Kill();
 
+		if ((_mainMenu != null && _mainMenu.Visible) || (_worldSetupMenu != null && _worldSetupMenu.IsOpen) || _primaryWorld == null)
+		{
+			_consolePanel.Visible = false;
+			if (_consoleCollapseTab != null) _consoleCollapseTab.Visible = false;
+			if (_consoleSummonTab != null) _consoleSummonTab.Visible = false;
+			return;
+		}
+
 		var panelWidth = _consolePanel.Size.X > 0 ? _consolePanel.Size.X : 372.0f;
 		var targetVisibleX = 12.0f;
 		var targetHiddenX = -(panelWidth + 24.0f);

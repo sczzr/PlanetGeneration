@@ -29,6 +29,23 @@ public static class CellFieldSampler
         SampleDiscrete(geometry, fields.Plates.BoundaryTypes, output.PlateBoundary, width, height);
         SampleDiscrete(geometry, fields.Rock, output.Rock, width, height);
         SampleDiscrete(geometry, fields.Ore, output.Ore, width, height);
+
+        if (fields.IndustrialOre != null)
+        {
+            SampleDiscrete(geometry, fields.IndustrialOre, output.IndustrialOre, width, height);
+        }
+        if (fields.SupernaturalOre != null)
+        {
+            SampleDiscrete(geometry, fields.SupernaturalOre, output.SupernaturalOre, width, height);
+        }
+        if (fields.CardOre != null)
+        {
+            SampleDiscrete(geometry, fields.CardOre, output.CardOre, width, height);
+        }
+        if (fields.Leyline != null)
+        {
+            SampleDiscrete(geometry, fields.Leyline, output.Leyline, width, height);
+        }
     }
 
     /// <summary>连续量面积加权采样，零像素覆盖时质心双线性插值回退。</summary>

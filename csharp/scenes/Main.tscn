@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://d0akra8y480bv" path="res://scripts/ThemeManager.cs" id="3_theme"]
 [ext_resource type="Theme" uid="uid://wy8e3hpiiulm" path="res://resources/themes/ChineseTheme.tres" id="4_chinese"]
 [ext_resource type="Theme" uid="uid://dxdup7k6lfxax" path="res://resources/themes/SteampunkTheme.tres" id="5_steampunk"]
+[ext_resource type="PackedScene" path="res://scenes/pause_menu.tscn" id="6_pause"]
 
 [node name="Main" type="Control" unique_id=860675360]
 layout_mode = 3
@@ -53,3 +54,10 @@ offset_top = 132.0
 offset_right = 240.0
 offset_bottom = 160.0
 text = "本次会话不再提示"
+
+[node name="OverlayLayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="PauseMenu" parent="OverlayLayer" instance=ExtResource("6_pause")]
+unique_name_in_owner = true
+visible = false

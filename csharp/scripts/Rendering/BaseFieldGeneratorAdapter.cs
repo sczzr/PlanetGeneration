@@ -34,8 +34,8 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
         var oceanicRatio = options.OceanicRatio;
         var plateResult = _plateGenerator.Generate(width, height, plateCount, seed, oceanicRatio);
 
-        // 2. 资源分布
-        var (rockRaster, oreRaster) = _resourceGenerator.Generate(width, height, seed, plateResult.BoundaryTypes);
+        // 2. 岩性与矿化异常度
+        var (rockRaster, oreAnomaly) = _resourceGenerator.Generate(width, height, seed, plateResult.BoundaryTypes);
 
         // 3. 高度场基础与地貌掩膜
         var elevation = _elevationGenerator.Generate(width, height, seed, seaLevel, plateResult);
@@ -78,7 +78,24 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
             seed,
             options.MoistureFactor);
 
-        // 6. 转换格式至 Core 域模型
+        // 6. 矿产与多层资源生成（结合地质构造、温湿度环境与灵脉）
+        var resCtx = new ResourceContext
+        {
+            Width = width,
+            Height = height,
+            Seed = seed,
+            Rocks = rockRaster,
+            Anomaly = oreAnomaly,
+            Elevation = elevation,
+            SeaLevel = seaLevel,
+            MagicDensity = options.MagicDensity,
+            Temperature = temperature,
+            Moisture = moisture,
+            Boundaries = plateResult.BoundaryTypes
+        };
+        var deposits = _resourceGenerator.GenerateAllDeposits(resCtx);
+
+        // 7. 转换格式至 Core 域模型
         var corePlateSites = new List<PlateSiteInfo>(plateResult.Sites.Count);
         for (var i = 0; i < plateResult.Sites.Count; i++)
         {
@@ -126,12 +143,21 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
 
         var rockBytes = new byte[width, height];
         var oreBytes = new byte[width, height];
+        var indBytes = new byte[width, height];
+        var supBytes = new byte[width, height];
+        var crdBytes = new byte[width, height];
+        var leyBytes = new byte[width, height];
+
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
                 rockBytes[x, y] = (byte)rockRaster[x, y];
-                oreBytes[x, y] = (byte)oreRaster[x, y];
+                oreBytes[x, y] = (byte)deposits.PrimaryOre[x, y];
+                indBytes[x, y] = (byte)deposits.IndustrialOre[x, y];
+                supBytes[x, y] = (byte)deposits.SupernaturalOre[x, y];
+                crdBytes[x, y] = (byte)deposits.CardOre[x, y];
+                leyBytes[x, y] = deposits.Leyline[x, y];
             }
         }
 
@@ -145,7 +171,11 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
             Moisture = moisture,
             Wind = wind,
             Rock = rockBytes,
-            Ore = oreBytes
+            Ore = oreBytes,
+            IndustrialOre = indBytes,
+            SupernaturalOre = supBytes,
+            CardOre = crdBytes,
+            Leyline = leyBytes
         };
     }
 
@@ -239,12 +269,16 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
         var (shapePower, upliftMax, edgeDropMax, contourAmp, fragmentAmp) = morphology switch
         {
             TerrainMorphology.Supercontinent => (0.82f, 0.40f, 0.22f, 0.14f, 0.04f),
-            TerrainMorphology.Continents => (1.12f, 0.30f, 0.20f, 0.18f, 0.12f),
+            TerrainMorphology.Continents => (1.10f, 0.38f, 0.28f, 0.14f, 0.08f),
             TerrainMorphology.Archipelago => (1.48f, 0.14f, 0.24f, 0.24f, 0.22f),
             TerrainMorphology.FracturedIslands => (1.65f, 0.11f, 0.27f, 0.28f, 0.30f),
             TerrainMorphology.ShallowFragments => (1.32f, 0.16f, 0.20f, 0.20f, 0.16f),
             TerrainMorphology.ColdContinent => (1.00f, 0.29f, 0.19f, 0.17f, 0.10f),
             TerrainMorphology.HotWasteland => (1.08f, 0.27f, 0.17f, 0.15f, 0.09f),
+            TerrainMorphology.PolarIcelands => (1.05f, 0.62f, 0.50f, 0.20f, 0.16f),
+            TerrainMorphology.AtollChain => (1.90f, 0.80f, 0.60f, 0.30f, 0.34f),
+            TerrainMorphology.InlandSea => (0.90f, 0.85f, 0.70f, 0.06f, 0.03f),
+            TerrainMorphology.RiftHighlands => (1.02f, 0.58f, 0.34f, 0.30f, 0.24f),
             _ => (1.20f, 0.24f, 0.16f, 0.16f, 0.08f)
         };
 
@@ -271,10 +305,9 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
             for (var x = 0; x < width; x++)
             {
                 var px = width <= 1 ? 0f : (float)x / (width - 1);
-                var dx = Math.Abs(px - 0.5f);
-                if (dx > 0.5f) dx = 1f - dx;
-                var dy = py - 0.5f;
-                var radial = Mathf.Sqrt((dx * dx * 4f) + (dy * dy * 4f));
+                var radial = ComputeWrappedRadial(px, py, 0.5f, 0.5f);
+                var lobeA = ComputeWrappedRadial(px, py, 0.34f, 0.56f);
+                var lobeC = ComputeWrappedRadial(px, py, 0.18f, 0.42f);
 
                 var nx = Mathf.Cos((x * 2f * Mathf.Pi) / Mathf.Max(width, 1));
                 var nz = Mathf.Sin((x * 2f * Mathf.Pi) / Mathf.Max(width, 1));
@@ -282,16 +315,48 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
                 var morphologyBase = morphology switch
                 {
                     TerrainMorphology.Supercontinent => Mathf.Clamp(1f - 1.24f * radial, 0f, 1f),
+                    TerrainMorphology.Continents => BuildContinentsBase(radial, fragmentNoise, nx, ny, nz, px, py, continentCount, seed),
                     TerrainMorphology.Archipelago => Mathf.Clamp(0.56f - 0.42f * radial, 0f, 1f),
                     TerrainMorphology.FracturedIslands => Mathf.Clamp(0.52f - 0.34f * radial, 0f, 1f),
                     TerrainMorphology.ShallowFragments => Mathf.Clamp(0.62f - 0.48f * radial, 0f, 1f),
+                    TerrainMorphology.ColdContinent => Mathf.Max(
+                        Mathf.Clamp(1f - 1.55f * radial, 0f, 1f),
+                        Mathf.Clamp(1f - 1.95f * lobeA, 0f, 1f) * 0.65f),
+                    TerrainMorphology.HotWasteland => Mathf.Max(
+                        Mathf.Clamp(1f - 1.62f * radial, 0f, 1f),
+                        Mathf.Clamp(1f - 2.10f * lobeC, 0f, 1f) * 0.45f),
+                    TerrainMorphology.PolarIcelands => Mathf.Max(
+                        Mathf.Clamp(1f - 2.55f * py, 0f, 1f),
+                        Mathf.Clamp(1f - 2.55f * (1f - py), 0f, 1f)),
+                    TerrainMorphology.AtollChain => Mathf.Clamp(0.46f - 1.90f * Mathf.Abs(py - 0.5f), 0f, 1f),
+                    TerrainMorphology.InlandSea => Mathf.Clamp(
+                        Mathf.Clamp(1f - 1.05f * radial, 0f, 1f)
+                        - 1.15f * Mathf.Clamp(1f - 3.40f * radial, 0f, 1f),
+                        0f,
+                        1f),
+                    TerrainMorphology.RiftHighlands => Mathf.Clamp(1f - 1.18f * radial, 0f, 1f),
                     _ => Mathf.Clamp(1f - 1.45f * radial, 0f, 1f)
                 };
 
                 var contour = contourNoise.GetNoise3D(2.6f * nx, 2.6f * ny, 2.6f * nz);
                 var fragments = fragmentNoise.GetNoise3D(6.2f * nx, 6.2f * ny, 6.2f * nz);
 
-                var falloff = morphologyBase + (contour * contourAmp * (0.55f + 0.45f * bias)) + (fragments * fragmentAmp);
+                var falloff = morphologyBase;
+                if (morphology == TerrainMorphology.Continents)
+                {
+                    if (morphologyBase > 0.001f)
+                    {
+                        falloff += (contour * contourAmp * (0.55f + 0.45f * bias) + fragments * fragmentAmp) * Mathf.Sqrt(morphologyBase);
+                    }
+                    else
+                    {
+                        falloff = 0f;
+                    }
+                }
+                else
+                {
+                    falloff += contour * contourAmp * (0.55f + 0.45f * bias) + fragments * fragmentAmp;
+                }
                 falloff = Mathf.Clamp(falloff, 0f, 1f);
                 falloff = Mathf.Pow(falloff, shapePower);
 
@@ -304,5 +369,173 @@ public sealed class BaseFieldGeneratorAdapter : IBaseFieldGenerator
         });
 
         return result;
+    }
+
+    private static readonly Vector2[] ContinentCenters2 =
+    {
+        new Vector2(0.30f, 0.44f),
+        new Vector2(0.74f, 0.56f)
+    };
+
+    private static readonly Vector2[] ContinentCenters3 =
+    {
+        new Vector2(0.34f, 0.56f),
+        new Vector2(0.68f, 0.45f),
+        new Vector2(0.18f, 0.42f)
+    };
+
+    private static readonly Vector2[] ContinentCenters4 =
+    {
+        new Vector2(0.12f, 0.34f),
+        new Vector2(0.37f, 0.70f),
+        new Vector2(0.63f, 0.30f),
+        new Vector2(0.88f, 0.66f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes1 =
+    {
+        (0.50f, 0.50f, 0.26f, 0.22f, 1.00f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes2 =
+    {
+        (0.26f, 0.50f, 0.15f, 0.20f, 1.00f),
+        (0.74f, 0.50f, 0.15f, 0.20f, 1.00f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes3 =
+    {
+        (0.28f, 0.35f, 0.14f, 0.14f, 1.00f),
+        (0.72f, 0.35f, 0.14f, 0.14f, 1.00f),
+        (0.50f, 0.70f, 0.15f, 0.14f, 1.00f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes4 =
+    {
+        (0.27f, 0.32f, 0.13f, 0.12f, 1.00f),
+        (0.27f, 0.68f, 0.13f, 0.12f, 1.00f),
+        (0.73f, 0.32f, 0.13f, 0.12f, 1.00f),
+        (0.73f, 0.68f, 0.13f, 0.12f, 1.00f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes5 =
+    {
+        // 1. 西北大洲 (North-West Continent)
+        (0.22f, 0.30f, 0.13f, 0.12f, 1.00f),
+        (0.25f, 0.39f, 0.07f, 0.07f, 0.94f),
+
+        // 2. 西南大洲 (South-West Continent)
+        (0.22f, 0.70f, 0.12f, 0.13f, 0.98f),
+        (0.25f, 0.61f, 0.06f, 0.07f, 0.92f),
+
+        // 3. 中北大洲 (North-Central Continent)
+        (0.52f, 0.28f, 0.14f, 0.12f, 1.00f),
+        (0.54f, 0.38f, 0.07f, 0.07f, 0.94f),
+
+        // 4. 中南大洲 (South-Central Continent)
+        (0.52f, 0.72f, 0.13f, 0.13f, 0.98f),
+        (0.50f, 0.62f, 0.07f, 0.07f, 0.92f),
+
+        // 5. 东部大洲 (Eastern Continent)
+        (0.84f, 0.50f, 0.13f, 0.15f, 0.98f),
+        (0.88f, 0.40f, 0.06f, 0.08f, 0.92f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes6 =
+    {
+        (0.20f, 0.32f, 0.10f, 0.11f, 1.00f),
+        (0.52f, 0.32f, 0.10f, 0.11f, 1.00f),
+        (0.84f, 0.32f, 0.10f, 0.11f, 1.00f),
+        (0.20f, 0.68f, 0.10f, 0.11f, 0.98f),
+        (0.52f, 0.68f, 0.10f, 0.11f, 0.98f),
+        (0.84f, 0.68f, 0.10f, 0.11f, 0.98f)
+    };
+
+    private static readonly (float Cx, float Cy, float Rx, float Ry, float Height)[] ContinentLobes7 =
+    {
+        (0.18f, 0.30f, 0.09f, 0.10f, 1.00f),
+        (0.50f, 0.30f, 0.09f, 0.10f, 1.00f),
+        (0.82f, 0.30f, 0.09f, 0.10f, 1.00f),
+        (0.34f, 0.50f, 0.09f, 0.09f, 0.96f),
+        (0.18f, 0.70f, 0.09f, 0.10f, 0.98f),
+        (0.56f, 0.70f, 0.09f, 0.10f, 0.98f),
+        (0.88f, 0.70f, 0.09f, 0.10f, 0.98f)
+    };
+
+    private static float BuildContinentsBase(float radial, FastNoiseLite fragmentNoise, float nx, float ny, float nz, float px, float py, int continentCount, int seed)
+    {
+        var normalizedCount = Mathf.Clamp(continentCount, 1, 7);
+        var lobes = normalizedCount switch
+        {
+            1 => ContinentLobes1,
+            2 => ContinentLobes2,
+            3 => ContinentLobes3,
+            4 => ContinentLobes4,
+            6 => ContinentLobes6,
+            7 => ContinentLobes7,
+            _ => ContinentLobes5
+        };
+
+        // 球面域扭曲：使各大洲形态摆脱机械椭圆感，形成自然弧形山系与海湾走势
+        var warpX = fragmentNoise.GetNoise3D(2.4f * nx + 13.7f, 2.4f * ny - 9.2f, 2.4f * nz + seed * 0.0001f) * 0.032f;
+        var warpY = fragmentNoise.GetNoise3D(2.4f * nx - 8.1f, 2.4f * ny + 11.4f, 2.4f * nz - seed * 0.0001f) * 0.032f;
+        var warpedPx = px + warpX;
+        var warpedPy = Mathf.Clamp(py + warpY, 0.02f, 0.98f);
+
+        // 2 级球面分形噪声，丰富大陆边缘的岬角、半岛与海湾，消除机械几何感
+        var coastNoise = fragmentNoise.GetNoise3D(4.2f * nx + seed * 0.0003f, 4.2f * ny, 4.2f * nz - seed * 0.0002f);
+        var fineNoise = fragmentNoise.GetNoise3D(9.6f * nx, 9.6f * ny, 9.6f * nz) * 0.5f;
+        var fractalDistort = coastNoise * 0.16f + fineNoise * 0.08f;
+
+        var baseShape = 0f;
+        for (var index = 0; index < lobes.Length; index++)
+        {
+            var (cx, cy, rx, ry, height) = lobes[index];
+            var dx = Mathf.Abs(warpedPx - cx);
+            if (dx > 0.5f)
+            {
+                dx = 1f - dx;
+            }
+            var dy = Mathf.Abs(warpedPy - cy);
+
+            // 各向异性椭圆尺度归一化
+            var nxDist = dx / rx;
+            var nyDist = dy / ry;
+            var dist = Mathf.Sqrt(nxDist * nxDist + nyDist * nyDist);
+
+            // 分形海岸扰动
+            var effectiveDist = dist + fractalDistort;
+
+            if (effectiveDist < 1.02f)
+            {
+                float continentVal;
+                if (effectiveDist <= 0.60f)
+                {
+                    continentVal = height;
+                }
+                else
+                {
+                    // 从 0.60 到 1.02 平滑三次 Hermite 阶跃，形成自然平缓的大陆架与海岸坡降
+                    var t = (effectiveDist - 0.60f) / 0.42f;
+                    var smooth = 1f - (t * t * (3f - 2f * t));
+                    continentVal = smooth * height;
+                }
+                baseShape = Mathf.Max(baseShape, continentVal);
+            }
+        }
+
+        return Mathf.Clamp(baseShape, 0f, 1f);
+    }
+
+    private static float ComputeWrappedRadial(float x, float y, float cx, float cy)
+    {
+        var dx = Mathf.Abs(x - cx);
+        if (dx > 0.5f)
+        {
+            dx = 1f - dx;
+        }
+
+        var dy = Mathf.Abs(y - cy);
+        return Mathf.Sqrt(dx * dx + dy * dy);
     }
 }

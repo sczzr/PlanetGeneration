@@ -1,0 +1,610 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/settings_menu.gd" id="1_script"]
+[ext_resource type="Theme" path="res://assets/themes/main_menu.tres" id="2_theme"]
+[ext_resource type="Script" path="res://scripts/container_appear.gd" id="3_appear"]
+[ext_resource type="Script" path="res://addons/menu_fx/scripts/menu_fx_sound.gd" id="4_fx_sound"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_open.wav" id="5_sfx_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_close.wav" id="6_sfx_close"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/ui_click.wav" id="7_sfx_click"]
+[ext_resource type="Texture2D" path="res://assets/textures/ui/settings_backdrop.png" id="8_backdrop"]
+[ext_resource type="Shader" path="res://assets/shaders/frosted_glass_background.gdshader" id="9_frosted_shader"]
+[ext_resource type="Script" path="res://scripts/rolling_number_label.gd" id="10_rolling_label"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_frosted"]
+shader = ExtResource("9_frosted_shader")
+shader_parameter/blur_level = 3.0
+shader_parameter/brightness = 0.98
+shader_parameter/saturation = 1.05
+shader_parameter/tint = Color(0.92, 0.96, 0.95, 1)
+shader_parameter/tint_amount = 0.1
+shader_parameter/vignette_start = 0.45
+shader_parameter/vignette_strength = 0.15
+shader_parameter/grain_strength = 0.008
+
+[node name="SettingsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_fx_sound")
+open_sound = ExtResource("5_sfx_open")
+close_sound = ExtResource("6_sfx_close")
+click_sound = ExtResource("7_sfx_click")
+
+[node name="Backdrop" type="TextureRect" parent="."]
+unique_name_in_owner = true
+material = SubResource("ShaderMaterial_frosted")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_filter = 4
+texture = ExtResource("8_backdrop")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="FrameArea" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 64.0
+offset_top = 28.0
+offset_right = -64.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+ratio = 1.9
+stretch_mode = 2
+alignment_horizontal = 1
+alignment_vertical = 1
+
+[node name="Frame" type="Control" parent="FrameArea"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Root" type="MarginContainer" parent="FrameArea/Frame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 22
+
+[node name="RootVBox" type="VBoxContainer" parent="FrameArea/Frame/Root"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="HeaderRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="FrameArea/Frame/Root/RootVBox/HeaderRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+text = "MENU_SETTINGS"
+
+[node name="HeaderSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="CloseButton" type="Button" parent="FrameArea/Frame/Root/RootVBox/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+
+[node name="Body" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 28
+
+[node name="NavColumn" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(216, 0)
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NavGeneral" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "SETTINGS_SECTION_GENERAL"
+
+[node name="NavSepGeneral" type="ColorRect" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="NavDisplay" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "SETTINGS_SECTION_DISPLAY"
+
+[node name="NavSepDisplay" type="ColorRect" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="NavAudio" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "SETTINGS_SECTION_AUDIO"
+
+[node name="NavSepAudio" type="ColorRect" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="NavQuality" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "SETTINGS_SECTION_QUALITY"
+
+[node name="NavSepQuality" type="ColorRect" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="NavKeybind" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "SETTINGS_SECTION_KEYBIND"
+
+[node name="NavSepKeybind" type="ColorRect" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="NavSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/NavColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ContentColumn" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="GeneralPage" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 1
+duration = 0.25
+delay_appear = 0.04
+delay_between_elements = 0.04
+slide_offset = 36.0
+
+[node name="PageTitle" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_GENERAL"
+
+[node name="PageDesc" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_GENERAL_DESC"
+
+[node name="TopSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="LanguageRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LanguageLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage/LanguageRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_LANGUAGE"
+
+[node name="LanguageOption" type="OptionButton" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage/LanguageRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+
+[node name="BottomSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/GeneralPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="DisplayPage" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 1
+duration = 0.25
+delay_appear = 0.04
+delay_between_elements = 0.04
+slide_offset = 36.0
+
+[node name="PageTitle" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_DISPLAY"
+
+[node name="PageDesc" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_DISPLAY_DESC"
+
+[node name="TopSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ModeRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ModeLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/ModeRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_DISPLAY_MODE"
+
+[node name="ModeOption" type="OptionButton" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/ModeRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+
+[node name="ResolutionRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResolutionLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/ResolutionRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_RESOLUTION"
+
+[node name="ResolutionOption" type="OptionButton" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/ResolutionRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
+
+[node name="VSyncRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="VSyncLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/VSyncRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_VSYNC"
+
+[node name="VSyncOn" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/VSyncRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 38)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_ENABLED"
+
+[node name="VSyncOff" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage/VSyncRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 38)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_DISABLED"
+
+[node name="BottomSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/DisplayPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="AudioPage" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 1
+duration = 0.25
+delay_appear = 0.04
+delay_between_elements = 0.04
+slide_offset = 36.0
+
+[node name="PageTitle" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_AUDIO"
+
+[node name="PageDesc" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_AUDIO_DESC"
+
+[node name="TopSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="MasterRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MasterLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MasterRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_MASTER_VOLUME"
+
+[node name="MasterSlider" type="HSlider" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MasterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+step = 1.0
+
+[node name="MasterValue" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MasterRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "100%"
+horizontal_alignment = 2
+script = ExtResource("10_rolling_label")
+
+[node name="MusicRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MusicLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MusicRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_MUSIC_VOLUME"
+
+[node name="MusicSlider" type="HSlider" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+step = 1.0
+
+[node name="MusicValue" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/MusicRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "100%"
+horizontal_alignment = 2
+script = ExtResource("10_rolling_label")
+
+[node name="SfxRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SfxLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/SfxRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_SFX_VOLUME"
+
+[node name="SfxSlider" type="HSlider" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/SfxRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+step = 1.0
+
+[node name="SfxValue" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage/SfxRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "100%"
+horizontal_alignment = 2
+script = ExtResource("10_rolling_label")
+
+[node name="BottomSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/AudioPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="QualityPage" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 1
+duration = 0.25
+delay_appear = 0.04
+delay_between_elements = 0.04
+slide_offset = 36.0
+
+[node name="PageTitle" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_QUALITY"
+
+[node name="PageDesc" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_QUALITY_DESC"
+
+[node name="TopSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="QualityRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="QualityLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/QualityRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_QUALITY_PRESET"
+
+[node name="QualityLow" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 38)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_QUALITY_LOW"
+
+[node name="QualityMedium" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 38)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_QUALITY_MEDIUM"
+
+[node name="QualityHigh" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/QualityRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 38)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_QUALITY_HIGH"
+
+[node name="QualityRowSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/QualityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="MsaaRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="MsaaLabel" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/MsaaRow"]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+size_flags_vertical = 4
+text = "SETTINGS_ANTIALIASING"
+
+[node name="MsaaOption" type="OptionButton" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/MsaaRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+
+[node name="MsaaRowSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage/MsaaRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="BottomSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/QualityPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="KeybindPage" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 14
+script = ExtResource("3_appear")
+anim_when = 1
+anim_type = 1
+duration = 0.25
+delay_appear = 0.04
+delay_between_elements = 0.04
+slide_offset = 36.0
+
+[node name="PageTitle" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_KEYBIND"
+
+[node name="PageDesc" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+layout_mode = 2
+text = "SETTINGS_SECTION_KEYBIND_DESC"
+
+[node name="TopSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="KeybindRows" type="VBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KeybindHint" type="Label" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="BottomSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/KeybindPage"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ButtonsRow" type="HBoxContainer" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ButtonsSpacer" type="Control" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/ButtonsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ResetButton" type="Button" parent="FrameArea/Frame/Root/RootVBox/Body/ContentColumn/ButtonsRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 40)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+text = "SETTINGS_RESET_DEFAULTS"

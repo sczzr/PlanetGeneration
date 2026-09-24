@@ -25,6 +25,10 @@ public sealed class BaseContinuousFields
     public required (float X, float Y)[,] Wind { get; init; }
     public required byte[,] Rock { get; init; }
     public required byte[,] Ore { get; init; }
+    public byte[,]? IndustrialOre { get; init; }
+    public byte[,]? SupernaturalOre { get; init; }
+    public byte[,]? CardOre { get; init; }
+    public byte[,]? Leyline { get; init; }
 }
 
 /// <summary>

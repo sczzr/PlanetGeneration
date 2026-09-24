@@ -27,6 +27,14 @@ public partial class ThemeManager : Node
 
     private void ApplyColors(Node node)
     {
+        if (node is UI.WorldSetupController
+            || node.Name == "WorldSetupMenu"
+            || node.Name == "MainMenu"
+            || node.Name == "PauseMenu"
+            || node.Name == "OverlayLayer"
+            || node.Name == "WorldConfigMenu"
+            || node.Name == "ModeSelectMenu"
+            || node.Name == "SettingsMenu") return;
         var isChinese = _currentTheme == ThemeType.Chinese;
         var accent = isChinese ? new Color("5ed1c1") : new Color("e8a256");
         var text = isChinese ? new Color("ecf5f3") : new Color("f4ebe1");
